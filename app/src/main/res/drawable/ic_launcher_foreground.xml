@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Icono propio de Barquitos AyaTu: silueta de buque sobre la retícula de tiro. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#1FFFFFFF"
+        android:pathData="M30,30h48v48h-48z" />
+    <path
+        android:strokeColor="#4DFFFFFF"
+        android:strokeWidth="1"
+        android:pathData="M54,26v56 M26,54h56" />
+    <path
+        android:fillColor="#FFF2B33D"
+        android:pathData="M46,46h16v4h-16z" />
+    <path
+        android:fillColor="#FFE8EDF2"
+        android:pathData="M30,60h48l-6,12h-36z" />
+    <path
+        android:fillColor="#FFE8EDF2"
+        android:pathData="M48,52h12v8h-12z" />
+    <path
+        android:fillColor="#FFF2B33D"
+        android:pathData="M52,38h4v14h-4z" />
+</vector>

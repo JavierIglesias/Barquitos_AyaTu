@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Barquitos AyaTu</string>
+    <string name="app_tagline">Hunde la flota enemiga</string>
+
+    <!-- Pantalla principal -->
+    <string name="home_single">Un jugador</string>
+    <string name="home_single_desc">Contra la máquina, sin conexión</string>
+    <string name="home_hotseat">Dos jugadores</string>
+    <string name="home_hotseat_desc">Por turnos en este mismo móvil</string>
+    <string name="home_wifi">WiFi local</string>
+    <string name="home_wifi_desc">Dos móviles en la misma red</string>
+    <string name="home_resume">Seguir la partida</string>
+    <string name="home_resume_desc">Tienes una batalla a medias</string>
+    <string name="home_shipyard">Astillero</string>
+    <string name="home_stats">Estadísticas</string>
+    <string name="home_settings">Ajustes</string>
+    <string name="home_manual">Manual</string>
+    <string name="home_news">Novedades</string>
+    <string name="home_log">Registro</string>
+    <string name="home_rules">Reglas</string>
+
+    <!-- Configuración de la partida -->
+    <string name="setup_title">Nueva partida</string>
+    <string name="setup_fleet">Flota</string>
+    <string name="setup_rule">Regla de disparo</string>
+    <string name="setup_shots_per_turn">Disparos por turno</string>
+    <string name="setup_difficulty">Nivel de la máquina</string>
+    <string name="setup_who_starts">Quién empieza</string>
+    <string name="setup_start_me">Yo</string>
+    <string name="setup_start_rival">El rival</string>
+    <string name="setup_start_random">Al azar</string>
+    <string name="setup_play">Empezar</string>
+    <string name="setup_player_names">Nombres</string>
+    <string name="setup_player1">Jugador 1</string>
+    <string name="setup_player2">Jugador 2</string>
+
+    <string name="fleet_standard">Estándar</string>
+    <string name="fleet_classic">Clásica</string>
+    <string name="fleet_russian">Rusa</string>
+    <string name="fleet_standard_desc">Seis barcos, dos con forma especial: el portaaviones tiene isla de mando y el submarino torreta. Pueden quedar pegados.</string>
+    <string name="fleet_classic_desc">La de toda la vida: cinco barcos rectos de 5, 4, 3, 3 y 2 casillas. Pueden quedar pegados.</string>
+    <string name="fleet_russian_desc">Diez barcos (uno de 4, dos de 3, tres de 2 y cuatro de 1) que han de dejar siempre una casilla de separación, también en diagonal.</string>
+
+    <string name="rule_one_shot">Un disparo</string>
+    <string name="rule_streak">Racha</string>
+    <string name="rule_salvo">Salva</string>
+    <string name="rule_chainfire">Fuego en cadena</string>
+    <string name="rule_multishot">Multidisparo</string>
+    <string name="rule_one_shot_desc">Un disparo por turno, turnos alternos. La regla clásica.</string>
+    <string name="rule_streak_desc">Sigues disparando mientras aciertes. El primer fallo acaba tu turno.</string>
+    <string name="rule_salvo_desc">Los dos disparáis a la vez, un disparo por cada barco que os quede a flote. Según se hunde tu flota, disparas menos.</string>
+    <string name="rule_chainfire_desc">Disparas tantas veces como barcos te queden a flote, pero uno a uno: ves el resultado de cada disparo antes de elegir el siguiente.</string>
+    <string name="rule_multishot_desc">Un número fijo de disparos por turno, de 2 a 6, el que elijas al crear la partida.</string>
+
+    <string name="difficulty_easy">Fácil</string>
+    <string name="difficulty_normal">Normal</string>
+    <string name="difficulty_hard">Difícil</string>
+    <string name="difficulty_easy_desc">Dispara casi a ciegas y solo a veces remata lo que ha tocado.</string>
+    <string name="difficulty_normal_desc">Busca al tresbolillo y, cuando toca un barco, sigue la línea hasta hundirlo.</string>
+    <string name="difficulty_hard_desc">Calcula en cada tirada dónde es más probable que te queden barcos. No hace trampas, pero no perdona.</string>
+
+    <string name="mode_single">Un jugador</string>
+    <string name="mode_hotseat">Dos jugadores</string>
+    <string name="mode_wifi">WiFi local</string>
+
+    <!-- Barcos -->
+    <string name="ship_carrier">Portaaviones</string>
+    <string name="ship_battleship">Acorazado</string>
+    <string name="ship_cruiser">Crucero</string>
+    <string name="ship_submarine">Submarino</string>
+    <string name="ship_destroyer">Destructor</string>
+    <string name="ship_patrol">Patrullera</string>
+    <string name="ship_boat">Lancha</string>
+
+    <!-- Colocación -->
+    <string name="placement_title">Coloca tu flota</string>
+    <string name="placement_hint">Elige un barco y toca el tablero. Mantén pulsado un barco colocado para quitarlo.</string>
+    <string name="placement_rotate">Girar</string>
+    <string name="placement_random">Al azar</string>
+    <string name="placement_clear">Vaciar</string>
+    <string name="placement_ready">A la batalla</string>
+    <string name="placement_pending">Te faltan %1$d barcos</string>
+    <string name="placement_separation">En esta flota los barcos no pueden tocarse.</string>
+    <string name="placement_turn">Flota de %1$s</string>
+
+    <!-- Partida -->
+    <string name="game_enemy_waters">Aguas enemigas</string>
+    <string name="game_my_fleet">Mi flota</string>
+    <string name="game_your_turn">Te toca</string>
+    <string name="game_rival_turn">Turno del rival</string>
+    <string name="game_player_turn">Turno de %1$s</string>
+    <string name="game_shots_left">Disparos: %1$d</string>
+    <string name="game_salvo_pick">Marca %1$d objetivos</string>
+    <string name="game_salvo_fire">¡Fuego!</string>
+    <string name="game_hit">¡Tocado!</string>
+    <string name="game_miss">Agua</string>
+    <string name="game_sunk">¡Hundido! %1$s</string>
+    <string name="game_streak_again">¡Otra vez!</string>
+    <string name="game_handoff">Pásale el móvil a %1$s</string>
+    <string name="game_handoff_ready">Ya lo tengo</string>
+    <string name="game_handoff_hidden">Tapado para que el otro no vea tu flota.</string>
+    <string name="game_report">Parte de batalla</string>
+    <string name="game_surrender">Rendirse</string>
+    <string name="game_surrender_ask">¿Seguro que te rindes? La partida cuenta como derrota.</string>
+    <string name="game_quit_ask">¿Salir de la partida? Se queda guardada para seguir luego.</string>
+    <string name="game_round">Ronda %1$d</string>
+    <string name="game_fleet_status">Flota rival</string>
+    <string name="game_my_fleet_status">Tu flota</string>
+    <string name="game_waiting_rival">El rival está apuntando…</string>
+
+    <!-- Resultado -->
+    <string name="result_victory">¡Victoria!</string>
+    <string name="result_defeat">Derrota</string>
+    <string name="result_draw">Empate</string>
+    <string name="result_victory_desc">Has hundido la flota enemiga.</string>
+    <string name="result_defeat_desc">Tu flota está en el fondo del mar.</string>
+    <string name="result_draw_desc">Las dos flotas se han hundido en la misma salva.</string>
+    <string name="result_winner">Gana %1$s</string>
+    <string name="result_shots">Disparos</string>
+    <string name="result_hits">Impactos</string>
+    <string name="result_accuracy">Acierto</string>
+    <string name="result_rounds">Rondas</string>
+    <string name="result_again">Otra vez</string>
+    <string name="result_home">Al puerto</string>
+    <string name="result_unlocked">Has desbloqueado: %1$s</string>
+    <string name="result_show_boards">Ver los tableros</string>
+
+    <!-- Estadísticas -->
+    <string name="stats_title">Estadísticas</string>
+    <string name="stats_played">Partidas</string>
+    <string name="stats_won">Ganadas</string>
+    <string name="stats_lost">Perdidas</string>
+    <string name="stats_drawn">Empatadas</string>
+    <string name="stats_winrate">Victorias</string>
+    <string name="stats_shots">Disparos</string>
+    <string name="stats_hits">Impactos</string>
+    <string name="stats_accuracy">Acierto medio</string>
+    <string name="stats_sunk">Barcos hundidos</string>
+    <string name="stats_best">Mejor victoria</string>
+    <string name="stats_best_value">%1$d disparos</string>
+    <string name="stats_streak">Racha actual</string>
+    <string name="stats_best_streak">Mejor racha</string>
+    <string name="stats_by_fleet">Por flota</string>
+    <string name="stats_by_rule">Por regla</string>
+    <string name="stats_by_difficulty">Por nivel</string>
+    <string name="stats_reset">Borrar estadísticas</string>
+    <string name="stats_reset_ask">¿Borrar todas las estadísticas? No se puede deshacer.</string>
+    <string name="stats_empty">Todavía no has jugado ninguna partida.</string>
+    <string name="stats_medals">Medallas</string>
+
+    <!-- Astillero -->
+    <string name="shipyard_title">Astillero</string>
+    <string name="shipyard_nation">Armada</string>
+    <string name="shipyard_skin">Pintura</string>
+    <string name="shipyard_emblem">Emblema</string>
+    <string name="shipyard_name">Tu nombre</string>
+    <string name="shipyard_blueprints">Planos</string>
+    <string name="shipyard_blueprints_desc">Cada barco que hundes acerca el plano del siguiente buque histórico.</string>
+    <string name="shipyard_locked">Bloqueado</string>
+    <string name="shipyard_unlock_at">Con %1$d barcos hundidos</string>
+    <string name="shipyard_sunk_total">Barcos hundidos: %1$d</string>
+    <string name="shipyard_preview">Vista previa</string>
+    <string name="shipyard_selected">En uso</string>
+    <string name="shipyard_use">Usar</string>
+
+    <!-- Ajustes -->
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_sound">Sonido</string>
+    <string name="settings_sound_desc">Disparos, impactos y hundimientos.</string>
+    <string name="settings_haptics">Vibración</string>
+    <string name="settings_haptics_desc">Un toque corto al acertar y uno largo al hundir.</string>
+    <string name="settings_animations">Animaciones</string>
+    <string name="settings_animations_desc">Olas, explosiones y entrada de las pantallas.</string>
+    <string name="settings_show_coords">Letras y números</string>
+    <string name="settings_show_coords_desc">Rotula los bordes del tablero (A-J, 1-10).</string>
+    <string name="settings_mark_water">Marcar agua al hundir</string>
+    <string name="settings_mark_water_desc">En la flota Rusa, pinta sola el agua que rodea a un barco hundido.</string>
+    <string name="settings_confirm_shot">Confirmar disparo</string>
+    <string name="settings_confirm_shot_desc">Pide una segunda pulsación para no disparar por error.</string>
+    <string name="settings_theme">Aspecto</string>
+    <string name="settings_theme_system">Como el sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_about">Acerca de</string>
+    <string name="settings_version">Versión %1$s</string>
+
+    <!-- WiFi local -->
+    <string name="wifi_title">WiFi local</string>
+    <string name="wifi_host">Crear partida</string>
+    <string name="wifi_join">Unirse a una partida</string>
+    <string name="wifi_hint">Los dos móviles tienen que estar en la misma red WiFi.</string>
+    <string name="wifi_waiting">Esperando a que alguien se una…</string>
+    <string name="wifi_searching">Buscando partidas…</string>
+    <string name="wifi_none">No se ve ninguna partida. Que el otro móvil cree una.</string>
+    <string name="wifi_connected">Conectado con %1$s</string>
+    <string name="wifi_connecting">Conectando…</string>
+    <string name="wifi_lost">Se ha perdido la conexión.</string>
+    <string name="wifi_cancel">Cancelar</string>
+    <string name="wifi_rival_left">El rival ha dejado la partida.</string>
+    <string name="wifi_rival_placing">El rival está colocando su flota…</string>
+
+    <!-- Documentos y registro -->
+    <string name="docs_manual">Manual de usuario</string>
+    <string name="docs_news">Novedades</string>
+    <string name="log_title">Registro</string>
+    <string name="log_empty">Sin líneas de registro todavía.</string>
+    <string name="log_copy">Copiar todo el registro</string>
+    <string name="log_copied">Registro copiado (%1$d líneas)</string>
+    <string name="log_share">Compartir</string>
+    <string name="log_share_title">Compartir registro</string>
+    <string name="log_older">Fichero anterior</string>
+    <string name="log_newer">Fichero siguiente</string>
+    <string name="log_refresh">Actualizar</string>
+
+    <!-- Comunes -->
+    <string name="common_back">Volver</string>
+    <string name="common_cancel">Cancelar</string>
+    <string name="common_ok">Vale</string>
+    <string name="common_yes">Sí</string>
+    <string name="common_no">No</string>
+    <string name="common_close">Cerrar</string>
+    <string name="common_you">Tú</string>
+    <string name="common_machine">Máquina</string>
+    <string name="common_rival">Rival</string>
+
+    <!-- Resumen de una salva -->
+    <plurals name="salvo_hits">
+        <item quantity="one">%1$d impacto</item>
+        <item quantity="other">%1$d impactos</item>
+    </plurals>
+    <plurals name="salvo_sunk">
+        <item quantity="one">%1$d barco hundido</item>
+        <item quantity="other">%1$d barcos hundidos</item>
+    </plurals>
+</resources>
