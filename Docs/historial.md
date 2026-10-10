@@ -1,5 +1,42 @@
 # Historial de Cambios
 
+## 10-10-2026 14:40 [1.0.0]
+
+### Corregido
+
+- **Mantener pulsado el tablero para colocar un barco no hacía nada.** Causa: `BoardView` resolvía
+  los gestos de colocación con `detectTapGestures`, donde una pulsación sostenida se clasifica como
+  *long press* y nunca llega a ser un *tap*; el `onLongPress` de la pantalla de colocación estaba
+  conectado a «quitar un barco ya puesto», así que sobre agua vacía no se ejecutaba ninguna acción
+  y además no había ninguna señal en pantalla de que el gesto se hubiera recibido. Reproducido en
+  el emulador: toque corto coloca, pulsación sostenida no.
+
+### Cambiado
+
+- **Colocación por arrastre** (`ui/common/BoardView.kt`, `ui/match/PlacementScreen.kt`,
+  `ui/match/MatchViewModel.kt`). El tablero acepta ahora dos callbacks nuevos, `onAim(Coord)` y
+  `onDrop(Coord?)`, resueltos con `awaitEachGesture` en vez de `detectTapGestures`, de modo que
+  tocar, mantener pulsado y arrastrar son **el mismo gesto**: mientras el dedo está apoyado se
+  previsualiza la casilla bajo él y al levantarlo se coloca.
+  - `MatchViewModel.aimAt()`: si el dedo baja sobre un barco ya colocado, lo levanta y pasa a ser el
+    que se arrastra, así que mover un barco ya no obliga a quitarlo primero.
+  - `MatchViewModel.dropAt()`: soltar **fuera** del tablero (`onDrop(null)`) devuelve el barco a la
+    bandeja y borra su sombra, que es lo que sustituye a la antigua pulsación larga para quitarlo.
+  - `removeAt()` desaparece: ya no la usa nadie.
+  - El tablero de la partida no cambia: sigue con `onTap` y `detectTapGestures`.
+- **Textos**: `placement_hint` (es/en) y el apartado «Colocar tu flota» del manual explican el gesto
+  nuevo.
+
+### Comprobado
+
+- En el emulador (API 36), con la flota Clásica: pulsación sostenida sobre agua → aparece la sombra
+  verde; arrastre → la sombra sigue al dedo; al soltar → barco colocado; dedo sobre un barco puesto
+  → se levanta; soltar fuera del tablero → vuelve a la bandeja y no queda sombra pintada. La
+  pantalla de batalla sigue disparando con normalidad (tres disparos, impacto y fallos
+  registrados). Pruebas unitarias en verde y APK de publicación sin errores en `logcat -b crash`.
+- Sin cambio de versión: la 1.0.0 todavía no está publicada en Google Play, así que no hace falta
+  subir el `versionCode`.
+
 ## 10-10-2026 13:20 [1.0.0]
 
 ### Cambiado

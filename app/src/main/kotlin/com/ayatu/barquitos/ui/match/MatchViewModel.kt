@@ -211,10 +211,36 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         sound.play(Sfx.TOQUE, 0.4f)
     }
 
+    /**
+     * El dedo apunta a una casilla durante la colocación: tocándola, manteniéndola pulsada o
+     * arrastrando por encima. Si baja sobre un barco ya puesto, lo levanta para que se pueda mover
+     * de sitio sin tener que quitarlo primero.
+     */
+    fun aimAt(anchor: Coord) {
+        val state = _ui.value
+        val existing = state.placed.firstOrNull { anchor in it.cells }
+        if (existing != null) {
+            _ui.update {
+                it.copy(
+                    placed = it.placed - existing,
+                    pendingShips = (it.pendingShips + existing.def).sortedBy { s -> s.id },
+                    selectedShipId = existing.id,
+                    orientation = existing.orientation,
+                )
+            }
+            sound.play(Sfx.TOQUE, 0.5f)
+        }
+        previewAt(anchor)
+    }
+
     /** Dibuja la sombra del barco seleccionado en esa casilla (para ver si cabe). */
     fun previewAt(anchor: Coord) {
         val state = _ui.value
-        val def = state.pendingShips.firstOrNull { it.id == state.selectedShipId } ?: return
+        val def = state.pendingShips.firstOrNull { it.id == state.selectedShipId }
+            ?: run {
+                if (state.preview.isNotEmpty()) _ui.update { it.copy(preview = emptyList()) }
+                return
+            }
         val fleet = state.config.fleetDef
         // El dedo señala el centro del barco, no su esquina: así se coloca donde uno mira.
         val shape = def.shape.rotated(state.orientation)
@@ -222,6 +248,18 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         val cells = Placement.cellsOf(def, offset, state.orientation)
         val valid = Placement.canPlace(fleet, def, offset, state.orientation, state.placed)
         _ui.update { it.copy(preview = cells, previewValid = valid) }
+    }
+
+    /**
+     * El dedo se levanta durante la colocación. Fuera del tablero no se coloca nada: el barco que
+     * se venía arrastrando se queda en la bandeja y solo hay que borrar su sombra.
+     */
+    fun dropAt(anchor: Coord?) {
+        if (anchor == null) {
+            _ui.update { it.copy(preview = emptyList()) }
+        } else {
+            placeAt(anchor)
+        }
     }
 
     /** Coloca el barco seleccionado. Si en esa casilla ya hay uno, lo levanta para recolocarlo. */
@@ -261,19 +299,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             )
         }
         sound.play(Sfx.TOQUE, 0.6f)
-    }
-
-    fun removeAt(anchor: Coord) {
-        val existing = _ui.value.placed.firstOrNull { anchor in it.cells } ?: return
-        _ui.update {
-            it.copy(
-                placed = it.placed - existing,
-                pendingShips = (it.pendingShips + existing.def).sortedBy { s -> s.id },
-                selectedShipId = existing.id,
-                preview = emptyList(),
-            )
-        }
-        sound.play(Sfx.TOQUE, 0.5f)
     }
 
     fun randomPlacement() {

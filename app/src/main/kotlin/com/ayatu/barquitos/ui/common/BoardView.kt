@@ -1,6 +1,8 @@
 package com.ayatu.barquitos.ui.common
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -73,6 +75,14 @@ fun BoardView(
     modifier: Modifier = Modifier,
     onTap: ((Coord) -> Unit)? = null,
     onLongPress: ((Coord) -> Unit)? = null,
+    /**
+     * Colocación: el dedo apunta a una casilla, ya sea tocándola, manteniéndola pulsada o
+     * arrastrando por encima. Se llama en cada casilla por la que pasa, para ir moviendo la sombra
+     * del barco.
+     */
+    onAim: ((Coord) -> Unit)? = null,
+    /** Colocación: el dedo se levanta sobre esa casilla, o fuera del tablero (`null`). */
+    onDrop: ((Coord?) -> Unit)? = null,
 ) {
     val measurer = rememberTextMeasurer()
     BoxWithConstraints(modifier.fillMaxWidth()) {
@@ -83,23 +93,63 @@ fun BoardView(
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .let { base ->
-                        if (onTap == null && onLongPress == null) base else {
-                            base.pointerInput(render.size, render.enabled, onTap, onLongPress) {
-                                detectTapGestures(
-                                    onTap = { p ->
-                                        if (render.enabled) {
-                                            coordAt(p, size.width.toFloat(), size.height.toFloat(), render.size, gutter)
-                                                ?.let { onTap?.invoke(it) }
+                        when {
+                            // Colocación. No se distingue entre tocar, mantener pulsado y
+                            // arrastrar: en los tres casos el dedo «lleva» el barco y se suelta
+                            // donde uno quiere. Con `detectTapGestures` una pulsación sostenida no
+                            // llegaba a ser un toque y no pasaba nada, que es justo lo que uno
+                            // intenta hacer la primera vez.
+                            onAim != null && onDrop != null ->
+                                base.pointerInput(render.size, render.enabled, onAim, onDrop) {
+                                    awaitEachGesture {
+                                        val down = awaitFirstDown(requireUnconsumed = false)
+                                        if (!render.enabled) return@awaitEachGesture
+                                        val w = size.width.toFloat()
+                                        val h = size.height.toFloat()
+                                        var last = coordAt(down.position, w, h, render.size, gutter)
+                                        var outside = last == null
+                                        last?.let(onAim)
+                                        down.consume()
+                                        while (true) {
+                                            val change = awaitPointerEvent().changes
+                                                .firstOrNull { it.id == down.id } ?: break
+                                            if (!change.pressed) {
+                                                change.consume()
+                                                break
+                                            }
+                                            val c = coordAt(change.position, w, h, render.size, gutter)
+                                            outside = c == null
+                                            if (c != null && c != last) {
+                                                last = c
+                                                onAim(c)
+                                            }
+                                            change.consume()
                                         }
-                                    },
-                                    onLongPress = { p ->
-                                        if (render.enabled) {
-                                            coordAt(p, size.width.toFloat(), size.height.toFloat(), render.size, gutter)
-                                                ?.let { onLongPress?.invoke(it) }
-                                        }
-                                    },
-                                )
-                            }
+                                        // Soltar fuera del tablero devuelve el barco a la bandeja
+                                        // en vez de colocarlo donde estuvo por última vez.
+                                        onDrop(if (outside) null else last)
+                                    }
+                                }
+
+                            onTap != null || onLongPress != null ->
+                                base.pointerInput(render.size, render.enabled, onTap, onLongPress) {
+                                    detectTapGestures(
+                                        onTap = { p ->
+                                            if (render.enabled) {
+                                                coordAt(p, size.width.toFloat(), size.height.toFloat(), render.size, gutter)
+                                                    ?.let { onTap?.invoke(it) }
+                                            }
+                                        },
+                                        onLongPress = { p ->
+                                            if (render.enabled) {
+                                                coordAt(p, size.width.toFloat(), size.height.toFloat(), render.size, gutter)
+                                                    ?.let { onLongPress?.invoke(it) }
+                                            }
+                                        },
+                                    )
+                                }
+
+                            else -> base
                         }
                     },
             ) {

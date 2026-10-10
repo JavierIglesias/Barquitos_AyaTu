@@ -74,12 +74,15 @@ ronda: entonces la partida queda en **empate**.
 ## Colocar tu flota
 
 1. Toca el barco que quieras en la bandeja de abajo.
-2. Toca el tablero. El barco se coloca **centrado donde pongas el dedo**.
-3. **Girar** lo rota. Los barcos rectos tienen dos posiciones; el portaaviones y el submarino,
+2. Llévalo al tablero con el dedo. Da igual que lo toques, que lo mantengas pulsado o que arrastres:
+   mientras el dedo está encima se ve la **sombra del barco**, y se coloca al levantarlo. El barco
+   va siempre **centrado donde pongas el dedo**.
+3. La sombra te dice si cabe: **verde** sí, **roja** no (se sale, pisa a otro o, en la flota Rusa,
+   queda pegado a otro). Si sueltas con la sombra en rojo, no se coloca.
+4. **Girar** lo rota. Los barcos rectos tienen dos posiciones; el portaaviones y el submarino,
    cuatro.
-4. Si un barco no cabe ahí (se sale, pisa a otro o, en la flota Rusa, queda pegado a otro), no se
-   coloca.
-5. **Mantén pulsado** un barco ya colocado para quitarlo y volver a ponerlo.
+5. Para **mover** un barco ya puesto, pon el dedo encima y arrástralo: se levanta y lo llevas a otro
+   sitio. Para **quitarlo**, arrástralo fuera del tablero y suéltalo: vuelve a la bandeja.
 6. **Al azar** reparte la flota entera de golpe (vuelve a repartir todos los barcos, también los que
    ya habías puesto). **La papelera** vacía el tablero.
 7. Cuando no te quede ninguno, el botón de abajo pasa a decir **A la batalla**.

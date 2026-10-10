@@ -1,5 +1,18 @@
 # Novedades
 
+## 10 de octubre de 2026 — versión 1.0.0
+
+### Colocar la flota es ahora arrastrar
+
+Antes había que dar un **toque corto** en el tablero: si dejabas el dedo apoyado un momento, no
+pasaba nada de nada y parecía que la pantalla estaba muerta. Ya no.
+
+- Ahora **da igual** que toques, que mantengas pulsado o que arrastres. Mientras el dedo esté
+  encima del tablero verás la **sombra del barco**, verde si cabe y roja si no, y el barco se
+  coloca al levantar el dedo.
+- Para **mover** un barco que ya habías puesto, pon el dedo encima y arrástralo a otro sitio.
+- Para **quitarlo**, arrástralo fuera del tablero y suéltalo: vuelve a la bandeja de abajo.
+
 ## 10 de octubre de 2026 — versión 1.0.0 (primera versión)
 
 Primera versión de **Barquitos AyaTu**: hundir la flota, con todo lo que hace falta para echar
