@@ -420,7 +420,11 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             PlayerBoard(Fleet.BOARD_SIZE, layouts[0] ?: Placement.randomLayout()),
             PlayerBoard(Fleet.BOARD_SIZE, layouts[1] ?: Placement.randomLayout()),
         )
-        val starting = state.config.startingPlayer ?: Random.nextInt(2)
+        // Por WiFi los dos móviles montan su propia partida, así que «quién empieza» tiene que
+        // venir ya decidido en la configuración que manda el anfitrión; si por lo que sea llegara
+        // sin decidir, empieza el anfitrión y no se sortea nada, que es mejor que desincronizarse.
+        val starting = state.config.startingPlayer
+            ?: if (state.config.mode == GameMode.WIFI_LOCAL) 0 else Random.nextInt(2)
         game = Game(state.config, boards, starting)
         _ui.update { it.copy(phase = MatchPhase.JUGANDO) }
         logger.logInfo(

@@ -37,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ayatu.barquitos.BarquitosApplication
 import com.ayatu.barquitos.R
 import com.ayatu.barquitos.core.GameConfig
+import com.ayatu.barquitos.core.resolvedForHosting
 import com.ayatu.barquitos.core.GameMode
 import com.ayatu.barquitos.net.LanBrowser
 import com.ayatu.barquitos.net.LanGameFound
@@ -90,14 +91,21 @@ class WifiViewModel(application: Application) : AndroidViewModel(application) {
 
     fun startHosting(playerName: String, config: GameConfig) {
         cancel()
-        val newHost = LanHost(getApplication(), playerName, config)
+        // «Al azar» hay que sortearlo **aquí**, una sola vez, y mandar ya el resultado en el
+        // saludo. Si viajara como «al azar», cada móvil echaría su propio dado y la mitad de las
+        // veces acabarían los dos creyendo que le toca al otro: los dos tableros muertos.
+        val acordado = config.resolvedForHosting()
+        val newHost = LanHost(getApplication(), playerName, acordado)
         host = newHost
-        logger.logInfo("WiFi local: publicando partida (${config.summary()})")
+        logger.logInfo(
+            "WiFi local: publicando partida (${acordado.summary()}); " +
+                "abre fuego el jugador ${(acordado.startingPlayer ?: 0) + 1}",
+        )
         viewModelScope.launch {
             runCatching { newHost.await() }
                 .onSuccess { link ->
                     LanSession.link = link
-                    LanSession.config = config
+                    LanSession.config = acordado
                     logger.logInfo("WiFi local: se ha unido un rival")
                     _connected.value = true
                 }

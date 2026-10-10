@@ -1,5 +1,7 @@
 package com.ayatu.barquitos.core
 
+import kotlin.random.Random
+
 /**
  * Cómo se reparten los disparos.
  *
@@ -24,6 +26,17 @@ enum class GameMode(val resKey: String) {
     UN_JUGADOR("mode_single"),
     WIFI_LOCAL("mode_wifi"),
 }
+
+/**
+ * Deja la configuración lista para publicarla por WiFi: «al azar» se sortea **aquí**, en el
+ * anfitrión, antes de mandar las reglas al otro móvil.
+ *
+ * Es importante que esto no se haga en cada móvil por separado: los dos montan su propia partida
+ * a partir de la misma configuración, así que si «quién empieza» viajara sin decidir, cada uno
+ * echaría su dado y la mitad de las veces acabarían los dos esperando al otro.
+ */
+fun GameConfig.resolvedForHosting(rng: Random = Random): GameConfig =
+    copy(startingPlayer = startingPlayer ?: rng.nextInt(2))
 
 /** Configuración completa de una partida. La flota no se elige: es siempre la misma. */
 data class GameConfig(

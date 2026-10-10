@@ -51,7 +51,7 @@ Dos detalles de los que depende todo lo visual:
 Hace falta JDK 17 y el SDK de Android (`local.properties` → `sdk.dir`).
 
 ```bash
-./gradlew testDebugUnitTest   # 33 pruebas del motor y de la IA
+./gradlew testDebugUnitTest   # 40 pruebas del motor, la IA y el protocolo de red
 ./gradlew assembleDebug       # APK de depuración
 ./gradlew bundleRelease       # .aab firmado para Google Play (necesita keystore.properties)
 ```

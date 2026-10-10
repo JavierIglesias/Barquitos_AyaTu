@@ -5,11 +5,12 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -25,6 +26,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ayatu.barquitos.core.Coord
@@ -92,6 +94,12 @@ class BoardHitTest(
 fun BoardView(
     render: BoardRender,
     modifier: Modifier = Modifier,
+    /**
+     * Lado máximo del tablero. Sin límite, en una pantalla ancha y casi cuadrada (un plegable
+     * abierto) el tablero se come la pantalla entera y hay que bajar a buscar la bandeja y los
+     * botones. Quien usa el tablero le pone un tope en función de la altura de la pantalla.
+     */
+    maxSize: Dp = Dp.Unspecified,
     onTap: ((Coord) -> Unit)? = null,
     onLongPress: ((Coord) -> Unit)? = null,
     /** Colocación: el dedo baja sobre esa casilla. */
@@ -107,8 +115,8 @@ fun BoardView(
     onGeometry: ((BoardHitTest) -> Unit)? = null,
 ) {
     val measurer = rememberTextMeasurer()
-    BoxWithConstraints(modifier.fillMaxWidth()) {
-        Box(Modifier.fillMaxWidth().aspectRatio(1f)) {
+    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+        Box(Modifier.widthIn(max = maxSize).fillMaxWidth().aspectRatio(1f)) {
             val gutter = if (render.showCoords) GUTTER_CELLS else 0f
             Canvas(
                 Modifier

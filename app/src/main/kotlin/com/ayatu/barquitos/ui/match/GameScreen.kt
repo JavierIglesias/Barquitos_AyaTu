@@ -42,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +72,14 @@ fun GameScreen(
     onBack: () -> Unit,
 ) {
     var askSurrender by remember { mutableStateOf(false) }
+
+    // Igual que al colocar: en una pantalla casi cuadrada el tablero enemigo no puede ocuparla
+    // entera, o el propio y el parte de batalla se quedan fuera de la vista.
+    val pantalla = LocalConfiguration.current
+    val tableroMax = minOf(
+        pantalla.screenWidthDp,
+        (pantalla.screenHeightDp * 0.5f).toInt(),
+    ).dp
 
     // Animación del último disparo: explosión si tocó, chapoteo si cayó al agua.
     var shotProgress by remember { mutableFloatStateOf(1f) }
@@ -149,6 +158,7 @@ fun GameScreen(
                             showCoords = settings.showCoords,
                             enabled = state.isMyTurn && !state.busy && !state.finished,
                         ),
+                        maxSize = tableroMax,
                         onTap = onTapEnemy,
                     )
                 }

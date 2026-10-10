@@ -1,5 +1,23 @@
 # Novedades
 
+## 10 de octubre de 2026 — versión 1.0.0 (arreglos)
+
+### Por WiFi ya se puede disparar
+
+Si al crear la partida dejabas «Quién empieza» en **Al azar**, los dos móviles echaban el dado por
+su cuenta y podían sacar cosas distintas: cuando eso pasaba, los dos se quedaban esperando al otro
+y no había forma de disparar. Ahora el sorteo lo hace **el que crea la partida**, una sola vez, y
+manda el resultado al otro móvil junto con las reglas.
+
+### El tablero ya no se come la pantalla de un plegable
+
+En un móvil plegable abierto, la pantalla es casi cuadrada y el tablero salía tan ancho como
+ella, dejando la bandeja de barcos y los botones fuera de la vista. Ahora el tablero tiene un tope
+de tamaño y se queda centrado, así que todo cabe de una vez. En un móvil normal no notarás
+ninguna diferencia.
+
+---
+
 ## 10 de octubre de 2026 — versión 1.0.0 (bandeja y colocación)
 
 ### Los barcos se sacan de la bandeja arrastrando

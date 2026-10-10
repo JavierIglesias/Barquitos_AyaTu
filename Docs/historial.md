@@ -1,5 +1,43 @@
 # Historial de Cambios
 
+## 10-10-2026 22:15 [1.0.0]
+
+### Corregido
+
+- **Por WiFi local no se podía disparar una vez empezada la partida.** Causa: «quién empieza»
+  viajaba en el saludo como «al azar» (`startingPlayer = null`, que es el valor por defecto de la
+  pantalla de nueva partida), y **cada móvil echaba su propio dado** en
+  `MatchViewModel.beginGame()`. Como los dos montan su propia partida a partir de la misma
+  configuración, el sorteo salía distinto la mitad de las veces: en una cuarta parte de las
+  partidas los dos creían que le tocaba al otro y ningún tablero admitía toques, y en otra cuarta
+  parte creían los dos que les tocaba a ellos y los disparos se cruzaban.
+  - Arreglado sorteando **una sola vez y en el anfitrión**, antes de publicar la partida:
+    `GameConfig.resolvedForHosting()` (en `core/Rules.kt`, función pura para poder probarla) y
+    `WifiViewModel.startHosting()`. Lo que sale a la red lleva ya un 0 o un 1.
+  - Red de seguridad en `beginGame()`: si por lo que fuera llegara sin decidir en una partida de
+    WiFi, empieza el anfitrión en vez de sortear, que es preferible a desincronizarse.
+  - El registro de la app anota ahora quién abre fuego en los dos móviles, para poder comprobarlo
+    desde dentro si vuelve a pasar algo parecido.
+- **En un plegable abierto el tablero se comía la pantalla** y había que bajar a buscar la bandeja
+  y los botones (visto en un Samsung Fold 5). Causa: el tablero era `fillMaxWidth().aspectRatio(1f)`
+  sin tope, así que en una pantalla ancha y casi cuadrada su lado era el ancho entero y dejaba
+  fuera todo lo demás. Añadido `BoardView(maxSize = ...)`: la pantalla de colocación lo limita al
+  48 % de la altura y la de batalla al 50 %, y el tablero se centra. En móviles normales no cambia
+  nada, porque ahí manda el ancho.
+
+### Añadido
+
+- **Pruebas del WiFi local** (`app/src/test/.../NetTest.kt`, 6 pruebas): que el anfitrión nunca
+  publica un «quién empieza» sin decidir, que no lo toca si ya estaba elegido, que **los dos
+  móviles acaban creyendo lo mismo** tras el saludo, y el ida y vuelta del protocolo (saludo,
+  disparo, flota, rendición y despedida), incluido que un saludo roto no revienta. Total: 40.
+
+### Pendiente de comprobar
+
+- El WiFi local no se puede probar de verdad aquí: dos emuladores no se ven entre sí por NSD y el
+  móvil está en otra red. El arreglo está razonado y cubierto por pruebas, pero **hay que
+  confirmarlo con los dos móviles**.
+
 ## 10-10-2026 21:00 [1.0.0]
 
 ### Cambiado

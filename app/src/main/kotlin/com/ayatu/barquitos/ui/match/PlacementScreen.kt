@@ -34,6 +34,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -89,6 +90,13 @@ fun PlacementScreen(
     var carriedAt by remember { mutableStateOf<Offset?>(null) }
 
     val pendientes = state.pendingShips.groupingBy { it.kind }.eachCount()
+    // El tablero no puede comerse la pantalla: en un plegable abierto, que es casi cuadrado, un
+    // tablero tan ancho como la pantalla dejaría la bandeja y los botones fuera de la vista.
+    val pantalla = LocalConfiguration.current
+    val tableroMax = minOf(
+        pantalla.screenWidthDp,
+        (pantalla.screenHeightDp * 0.48f).toInt(),
+    ).dp
 
     BarquitosScreen(title = stringResource(R.string.placement_title), onBack = onBack) { modifier ->
         Box(
@@ -124,6 +132,7 @@ fun PlacementScreen(
                         showCoords = settings.showCoords,
                         enabled = true,
                     ),
+                    maxSize = tableroMax,
                     onPress = onBoardPress,
                     onMove = onBoardMove,
                     onRelease = onBoardRelease,
