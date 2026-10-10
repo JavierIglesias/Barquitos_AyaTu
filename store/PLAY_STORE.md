@@ -14,15 +14,34 @@ datos que se tratan, versión). Al final está la lista de comprobaciones antes 
 | `minSdk` | 24 (Android 7.0) |
 | `targetSdk` / `compileSdk` | 36 |
 | Formato de subida | Android App Bundle (`.aab`) |
-| Firma | `keystore.properties` en la raíz del repo (fuera de git) |
+| Firma | Almacén `barquitos-release.jks`, alias `barquitos` (ver «Clave de firma») |
 | Idiomas | Español (por defecto) e inglés |
-| Tamaño aproximado | ~5 MB (no lleva imágenes ni audio: todo se dibuja y se sintetiza) |
+| Tamaño real del APK de publicación | **1,49 MB** (no lleva imágenes ni audio: todo se dibuja y se sintetiza) |
 
 Compilar la versión de publicación:
 
 ```
-./gradlew bundleRelease     # app/build/outputs/bundle/release/app-release.aab
+./gradlew bundleRelease     # app/build/outputs/bundle/release/app-release.aab  -> Google Play
+./gradlew assembleRelease   # app/build/outputs/apk/release/app-release.apk     -> instalar a mano
 ```
+
+### Clave de firma
+
+| Campo | Valor |
+|---|---|
+| Almacén | `barquitos-release.jks`, en la raíz del repositorio |
+| Alias | `barquitos` |
+| Algoritmo | RSA 2048, SHA256withRSA, validez 10.000 días |
+| Titular | `CN=Javier Iglesias, OU=AyaTu, O=AyaTu, L=Madrid, C=ES` |
+| Huella SHA-256 | `9A:A3:AB:C3:1C:47:B3:3C:1C:72:8E:39:00:40:23:3A:34:1E:E0:91:EC:AB:E3:A9:0F:23:04:05:34:B5:AC:21` |
+| Huella SHA-1 | `75:B2:16:E0:56:A7:05:4F:20:D7:82:22:C6:F3:CD:88:D4:8D:24:E1` |
+
+El almacén y sus contraseñas están en `barquitos-release.jks` y `keystore.properties`, los dos
+**ignorados por git**: no se suben al repositorio y, por tanto, **no hay copia de seguridad
+automática**. Hay que guardar los dos ficheros fuera del equipo. Esta es la clave de **subida**; si se
+activa la firma de apps de Google Play, la clave con la que se distribuye la app la custodia Google y
+esta solo sirve para subir, de modo que una pérdida se puede resolver pidiendo un restablecimiento de
+clave de subida en la consola.
 
 ---
 

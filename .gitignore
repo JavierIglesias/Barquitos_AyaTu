@@ -14,3 +14,5 @@ app/build/
 app/src/main/assets/historial.md
 app/src/main/assets/novedades.md
 app/src/main/assets/manual_usuario.md
+/*.jks
+/*.keystore

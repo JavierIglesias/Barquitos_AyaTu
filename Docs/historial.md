@@ -1,5 +1,28 @@
 # Historial de Cambios
 
+## 10-10-2026 13:20 [1.0.0]
+
+### Cambiado
+
+- **Creada la clave de firma de publicación** (`barquitos-release.jks`, alias `barquitos`) y su
+  `keystore.properties`, los dos fuera de git. Causa: sin almacén de claves, `assembleRelease` dejaba
+  el APK **sin firmar** y no se podía instalar en un móvil ni subir a Google Play. Huellas y aviso de
+  copia de seguridad anotados en `store/PLAY_STORE.md` («Clave de firma»).
+- **`app/build.gradle.kts`**: la ruta del almacén se resuelve ahora con `rootProject.file(...)` en vez
+  de `file(...)`. Causa: dentro del bloque `android {}`, `file()` resuelve sobre `app/`, así que una
+  ruta relativa escrita en `keystore.properties` (lo natural, al vivir ese fichero en la raíz) no se
+  encontraba.
+- **`.gitignore`**: añadidos `/*.jks` y `/*.keystore`, para que el almacén de claves no se pueda subir
+  al repositorio por descuido.
+- **`store/PLAY_STORE.md`**: tamaño real del APK de publicación (1,49 MB en vez de la estimación de
+  ~5 MB) y comando `assembleRelease` para instalar a mano.
+
+### Comprobado
+
+- APK de publicación (R8, recursos encogidos, 1,49 MB) firmado con la clave nueva e **instalado en un
+  Pixel 9 Pro XL con Android 17**; arranca sin errores ni en `logcat -b crash` ni en el registro de la
+  propia app.
+
 ## 10-10-2026 11:30 [1.0.0]
 
 Primera versión del proyecto. Juego de hundir la flota para Android, pensado a partir del conjunto
