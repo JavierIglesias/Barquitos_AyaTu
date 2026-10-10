@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
@@ -49,6 +51,8 @@ data class BoardRender(
     /** Casillas del barco que se está colocando ahora mismo. */
     val preview: List<Coord> = emptyList(),
     val previewValid: Boolean = true,
+    /** Barco colocado que está seleccionado: se pinta en rojo y es el que gira el botón. */
+    val selectedShipId: Int? = null,
     /** Casilla a la espera de confirmación de disparo. */
     val pendingShot: Coord? = null,
     /** Último disparo, para la animación. */
@@ -63,6 +67,23 @@ data class BoardRender(
 )
 
 /**
+ * Dónde ha quedado el tablero en la pantalla y cómo convertir un punto de la pantalla en una
+ * casilla. Hace falta porque los barcos se arrastran **desde la bandeja**, que es otro componente:
+ * el dedo empieza fuera del tablero y hay que saber sobre qué casilla pasa.
+ */
+class BoardHitTest(
+    private val topLeft: Offset,
+    private val width: Float,
+    private val height: Float,
+    private val n: Int,
+    private val gutter: Float,
+) {
+    /** La casilla que hay bajo [root] (coordenadas de la ventana), o null si está fuera. */
+    fun coordAtRoot(root: Offset): Coord? =
+        coordAt(root - topLeft, width, height, n, gutter)
+}
+
+/**
  * El tablero. Se dibuja entero con Canvas (agua, retícula, barcos, impactos y animaciones), así
  * que el mismo componente sirve para la pantalla de colocación, para la de partida y para la de
  * resultado, y no hay ni una imagen que escalar.
@@ -73,14 +94,17 @@ fun BoardView(
     modifier: Modifier = Modifier,
     onTap: ((Coord) -> Unit)? = null,
     onLongPress: ((Coord) -> Unit)? = null,
-    /**
-     * Colocación: el dedo apunta a una casilla, ya sea tocándola, manteniéndola pulsada o
-     * arrastrando por encima. Se llama en cada casilla por la que pasa, para ir moviendo la sombra
-     * del barco.
-     */
-    onAim: ((Coord) -> Unit)? = null,
+    /** Colocación: el dedo baja sobre esa casilla. */
+    onPress: ((Coord) -> Unit)? = null,
+    /** Colocación: el dedo, sin levantarse, pasa a otra casilla. */
+    onMove: ((Coord) -> Unit)? = null,
     /** Colocación: el dedo se levanta sobre esa casilla, o fuera del tablero (`null`). */
-    onDrop: ((Coord?) -> Unit)? = null,
+    onRelease: ((Coord?) -> Unit)? = null,
+    /**
+     * Avisa de dónde ha quedado el tablero en la pantalla, para que quien lo contiene pueda
+     * saber a qué casilla apunta un dedo que viene de fuera (arrastrar un barco de la bandeja).
+     */
+    onGeometry: ((BoardHitTest) -> Unit)? = null,
 ) {
     val measurer = rememberTextMeasurer()
     BoxWithConstraints(modifier.fillMaxWidth()) {
@@ -91,14 +115,27 @@ fun BoardView(
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .let { base ->
+                        if (onGeometry == null) base else base.onGloballyPositioned { c ->
+                            onGeometry(
+                                BoardHitTest(
+                                    topLeft = c.positionInRoot(),
+                                    width = c.size.width.toFloat(),
+                                    height = c.size.height.toFloat(),
+                                    n = render.size,
+                                    gutter = gutter,
+                                ),
+                            )
+                        }
+                    }
+                    .let { base ->
                         when {
                             // Colocación. No se distingue entre tocar, mantener pulsado y
                             // arrastrar: en los tres casos el dedo «lleva» el barco y se suelta
                             // donde uno quiere. Con `detectTapGestures` una pulsación sostenida no
                             // llegaba a ser un toque y no pasaba nada, que es justo lo que uno
                             // intenta hacer la primera vez.
-                            onAim != null && onDrop != null ->
-                                base.pointerInput(render.size, render.enabled, onAim, onDrop) {
+                            onPress != null && onRelease != null ->
+                                base.pointerInput(render.size, render.enabled, onPress, onMove, onRelease) {
                                     awaitEachGesture {
                                         val down = awaitFirstDown(requireUnconsumed = false)
                                         if (!render.enabled) return@awaitEachGesture
@@ -106,7 +143,7 @@ fun BoardView(
                                         val h = size.height.toFloat()
                                         var last = coordAt(down.position, w, h, render.size, gutter)
                                         var outside = last == null
-                                        last?.let(onAim)
+                                        last?.let(onPress)
                                         down.consume()
                                         while (true) {
                                             val change = awaitPointerEvent().changes
@@ -119,13 +156,13 @@ fun BoardView(
                                             outside = c == null
                                             if (c != null && c != last) {
                                                 last = c
-                                                onAim(c)
+                                                onMove?.invoke(c)
                                             }
                                             change.consume()
                                         }
                                         // Soltar fuera del tablero devuelve el barco a la bandeja
                                         // en vez de colocarlo donde estuvo por última vez.
-                                        onDrop(if (outside) null else last)
+                                        onRelease(if (outside) null else last)
                                     }
                                 }
 
@@ -166,6 +203,7 @@ fun BoardView(
                         origin = origin,
                         cell = cell,
                         sunk = ship.id in render.sunkShipIds,
+                        selected = ship.id == render.selectedShipId,
                         alpha = alpha,
                     )
                 }

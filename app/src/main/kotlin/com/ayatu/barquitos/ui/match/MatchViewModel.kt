@@ -54,6 +54,8 @@ data class MatchUiState(
     val placed: List<PlacedShip> = emptyList(),
     val pendingShips: List<ShipDef> = emptyList(),
     val selectedShipId: Int? = null,
+    /** Barco ya colocado que está elegido: se pinta en rojo y es el que gira «Girar». */
+    val selectedPlacedId: Int? = null,
     val orientation: Orientation = Orientation.HORIZONTAL,
     val preview: List<Coord> = emptyList(),
     val previewValid: Boolean = true,
@@ -145,7 +147,8 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             boardSize = config.boardSize,
             localPlayer = local,
             pendingShips = Fleet.ships,
-            selectedShipId = Fleet.ships.firstOrNull()?.id,
+            // Nada preseleccionado: el barco se elige al sacarlo de la bandeja con el dedo.
+            selectedShipId = null,
         )
         logger.logInicio("Partida nueva: ${config.summary()}")
         viewModelScope.launch { settingsStore.saveLastConfig(config) }
@@ -180,44 +183,150 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
 
     // ------------------------------------------------------------------ colocación
 
-    fun selectShip(id: Int) {
-        _ui.update { it.copy(selectedShipId = id, preview = emptyList()) }
+    // ------------------------------------------------------------------ colocación
+
+    /**
+     * Empieza a sacar un barco de la bandeja: se elige el primero que quede de esa clase. Los
+     * botones de la bandeja son por clase (un botón para los cuatro submarinos), así que aquí se
+     * decide cuál de los gemelos se coloca.
+     */
+    fun takeFromTray(kind: ShipKind) {
+        val state = _ui.value
+        val def = state.pendingShips.firstOrNull { it.kind == kind } ?: return
+        _ui.update {
+            it.copy(selectedShipId = def.id, selectedPlacedId = null, preview = emptyList())
+        }
         sound.play(Sfx.TOQUE, 0.4f)
     }
 
-    fun rotate() {
-        _ui.update { it.copy(orientation = it.orientation.next(), preview = emptyList()) }
-        sound.play(Sfx.TOQUE, 0.4f)
+    /** El dedo, trayendo un barco de la bandeja, pasa por esa casilla (null = fuera del tablero). */
+    fun dragOverBoard(anchor: Coord?) {
+        if (anchor == null) clearPreview() else previewAt(anchor)
+    }
+
+    /** Se suelta el barco que se traía de la bandeja. Fuera del tablero no se coloca nada. */
+    fun dropFromTray(anchor: Coord?) {
+        if (anchor == null) clearPreview() else placeAt(anchor)
     }
 
     /**
-     * El dedo apunta a una casilla durante la colocación: tocándola, manteniéndola pulsada o
-     * arrastrando por encima. Si baja sobre un barco ya puesto, lo levanta para que se pueda mover
-     * de sitio sin tener que quitarlo primero.
+     * Gira. Si hay un barco colocado elegido (el rojo), lo gira **en su sitio**, sobre su propio
+     * centro; si no, cambia la orientación con la que se colocará el siguiente.
      */
-    fun aimAt(anchor: Coord) {
+    fun rotate() {
         val state = _ui.value
-        val existing = state.placed.firstOrNull { anchor in it.cells }
-        if (existing != null) {
-            _ui.update {
-                it.copy(
-                    placed = it.placed - existing,
-                    pendingShips = (it.pendingShips + existing.def).sortedBy { s -> s.id },
-                    selectedShipId = existing.id,
-                    orientation = existing.orientation,
-                )
-            }
-            sound.play(Sfx.TOQUE, 0.5f)
+        val puesto = state.placed.firstOrNull { it.id == state.selectedPlacedId }
+        if (puesto == null) {
+            _ui.update { it.copy(orientation = it.orientation.next(), preview = emptyList()) }
+            sound.play(Sfx.TOQUE, 0.4f)
+            return
+        }
+        val nueva = puesto.orientation.next()
+        val forma = puesto.def.shape.rotated(nueva)
+        // El barco gira sobre su centro, no sobre su proa: así se queda donde estaba.
+        val centro = Coord(
+            puesto.anchor.x + (puesto.def.shape.rotated(puesto.orientation).width - 1) / 2,
+            puesto.anchor.y + (puesto.def.shape.rotated(puesto.orientation).height - 1) / 2,
+        )
+        val resto = state.placed - puesto
+        val candidatos = buildList {
+            add(Coord(centro.x - (forma.width - 1) / 2, centro.y - (forma.height - 1) / 2))
+            // Si al girar se sale del tablero, se intenta metiendo el barco dentro.
+            val bruto = Coord(centro.x - (forma.width - 1) / 2, centro.y - (forma.height - 1) / 2)
+            add(
+                Coord(
+                    bruto.x.coerceIn(0, Fleet.BOARD_SIZE - forma.width),
+                    bruto.y.coerceIn(0, Fleet.BOARD_SIZE - forma.height),
+                ),
+            )
+        }
+        val sitio = candidatos.firstOrNull {
+            Placement.canPlace(puesto.def, it, nueva, resto)
+        }
+        if (sitio == null) {
+            // No cabe girado: se avisa y se deja como estaba.
+            sound.play(Sfx.AGUA, 0.3f)
+            return
+        }
+        _ui.update {
+            it.copy(
+                placed = resto + PlacedShip(puesto.def, sitio, nueva),
+                orientation = nueva,
+                preview = emptyList(),
+            )
+        }
+        sound.play(Sfx.TOQUE, 0.5f)
+    }
+
+    // --- gestos sobre el propio tablero
+
+    /** Barco que había bajo el dedo al bajar, para distinguir «tocar» de «arrastrar». */
+    private var pressedShipId: Int? = null
+    private var dragging = false
+
+    fun boardPress(anchor: Coord) {
+        val state = _ui.value
+        pressedShipId = state.placed.firstOrNull { anchor in it.cells }?.id
+        dragging = false
+        if (pressedShipId == null) previewAt(anchor)
+    }
+
+    fun boardMove(anchor: Coord) {
+        val id = pressedShipId
+        if (!dragging && id != null) {
+            // En cuanto el dedo se mueve, el barco se levanta y se arrastra.
+            liftShip(id)
+            dragging = true
         }
         previewAt(anchor)
     }
 
-    /** Dibuja la sombra del barco seleccionado en esa casilla (para ver si cabe). */
+    fun boardRelease(anchor: Coord?) {
+        val id = pressedShipId
+        val arrastrado = dragging
+        pressedShipId = null
+        dragging = false
+        if (id != null && !arrastrado) {
+            // Un toque sobre un barco ya puesto solo lo elige, para poder girarlo.
+            _ui.update {
+                it.copy(
+                    selectedPlacedId = id,
+                    selectedShipId = null,
+                    preview = emptyList(),
+                )
+            }
+            sound.play(Sfx.TOQUE, 0.4f)
+            return
+        }
+        if (anchor == null) clearPreview() else placeAt(anchor)
+    }
+
+    /** Levanta un barco ya colocado y lo devuelve a la bandeja como el barco en curso. */
+    private fun liftShip(id: Int) {
+        val state = _ui.value
+        val puesto = state.placed.firstOrNull { it.id == id } ?: return
+        _ui.update {
+            it.copy(
+                placed = it.placed - puesto,
+                pendingShips = (it.pendingShips + puesto.def).sortedBy { s -> s.id },
+                selectedShipId = puesto.id,
+                selectedPlacedId = null,
+                orientation = puesto.orientation,
+            )
+        }
+        sound.play(Sfx.TOQUE, 0.5f)
+    }
+
+    private fun clearPreview() {
+        if (_ui.value.preview.isNotEmpty()) _ui.update { it.copy(preview = emptyList()) }
+    }
+
+    /** Dibuja la sombra del barco en curso en esa casilla, verde si cabe y roja si no. */
     fun previewAt(anchor: Coord) {
         val state = _ui.value
         val def = state.pendingShips.firstOrNull { it.id == state.selectedShipId }
             ?: run {
-                if (state.preview.isNotEmpty()) _ui.update { it.copy(preview = emptyList()) }
+                clearPreview()
                 return
             }
         // El dedo señala el centro del barco, no su esquina: así se coloca donde uno mira.
@@ -228,41 +337,18 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         _ui.update { it.copy(preview = cells, previewValid = valid) }
     }
 
-    /**
-     * El dedo se levanta durante la colocación. Fuera del tablero no se coloca nada: el barco que
-     * se venía arrastrando se queda en la bandeja y solo hay que borrar su sombra.
-     */
-    fun dropAt(anchor: Coord?) {
-        if (anchor == null) {
-            _ui.update { it.copy(preview = emptyList()) }
-        } else {
-            placeAt(anchor)
-        }
-    }
-
-    /** Coloca el barco seleccionado. Si en esa casilla ya hay uno, lo levanta para recolocarlo. */
+    /** Coloca el barco en curso. Al quedar puesto se queda elegido (en rojo) para poder girarlo. */
     fun placeAt(anchor: Coord) {
         val state = _ui.value
-        val existing = state.placed.firstOrNull { anchor in it.cells }
-        if (existing != null) {
-            _ui.update {
-                it.copy(
-                    placed = it.placed - existing,
-                    pendingShips = (it.pendingShips + existing.def).sortedBy { s -> s.id },
-                    selectedShipId = existing.id,
-                    orientation = existing.orientation,
-                    preview = emptyList(),
-                )
-            }
-            sound.play(Sfx.TOQUE, 0.5f)
+        val def = state.pendingShips.firstOrNull { it.id == state.selectedShipId } ?: run {
+            clearPreview()
             return
         }
-        val def = state.pendingShips.firstOrNull { it.id == state.selectedShipId }
-            ?: state.pendingShips.firstOrNull() ?: return
         val shape = def.shape.rotated(state.orientation)
         val offset = Coord(anchor.x - (shape.width - 1) / 2, anchor.y - (shape.height - 1) / 2)
         if (!Placement.canPlace(def, offset, state.orientation, state.placed)) {
             sound.play(Sfx.AGUA, 0.3f)
+            clearPreview()
             return
         }
         val ship = PlacedShip(def, offset, state.orientation)
@@ -271,7 +357,8 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             it.copy(
                 placed = it.placed + ship,
                 pendingShips = pending,
-                selectedShipId = pending.firstOrNull()?.id,
+                selectedShipId = null,
+                selectedPlacedId = ship.id,
                 preview = emptyList(),
             )
         }
@@ -279,21 +366,26 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun randomPlacement() {
-        val state = _ui.value
         val layout = Placement.randomFill() ?: return
         _ui.update {
-            it.copy(placed = layout, pendingShips = emptyList(), selectedShipId = null, preview = emptyList())
+            it.copy(
+                placed = layout,
+                pendingShips = emptyList(),
+                selectedShipId = null,
+                selectedPlacedId = null,
+                preview = emptyList(),
+            )
         }
         sound.play(Sfx.TOQUE, 0.7f)
     }
 
     fun clearPlacement() {
-        val state = _ui.value
         _ui.update {
             it.copy(
                 placed = emptyList(),
                 pendingShips = Fleet.ships,
-                selectedShipId = Fleet.ships.firstOrNull()?.id,
+                selectedShipId = null,
+                selectedPlacedId = null,
                 preview = emptyList(),
             )
         }

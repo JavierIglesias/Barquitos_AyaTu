@@ -6,6 +6,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import com.ayatu.barquitos.core.Coord
@@ -33,12 +34,22 @@ object ShipPainter {
         origin: Offset,
         cell: Float,
         sunk: Boolean = false,
+        /** El barco elegido en la colocación: se pinta en rojo para que se vea cuál va a girar. */
+        selected: Boolean = false,
         alpha: Float = 1f,
     ) {
         val cells = ship.cells
         val colors = Palette.BARCOS
-        val hull = if (sunk) colors.hull.darken(0.45f) else colors.hull
-        val deck = if (sunk) colors.deck.darken(0.45f) else colors.deck
+        val hull = when {
+            sunk -> colors.hull.darken(0.45f)
+            selected -> SELECCION_CASCO
+            else -> colors.hull
+        }
+        val deck = when {
+            sunk -> colors.deck.darken(0.45f)
+            selected -> SELECCION_CUBIERTA
+            else -> colors.deck
+        }
         val accent = if (sunk) colors.accent.darken(0.5f) else colors.accent
         val inset = cell * 0.08f
 
@@ -68,6 +79,14 @@ object ShipPainter {
         }
 
         drawPath(silhouette, hull, alpha = alpha)
+        if (selected) {
+            drawPath(
+                silhouette,
+                SELECCION_BORDE,
+                alpha = alpha,
+                style = Stroke(width = cell * 0.09f),
+            )
+        }
 
         clipPath(silhouette) {
 
@@ -196,7 +215,12 @@ object ShipPainter {
      * Dibuja un barco suelto (sin tablero) dentro de [area]: lo usan la bandeja de colocación y
      * la lista de barcos de cada flota durante la partida.
      */
-    fun DrawScope.drawShipPreview(ship: PlacedShip, area: Rect, sunk: Boolean = false) {
+    fun DrawScope.drawShipPreview(
+        ship: PlacedShip,
+        area: Rect,
+        sunk: Boolean = false,
+        selected: Boolean = false,
+    ) {
         val cells = ship.cells
         val w = cells.maxOf { it.x } - cells.minOf { it.x } + 1
         val h = cells.maxOf { it.y } - cells.minOf { it.y } + 1
@@ -205,7 +229,7 @@ object ShipPainter {
             area.left + (area.width - cell * w) / 2f - cells.minOf { it.x } * cell,
             area.top + (area.height - cell * h) / 2f - cells.minOf { it.y } * cell,
         )
-        drawShip(ship, origin, cell, sunk)
+        drawShip(ship, origin, cell, sunk, selected)
     }
 
     /** Una explosión sencilla: núcleo claro, llamas y esquirlas. [progress] va de 0 a 1. */
@@ -246,6 +270,11 @@ object ShipPainter {
             alpha = fade * 0.5f,
         )
     }
+
+    /** Rojo de «este es el barco que estoy moviendo». */
+    private val SELECCION_CASCO = Color(0xFFB03A2E)
+    private val SELECCION_CUBIERTA = Color(0xFFE8826F)
+    private val SELECCION_BORDE = Color(0xFFFF5A3C)
 }
 
 /** Oscurece un color mezclándolo con negro. [amount] 0 = igual, 1 = negro. */

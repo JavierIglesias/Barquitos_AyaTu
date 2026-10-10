@@ -1,5 +1,21 @@
 # Novedades
 
+## 10 de octubre de 2026 — versión 1.0.0 (bandeja y colocación)
+
+### Los barcos se sacan de la bandeja arrastrando
+
+- La bandeja tiene ahora **un botón por clase de barco**, no uno por barco: Portaaviones,
+  Acorazado, Destructor y Submarino, cada uno con **cuántos te quedan** debajo. Los cuatro
+  submarinos comparten botón: pone 4, sacas uno y pone 3.
+- Para colocar un barco, **mantenlo pulsado en la bandeja y arrástralo al tablero**. El barco va
+  pegado al dedo y la sombra te dice si cabe (verde) o no (roja). Al soltar, se queda puesto.
+- Al soltarlo queda **marcado en rojo**, y mientras esté así **Girar** lo pone de pie o lo tumba
+  **sin moverlo de sitio**, girando sobre su propio centro.
+- Para volver a coger uno ya puesto, tócalo: se pone en rojo y se puede girar. Arrastrarlo lo
+  mueve, y sacarlo del tablero lo devuelve a la bandeja.
+
+---
+
 ## 10 de octubre de 2026 — versión 1.0.0 (simplificación)
 
 ### El juego se ha simplificado: una flota y dos reglas

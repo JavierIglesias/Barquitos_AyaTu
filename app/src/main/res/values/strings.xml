@@ -51,7 +51,7 @@
 
     <!-- Colocación -->
     <string name="placement_title">Coloca tu flota</string>
-    <string name="placement_hint">Elige un barco y llévalo al tablero con el dedo: mientras lo mantienes pulsado ves dónde queda, y al soltar se coloca. Arrastra un barco ya puesto para moverlo, o sácalo del tablero para devolverlo a la bandeja.</string>
+    <string name="placement_hint">Mantén pulsado un barco de la bandeja y arrástralo al tablero. Al soltarlo se queda marcado en rojo: «Girar» lo pone de pie o lo tumba. Toca un barco ya puesto para elegirlo, arrástralo para moverlo, o sácalo del tablero para devolverlo a la bandeja.</string>
     <string name="placement_rotate">Girar</string>
     <string name="placement_random">Al azar</string>
     <string name="placement_clear">Vaciar</string>

@@ -1,5 +1,44 @@
 # Historial de Cambios
 
+## 10-10-2026 21:00 [1.0.0]
+
+### Cambiado
+
+- **La colocación se hace arrastrando desde la bandeja**, que es el gesto que pedía Javier:
+  mantener pulsado el botón del barco, arrastrar hasta el tablero y soltar. Ficheros implicados:
+  - `ui/common/Widgets.kt` → `ShipChip` pasa de ser un botón por **barco** a un botón por **clase**,
+    con el número de los que quedan por colocar, y coge el gesto con
+    `detectDragGesturesAfterLongPress`. Informa de la posición del dedo en coordenadas de la
+    ventana (`positionInRoot` del propio botón más la posición local del toque).
+  - `ui/common/BoardView.kt` → nueva clase `BoardHitTest` y parámetro `onGeometry`: el tablero
+    dice dónde ha quedado en pantalla para que la pantalla de colocación pueda traducir un dedo
+    que **viene de fuera** a una casilla. Hacía falta porque el gesto empieza en la bandeja, que
+    es otro componente, y `pointerInput` solo ve lo que pasa dentro del suyo.
+  - `ui/match/PlacementScreen.kt` → un `Box` envuelve la pantalla y dibuja el **barco fantasma**
+    pegado al dedo por encima de todo lo demás, un poco por encima del punto de contacto para que
+    no lo tape el propio dedo.
+- **El barco recién colocado se queda elegido y se pinta en rojo** (`BoardRender.selectedShipId`,
+  `ShipPainter.drawShip(selected = ...)`), que es la señal de «este es el que va a girar».
+- **`rotate()` gira el barco colocado en su sitio**, sobre su propio centro, en vez de limitarse a
+  cambiar la orientación del siguiente que se coloque. Si girado no cabe, intenta meterlo dentro
+  del tablero y, si tampoco, avisa con el sonido de agua y lo deja como estaba.
+- **Gestos del tablero repartidos en tres** (`onPress` / `onMove` / `onRelease`, antes `onAim` y
+  `onDrop`), que es lo que permite distinguir **tocar** un barco puesto (lo elige, para girarlo) de
+  **arrastrarlo** (lo mueve). El barco solo se levanta cuando el dedo cambia de casilla.
+- Al empezar a colocar **no hay nada preseleccionado** (`selectedShipId = null` en `startNew`):
+  antes el primer barco salía con el recuadro de elegido sin que nadie lo hubiera tocado, y ya no
+  significa nada porque el barco se elige al sacarlo.
+- Textos de `placement_hint` (es/en) y apartado «Colocar tu flota» del manual, reescritos para el
+  gesto nuevo.
+
+### Comprobado
+
+En el emulador (API 36), con la app recién instalada y sin datos: bandeja con los cuatro botones y
+sus contadores (1, 2, 3, 4); arrastre del Acorazado hasta D5-F5 con barco pegado al dedo y sombra
+verde; al soltar, barco en rojo y contador de 2 a 1; «Girar» lo pone vertical en E4-E6, sobre su
+centro; arrastre de un barco ya puesto de B1-E1 a F7-I7; un toque en él lo vuelve a poner en rojo
+sin moverlo. 33 pruebas en verde.
+
 ## 10-10-2026 19:30 [1.0.0]
 
 Poda grande: el juego pasa de «todo lo que hace Fleet Battle» a **el barquitos de toda la vida**,

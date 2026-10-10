@@ -50,7 +50,7 @@
 
     <!-- Placement -->
     <string name="placement_title">Place your fleet</string>
-    <string name="placement_hint">Pick a ship and carry it to the board with your finger: while you hold it you can see where it lands, and it is placed when you let go. Drag a placed ship to move it, or drag it off the board to send it back to the tray.</string>
+    <string name="placement_hint">Press and hold a ship in the tray and drag it onto the board. Once dropped it stays marked in red: «Rotate» stands it up or lays it down. Tap a placed ship to select it, drag it to move it, or drag it off the board to send it back to the tray.</string>
     <string name="placement_rotate">Rotate</string>
     <string name="placement_random">Random</string>
     <string name="placement_clear">Clear</string>

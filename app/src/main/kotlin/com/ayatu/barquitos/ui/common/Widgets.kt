@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,9 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -268,34 +272,54 @@ private fun Color.toArgbCompat(): Int = android.graphics.Color.argb(
     (alpha * 255).toInt(), (red * 255).toInt(), (green * 255).toInt(), (blue * 255).toInt(),
 )
 
-/** Dibuja un barco suelto, para la bandeja de colocación. */
+/**
+ * Una clase de barco en la bandeja de colocación: el dibujo, el nombre y **cuántos quedan por
+ * colocar**. Hay un botón por clase, no uno por barco, así que los cuatro submarinos comparten
+ * botón y el número va bajando según se sacan al tablero.
+ *
+ * El barco se saca manteniéndolo pulsado y arrastrando hasta el tablero ([onDragStart] /
+ * [onDrag] / [onDragEnd], con la posición del dedo en coordenadas de la ventana).
+ */
 @Composable
 fun ShipChip(
     def: ShipDef,
-    selected: Boolean,
-    placed: Boolean,
     label: String,
-    onClick: () -> Unit,
+    remaining: Int,
+    selected: Boolean,
+    modifier: Modifier = Modifier,
+    onDragStart: () -> Unit,
+    onDrag: (Offset) -> Unit,
+    onDragEnd: (Offset?) -> Unit,
 ) {
-    val border = if (selected) MaterialTheme.colorScheme.primary else Color.Transparent
+    val agotado = remaining <= 0
+    val border = if (selected && !agotado) MaterialTheme.colorScheme.primary else Color.Transparent
+    var origen by remember { mutableStateOf(Offset.Zero) }
     Column(
-        Modifier
-            .width(76.dp)
+        modifier
             .clip(RoundedCornerShape(12.dp))
             .background(
-                if (placed) MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
+                if (agotado) MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)
                 else MaterialTheme.colorScheme.surface,
             )
             .border(2.dp, border, RoundedCornerShape(12.dp))
-            .clickable(enabled = !placed, onClick = onClick)
+            .onGloballyPositioned { origen = it.positionInRoot() }
+            .pointerInput(def.id, agotado) {
+                if (agotado) return@pointerInput
+                detectDragGesturesAfterLongPress(
+                    onDragStart = { onDragStart() },
+                    onDrag = { change, _ -> onDrag(origen + change.position) },
+                    onDragEnd = { onDragEnd(null) },
+                    onDragCancel = { onDragEnd(null) },
+                )
+            }
             .padding(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Canvas(
             Modifier
                 .fillMaxWidth()
-                .height(34.dp)
-                .graphicsLayer(alpha = if (placed) 0.3f else 1f),
+                .height(30.dp)
+                .graphicsLayer(alpha = if (agotado) 0.3f else 1f),
         ) {
             val ship = PlacedShip(def, Coord(0, 0), Orientation.HORIZONTAL)
             drawShipPreview(ship, Rect(0f, 0f, size.width, size.height))
@@ -308,9 +332,10 @@ fun ShipChip(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            "${def.size}",
-            style = MaterialTheme.typography.labelSmall,
-            color = if (placed) Flota.Victoria else MaterialTheme.colorScheme.primary,
+            "$remaining",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            color = if (agotado) Flota.Victoria else MaterialTheme.colorScheme.primary,
         )
     }
 }

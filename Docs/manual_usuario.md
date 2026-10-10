@@ -56,18 +56,24 @@ Se eligen al crear la partida, en **Reglas de disparo**. Las dos partes juegan c
 
 ## Colocar tu flota
 
-1. Toca el barco que quieras en la bandeja de abajo.
-2. Llévalo al tablero con el dedo. Da igual que lo toques, que lo mantengas pulsado o que arrastres:
-   mientras el dedo está encima se ve la **sombra del barco**, y se coloca al levantarlo. El barco
-   va siempre **centrado donde pongas el dedo**.
-3. La sombra te dice si cabe: **verde** sí, **roja** no (se sale, pisa a otro o queda pegado a
-   otro). Si sueltas con la sombra en rojo, no se coloca.
-4. **Girar** lo pone en vertical u horizontal.
-5. Para **mover** un barco ya puesto, pon el dedo encima y arrástralo: se levanta y lo llevas a otro
-   sitio. Para **quitarlo**, arrástralo fuera del tablero y suéltalo: vuelve a la bandeja.
-6. **Al azar** reparte la flota entera de golpe (vuelve a repartir todos los barcos, también los que
-   ya habías puesto). **La papelera** vacía el tablero.
-7. Cuando no te quede ninguno, el botón de abajo pasa a decir **A la batalla**.
+Abajo tienes la **bandeja**: un botón por cada clase de barco, con el dibujo, el nombre y
+**cuántos te quedan por colocar**. Los cuatro submarinos comparten botón: pone 4, sacas uno y
+pone 3.
+
+1. **Mantén pulsado** el botón del barco que quieras, por ejemplo Acorazado.
+2. Sin levantar el dedo, **arrastra hasta el tablero**. El barco va pegado al dedo y, al entrar en
+   el tablero, aparece la **sombra** de dónde caería: **verde** si cabe, **roja** si no (se sale,
+   pisa a otro o queda pegado a otro).
+3. **Suelta**. El barco queda puesto y **marcado en rojo**.
+4. Mientras esté en rojo, **Girar** lo pone de pie o lo tumba **sin moverlo de sitio**: gira sobre
+   su propio centro. Si girado no cabe, suena el aviso y se queda como estaba.
+5. Para volver a coger un barco ya puesto, **tócalo**: se pone en rojo y ya puedes girarlo.
+6. Para **moverlo**, pon el dedo encima y arrástralo a otro sitio.
+7. Para **quitarlo**, arrástralo fuera del tablero y suéltalo: vuelve a la bandeja y su contador
+   sube.
+8. **Al azar** reparte la flota entera de golpe (vuelve a repartir todos los barcos, también los
+   que ya habías puesto). **La papelera** vacía el tablero.
+9. Cuando no te quede ninguno, el botón de abajo pasa a decir **A la batalla**.
 
 ---
 
