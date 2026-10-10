@@ -5,28 +5,22 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import com.ayatu.barquitos.core.Difficulty
-import com.ayatu.barquitos.core.FleetType
 import com.ayatu.barquitos.core.GameConfig
 import com.ayatu.barquitos.core.GameMode
 import com.ayatu.barquitos.core.ShotRule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/** Partidas jugadas y ganadas de un corte concreto (una flota, una regla, un nivel). */
+/** Partidas jugadas y ganadas de un corte concreto (una regla, un nivel). */
 data class Record(val played: Int = 0, val won: Int = 0) {
     val winRate: Float get() = if (played == 0) 0f else won.toFloat() / played
 }
 
-/**
- * Estadísticas del jugador. Solo cuentan las partidas en las que hay un «tú»: contra la máquina
- * y por WiFi. Las de dos jugadores en el mismo móvil se apuntan aparte ([hotseatPlayed]), porque
- * ahí las dos flotas son del mismo dueño y sumarlas al porcentaje de victorias no diría nada.
- */
+/** Estadísticas del jugador: cuentan las partidas contra la máquina y las de WiFi local. */
 data class Stats(
     val played: Int = 0,
     val won: Int = 0,
     val lost: Int = 0,
-    val drawn: Int = 0,
     val shots: Int = 0,
     val hits: Int = 0,
     val sunkByMe: Int = 0,
@@ -37,26 +31,21 @@ data class Stats(
     val bestStreak: Int = 0,
     /** Mejor porcentaje de acierto en una partida ganada, de 0 a 100. */
     val bestAccuracy: Int = 0,
-    val hotseatPlayed: Int = 0,
-    val byFleet: Map<FleetType, Record> = emptyMap(),
     val byRule: Map<ShotRule, Record> = emptyMap(),
     val byDifficulty: Map<Difficulty, Record> = emptyMap(),
 ) {
     val accuracy: Float get() = if (shots == 0) 0f else hits.toFloat() / shots
     val winRate: Float get() = if (played == 0) 0f else won.toFloat() / played
-    val isEmpty: Boolean get() = played == 0 && hotseatPlayed == 0
+    val isEmpty: Boolean get() = played == 0
 
-    /** Con cuántas flotas distintas se ha ganado alguna vez (para las medallas). */
-    val fleetsWon: Int get() = byFleet.count { it.value.won > 0 }
-
-    /** Con cuántas reglas distintas se ha ganado alguna vez. */
+    /** Con cuántas reglas distintas se ha ganado alguna vez (para las medallas). */
     val rulesWon: Int get() = byRule.count { it.value.won > 0 }
 
     val hardWins: Int get() = byDifficulty[Difficulty.DIFICIL]?.won ?: 0
 }
 
 /** Cómo acabó una partida, desde el punto de vista del jugador local. */
-enum class MatchResult { GANADA, PERDIDA, EMPATADA }
+enum class MatchResult { GANADA, PERDIDA }
 
 /** Resumen de una partida acabada, lo que hace falta para actualizar las estadísticas. */
 data class MatchSummary(
@@ -75,7 +64,6 @@ class StatsStore(private val context: Context) {
             played = p[K.PLAYED] ?: 0,
             won = p[K.WON] ?: 0,
             lost = p[K.LOST] ?: 0,
-            drawn = p[K.DRAWN] ?: 0,
             shots = p[K.SHOTS] ?: 0,
             hits = p[K.HITS] ?: 0,
             sunkByMe = p[K.SUNK_BY_ME] ?: 0,
@@ -84,8 +72,6 @@ class StatsStore(private val context: Context) {
             currentStreak = p[K.STREAK] ?: 0,
             bestStreak = p[K.BEST_STREAK] ?: 0,
             bestAccuracy = p[K.BEST_ACCURACY] ?: 0,
-            hotseatPlayed = p[K.HOTSEAT_PLAYED] ?: 0,
-            byFleet = FleetType.entries.associateWith { readRecord(p, "fleet", it.name) },
             byRule = ShotRule.entries.associateWith { readRecord(p, "rule", it.name) },
             byDifficulty = Difficulty.entries.associateWith { readRecord(p, "diff", it.name) },
         )
@@ -95,10 +81,6 @@ class StatsStore(private val context: Context) {
     suspend fun record(summary: MatchSummary) {
         val config = summary.config
         context.barquitosStore.edit { p ->
-            if (config.mode == GameMode.DOS_JUGADORES) {
-                p[K.HOTSEAT_PLAYED] = (p[K.HOTSEAT_PLAYED] ?: 0) + 1
-                return@edit
-            }
             p[K.PLAYED] = (p[K.PLAYED] ?: 0) + 1
             p[K.SHOTS] = (p[K.SHOTS] ?: 0) + summary.myShots
             p[K.HITS] = (p[K.HITS] ?: 0) + summary.myHits
@@ -122,12 +104,7 @@ class StatsStore(private val context: Context) {
                     p[K.LOST] = (p[K.LOST] ?: 0) + 1
                     p[K.STREAK] = 0
                 }
-                MatchResult.EMPATADA -> {
-                    p[K.DRAWN] = (p[K.DRAWN] ?: 0) + 1
-                    p[K.STREAK] = 0
-                }
             }
-            bumpRecord(p, "fleet", config.fleet.name, summary.result == MatchResult.GANADA)
             bumpRecord(p, "rule", config.shotRule.name, summary.result == MatchResult.GANADA)
             if (config.mode == GameMode.UN_JUGADOR) {
                 bumpRecord(p, "diff", config.difficulty.name, summary.result == MatchResult.GANADA)
@@ -138,7 +115,7 @@ class StatsStore(private val context: Context) {
     suspend fun reset() {
         context.barquitosStore.edit { p ->
             // Se borran solo las claves de estadísticas: los ajustes y los desbloqueos se quedan.
-            val prefixes = listOf("stat_", "fleet_", "rule_", "diff_")
+            val prefixes = listOf("stat_", "rule_", "diff_")
             p.asMap().keys.filter { key -> prefixes.any { key.name.startsWith(it) } }
                 .forEach { p.remove(it) }
         }
@@ -162,7 +139,6 @@ class StatsStore(private val context: Context) {
         val PLAYED = intPreferencesKey("stat_played")
         val WON = intPreferencesKey("stat_won")
         val LOST = intPreferencesKey("stat_lost")
-        val DRAWN = intPreferencesKey("stat_drawn")
         val SHOTS = intPreferencesKey("stat_shots")
         val HITS = intPreferencesKey("stat_hits")
         val SUNK_BY_ME = intPreferencesKey("stat_sunk_by_me")
@@ -171,6 +147,5 @@ class StatsStore(private val context: Context) {
         val STREAK = intPreferencesKey("stat_streak")
         val BEST_STREAK = intPreferencesKey("stat_best_streak")
         val BEST_ACCURACY = intPreferencesKey("stat_best_accuracy")
-        val HOTSEAT_PLAYED = intPreferencesKey("stat_hotseat_played")
     }
 }

@@ -18,8 +18,6 @@ import com.ayatu.barquitos.core.ShipKind
 import com.ayatu.barquitos.core.ShotRecord
 import com.ayatu.barquitos.core.ShotRule
 import com.ayatu.barquitos.core.ai.ShipAi
-import com.ayatu.barquitos.data.Blueprint
-import com.ayatu.barquitos.data.Blueprints
 import com.ayatu.barquitos.data.MatchResult
 import com.ayatu.barquitos.data.MatchStore
 import com.ayatu.barquitos.data.MatchSummary
@@ -39,41 +37,29 @@ import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 /** En qué momento de la partida estamos. */
-enum class MatchPhase { COLOCANDO, TRASPASO, ESPERANDO_RIVAL, JUGANDO, RESULTADO }
+enum class MatchPhase { COLOCANDO, ESPERANDO_RIVAL, JUGANDO, RESULTADO }
 
 /** El aviso grande que aparece un momento sobre el tablero. */
 enum class FlashKind { TOCADO, AGUA, HUNDIDO, OTRA_VEZ, HUNDIDO_PROPIO }
 
 data class Flash(val kind: FlashKind, val shipKind: ShipKind? = null, val stamp: Long = 0L)
 
-/** Resumen de una ronda de SALVA, que se muestra con los disparos de los dos a la vez. */
-data class SalvoSummary(
-    val myShots: List<Pair<Coord, Boolean>>,
-    val rivalShots: List<Pair<Coord, Boolean>>,
-    val mySunk: List<ShipKind>,
-    val rivalSunk: List<ShipKind>,
-)
-
 data class MatchUiState(
     val phase: MatchPhase = MatchPhase.COLOCANDO,
     val config: GameConfig = GameConfig(),
     val boardSize: Int = 10,
-    /** Qué tablero es «el mío» en pantalla ahora mismo (en dos jugadores va alternando). */
+    /** Qué tablero es «el mío»: el 0 contra la máquina, el que toque por WiFi. */
     val localPlayer: Int = 0,
     // --- colocación
-    val placingPlayer: Int = 0,
     val placed: List<PlacedShip> = emptyList(),
     val pendingShips: List<ShipDef> = emptyList(),
     val selectedShipId: Int? = null,
-    val orientation: Orientation = Orientation.NORTE,
+    val orientation: Orientation = Orientation.HORIZONTAL,
     val preview: List<Coord> = emptyList(),
     val previewValid: Boolean = true,
     // --- partida
     val current: Int = 0,
-    val shotsLeft: Int = 0,
     val round: Int = 1,
-    val salvoSize: Int = 0,
-    val aimCount: Int = 0,
     val enemyRender: BoardRender? = null,
     val myRender: BoardRender? = null,
     val myFleet: List<FleetEntry> = emptyList(),
@@ -86,15 +72,12 @@ data class MatchUiState(
     val lastShotOnEnemy: Boolean = true,
     val busy: Boolean = false,
     val pendingShot: Coord? = null,
-    val salvoSummary: SalvoSummary? = null,
-    // --- traspaso y red
-    val handoffPlayer: Int = 0,
+    // --- red
     val netStatus: String? = null,
     // --- resultado
     val winner: Int? = null,
     val myShots: Int = 0,
     val myHits: Int = 0,
-    val unlocked: List<Blueprint> = emptyList(),
     val revealAll: Boolean = false,
 ) {
     val isMyTurn: Boolean get() = current == localPlayer
@@ -109,8 +92,6 @@ data class FleetEntry(val kind: ShipKind, val size: Int, val sunk: Boolean, val 
  * el guardado automático, y expone un único [MatchUiState] para que las pantallas solo tengan que
  * pintar.
  *
- * Se encarga también de que en «dos jugadores en el mismo móvil» nadie vea la flota del otro:
- * entre turno y turno se mete una pantalla de traspaso ([MatchPhase.TRASPASO]).
  */
 class MatchViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -163,9 +144,8 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             config = config,
             boardSize = config.boardSize,
             localPlayer = local,
-            placingPlayer = local,
-            pendingShips = config.fleetDef.ships,
-            selectedShipId = config.fleetDef.ships.firstOrNull()?.id,
+            pendingShips = Fleet.ships,
+            selectedShipId = Fleet.ships.firstOrNull()?.id,
         )
         logger.logInicio("Partida nueva: ${config.summary()}")
         viewModelScope.launch { settingsStore.saveLastConfig(config) }
@@ -185,12 +165,11 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             ai = if (saved.config.mode == GameMode.UN_JUGADOR) ShipAi(saved.config.difficulty) else null
             layouts[0] = saved.boards[0].ships
             layouts[1] = saved.boards[1].ships
-            val local = if (saved.config.mode == GameMode.DOS_JUGADORES) saved.current else 0
             _ui.value = MatchUiState(
                 phase = MatchPhase.JUGANDO,
                 config = saved.config,
                 boardSize = saved.config.boardSize,
-                localPlayer = local,
+                localPlayer = 0,
             )
             logger.logInfo("Partida recuperada: ${saved.config.summary()}, ronda ${saved.round}")
             refresh()
@@ -241,12 +220,11 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                 if (state.preview.isNotEmpty()) _ui.update { it.copy(preview = emptyList()) }
                 return
             }
-        val fleet = state.config.fleetDef
         // El dedo señala el centro del barco, no su esquina: así se coloca donde uno mira.
         val shape = def.shape.rotated(state.orientation)
         val offset = Coord(anchor.x - (shape.width - 1) / 2, anchor.y - (shape.height - 1) / 2)
         val cells = Placement.cellsOf(def, offset, state.orientation)
-        val valid = Placement.canPlace(fleet, def, offset, state.orientation, state.placed)
+        val valid = Placement.canPlace(def, offset, state.orientation, state.placed)
         _ui.update { it.copy(preview = cells, previewValid = valid) }
     }
 
@@ -265,7 +243,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     /** Coloca el barco seleccionado. Si en esa casilla ya hay uno, lo levanta para recolocarlo. */
     fun placeAt(anchor: Coord) {
         val state = _ui.value
-        val fleet = state.config.fleetDef
         val existing = state.placed.firstOrNull { anchor in it.cells }
         if (existing != null) {
             _ui.update {
@@ -284,7 +261,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             ?: state.pendingShips.firstOrNull() ?: return
         val shape = def.shape.rotated(state.orientation)
         val offset = Coord(anchor.x - (shape.width - 1) / 2, anchor.y - (shape.height - 1) / 2)
-        if (!Placement.canPlace(fleet, def, offset, state.orientation, state.placed)) {
+        if (!Placement.canPlace(def, offset, state.orientation, state.placed)) {
             sound.play(Sfx.AGUA, 0.3f)
             return
         }
@@ -303,7 +280,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
 
     fun randomPlacement() {
         val state = _ui.value
-        val layout = Placement.randomFill(state.config.fleetDef, emptyList()) ?: return
+        val layout = Placement.randomFill() ?: return
         _ui.update {
             it.copy(placed = layout, pendingShips = emptyList(), selectedShipId = null, preview = emptyList())
         }
@@ -315,8 +292,8 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         _ui.update {
             it.copy(
                 placed = emptyList(),
-                pendingShips = state.config.fleetDef.ships,
-                selectedShipId = state.config.fleetDef.ships.firstOrNull()?.id,
+                pendingShips = Fleet.ships,
+                selectedShipId = Fleet.ships.firstOrNull()?.id,
                 preview = emptyList(),
             )
         }
@@ -326,30 +303,13 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     fun confirmPlacement() {
         val state = _ui.value
         if (state.pendingShips.isNotEmpty()) return
-        val player = state.placingPlayer
+        val player = state.localPlayer
         layouts[player] = state.placed
-        logger.logInfo("Flota colocada por el jugador ${player + 1} (${state.config.fleet.name})")
+        logger.logInfo("Flota colocada por el jugador ${player + 1}")
         when (state.config.mode) {
             GameMode.UN_JUGADOR -> {
-                layouts[1] = ShipAi.placeFleet(state.config.fleetDef, state.config.difficulty)
+                layouts[1] = ShipAi.placeFleet(state.config.difficulty)
                 beginGame()
-            }
-            GameMode.DOS_JUGADORES -> {
-                if (player == 0) {
-                    _ui.update {
-                        it.copy(
-                            phase = MatchPhase.TRASPASO,
-                            handoffPlayer = 1,
-                            placingPlayer = 1,
-                            placed = emptyList(),
-                            pendingShips = it.config.fleetDef.ships,
-                            selectedShipId = it.config.fleetDef.ships.firstOrNull()?.id,
-                            preview = emptyList(),
-                        )
-                    }
-                } else {
-                    beginGame()
-                }
             }
             GameMode.WIFI_LOCAL -> {
                 viewModelScope.launch {
@@ -362,44 +322,15 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    /** El jugador al que se le pasa el móvil dice que ya lo tiene. */
-    fun handoffDone() {
-        val state = _ui.value
-        when {
-            // Traspaso antes de colocar la segunda flota.
-            layouts[1] == null && state.config.mode == GameMode.DOS_JUGADORES ->
-                _ui.update { it.copy(phase = MatchPhase.COLOCANDO) }
-            // Traspaso entre turnos.
-            else -> {
-                _ui.update { it.copy(phase = MatchPhase.JUGANDO, localPlayer = state.handoffPlayer) }
-                refresh()
-            }
-        }
-    }
-
     private fun beginGame() {
         val state = _ui.value
-        val fleet = state.config.fleetDef
         val boards = listOf(
-            PlayerBoard(fleet.boardSize, layouts[0] ?: Placement.randomLayout(fleet)),
-            PlayerBoard(fleet.boardSize, layouts[1] ?: Placement.randomLayout(fleet)),
+            PlayerBoard(Fleet.BOARD_SIZE, layouts[0] ?: Placement.randomLayout()),
+            PlayerBoard(Fleet.BOARD_SIZE, layouts[1] ?: Placement.randomLayout()),
         )
-        var starting = state.config.startingPlayer ?: Random.nextInt(2)
-        // En SALVA los dos disparan a la vez, así que «quién empieza» solo decide quién apunta
-        // primero, y eso únicamente tiene sentido cuando se comparte el móvil. Contra la máquina
-        // o por WiFi, el que apunta primero tiene que ser siempre el jugador de este móvil: si no,
-        // se quedaría esperando un turno que no llega nunca.
-        if (state.config.shotRule.isSimultaneous && state.config.mode != GameMode.DOS_JUGADORES) {
-            starting = if (state.config.mode == GameMode.WIFI_LOCAL) state.localPlayer else 0
-        }
-        val created = Game(state.config, boards, starting)
-        game = created
-        val local = when (state.config.mode) {
-            GameMode.DOS_JUGADORES -> starting
-            GameMode.WIFI_LOCAL -> state.localPlayer
-            GameMode.UN_JUGADOR -> 0
-        }
-        _ui.update { it.copy(phase = MatchPhase.JUGANDO, localPlayer = local) }
+        val starting = state.config.startingPlayer ?: Random.nextInt(2)
+        game = Game(state.config, boards, starting)
+        _ui.update { it.copy(phase = MatchPhase.JUGANDO) }
         logger.logInfo(
             "Empieza la batalla (${state.config.summary()}); abre fuego el jugador ${starting + 1}",
         )
@@ -416,13 +347,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         val g = game ?: return
         if (state.phase != MatchPhase.JUGANDO || state.busy || g.finished) return
         if (!state.isMyTurn) return
-        if (g.config.shotRule == ShotRule.SALVA) {
-            if (g.toggleAim(target)) {
-                sound.play(Sfx.TOQUE, 0.5f)
-                refresh()
-            }
-            return
-        }
         if (g.boards[g.enemyOf(state.localPlayer)].alreadyShot(target)) return
         if (confirmShot && state.pendingShot != target) {
             _ui.update { it.copy(pendingShot = target) }
@@ -485,19 +409,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             return
         }
         save()
-        if (shooter != g.current) handleTurnChange(previous = shooter)
         maybeRunAi()
-    }
-
-    /** Al cambiar de turno en dos jugadores hay que tapar la pantalla antes de pasar el móvil. */
-    private fun handleTurnChange(previous: Int) {
-        val g = game ?: return
-        if (g.config.mode != GameMode.DOS_JUGADORES) return
-        viewModelScope.launch {
-            delay(HANDOFF_DELAY_MS)
-            if (game?.finished == true) return@launch
-            _ui.update { it.copy(phase = MatchPhase.TRASPASO, handoffPlayer = g.current, flash = null) }
-        }
     }
 
     /** Si le toca a la máquina, que juegue su turno entero con su pausa para que se vea. */
@@ -505,7 +417,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         val g = game ?: return
         val machine = ai ?: return
         if (g.finished || g.current != 1) return
-        if (g.config.shotRule == ShotRule.SALVA) return
         _ui.update { it.copy(busy = true) }
         refresh()
         viewModelScope.launch {
@@ -535,86 +446,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         _ui.update { it.copy(pendingShot = null) }
     }
 
-    // ------------------------------------------------------------------ salva
-
-    /** El jugador da por buena su salva. */
-    fun confirmSalvo() {
-        val g = game ?: return
-        if (g.config.shotRule != ShotRule.SALVA) return
-        val state = _ui.value
-        if (g.aimOf(state.localPlayer).size != g.salvoSize(state.localPlayer)) return
-        val myShots = g.aimOf(state.localPlayer).toList()
-        val bothReady = g.confirmAim()
-        when {
-            bothReady -> resolveSalvo()
-            ai != null -> {
-                // La máquina apunta sin ver lo que has marcado tú.
-                val machine = ai!!
-                val targets = machine.chooseShots(g.viewFor(1), g.salvoSize(1))
-                g.setAim(1, targets)
-                resolveSalvo()
-            }
-            g.config.mode == GameMode.WIFI_LOCAL -> {
-                viewModelScope.launch { link?.send(NetMessage.Salvo(myShots)) }
-                _ui.update { it.copy(busy = true, netStatus = WAITING_RIVAL) }
-                refresh()
-            }
-            else -> {
-                // Dos jugadores en el mismo móvil: le toca apuntar al otro.
-                _ui.update { it.copy(phase = MatchPhase.TRASPASO, handoffPlayer = g.current) }
-            }
-        }
-    }
-
-    private fun resolveSalvo() {
-        val g = game ?: return
-        val local = _ui.value.localPlayer
-        val before = listOf(g.boards[0].sunkShips.size, g.boards[1].sunkShips.size)
-        val round = g.resolveSalvo()
-        val mine = round.outcomes[local].orEmpty()
-        val theirs = round.outcomes[g.enemyOf(local)].orEmpty()
-        val mySunk = mine.mapNotNull { it.sunk?.kind }
-        val rivalSunk = theirs.mapNotNull { it.sunk?.kind }
-        if (mine.any { it.hit }) {
-            sound.play(if (mySunk.isNotEmpty()) Sfx.HUNDIDO else Sfx.IMPACTO)
-            sound.vibrate(if (mySunk.isNotEmpty()) 150 else 40)
-        } else {
-            sound.play(Sfx.AGUA)
-        }
-        logger.logInfo(
-            "Salva resuelta: tú ${mine.count { it.hit }}/${mine.size} impactos, " +
-                "rival ${theirs.count { it.hit }}/${theirs.size}",
-        )
-        if (before.sum() != g.boards[0].sunkShips.size + g.boards[1].sunkShips.size) {
-            logger.logInfo("Hundidos en la salva: tú ${mySunk.size}, rival ${rivalSunk.size}")
-        }
-        _ui.update {
-            it.copy(
-                busy = false,
-                netStatus = null,
-                salvoSummary = SalvoSummary(
-                    myShots = mine.map { o -> o.coord to o.hit },
-                    rivalShots = theirs.map { o -> o.coord to o.hit },
-                    mySunk = mySunk,
-                    rivalSunk = rivalSunk,
-                ),
-            )
-        }
-        refresh()
-        if (g.finished) finish() else save()
-    }
-
-    /** Cierra el resumen de la salva y arranca la ronda siguiente. */
-    fun dismissSalvoSummary() {
-        val g = game ?: return
-        _ui.update { it.copy(salvoSummary = null) }
-        if (g.finished) return
-        if (g.config.mode == GameMode.DOS_JUGADORES) {
-            _ui.update { it.copy(phase = MatchPhase.TRASPASO, handoffPlayer = g.current) }
-        }
-        refresh()
-    }
-
     // ------------------------------------------------------------------ fin
 
     fun surrender() {
@@ -637,11 +468,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         matchStore.clear()
         val local = _ui.value.localPlayer
         val winner = forcedWinner ?: g.winner
-        val result = when {
-            winner == Game.DRAW -> MatchResult.EMPATADA
-            winner == local -> MatchResult.GANADA
-            else -> MatchResult.PERDIDA
-        }
+        val result = if (winner == local) MatchResult.GANADA else MatchResult.PERDIDA
         sound.play(if (result == MatchResult.GANADA) Sfx.VICTORIA else Sfx.DERROTA)
         val enemy = g.enemyOf(local)
         val summary = MatchSummary(
@@ -657,20 +484,13 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                 "${summary.myHits}/${summary.myShots} impactos en ${g.round} rondas",
         )
         viewModelScope.launch {
-            val before = statsStore.stats.first().sunkByMe
             statsStore.record(summary)
-            val after = before + summary.shipsSunkByMe
-            val unlocked = Blueprints.all.filter { it.unlockAt in (before + 1)..after }
-            if (unlocked.isNotEmpty()) {
-                logger.logInfo("Planos desbloqueados: ${unlocked.joinToString { it.name }}")
-            }
             _ui.update {
                 it.copy(
                     phase = MatchPhase.RESULTADO,
                     winner = winner,
                     myShots = summary.myShots,
                     myHits = summary.myHits,
-                    unlocked = unlocked,
                     busy = false,
                     revealAll = true,
                 )
@@ -720,11 +540,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                             afterShotFromRival(shooter, outcome.coord, outcome.hit, outcome.sunk?.kind)
                         }
                     }
-                    is NetMessage.Salvo -> {
-                        val g = game ?: return@collect
-                        g.setAim(1 - transport.localPlayer, message.targets)
-                        if (g.hasConfirmed(transport.localPlayer)) resolveSalvo()
-                    }
                     NetMessage.Surrender -> {
                         logger.logInfo("El rival se ha rendido")
                         finish(forcedWinner = transport.localPlayer)
@@ -761,7 +576,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
             sunkShipIds = enemyBoard.sunkShips.mapTo(HashSet()) { it.id },
             hits = enemyBoard.hits,
             misses = enemyBoard.misses,
-            aim = if (g.config.shotRule == ShotRule.SALVA) g.aimOf(local) else emptyList(),
             water = if (markWater) deducedWater(enemyBoard) else emptySet(),
             pendingShot = state.pendingShot,
             lastShot = state.lastShot?.takeIf { state.lastShotOnEnemy },
@@ -784,10 +598,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         _ui.update {
             it.copy(
                 current = g.current,
-                shotsLeft = g.shotsLeft,
                 round = g.round,
-                salvoSize = if (g.config.shotRule == ShotRule.SALVA) g.salvoSize(local) else 0,
-                aimCount = g.aimOf(local).size,
                 enemyRender = enemyRender,
                 myRender = myRender,
                 myFleet = fleetEntries(myBoard),
@@ -808,11 +619,11 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Agua deducida: en la flota Rusa, los barcos tienen que dejar una casilla de separación, así
-     * que alrededor de uno hundido no puede haber nada. Se marca para no gastar disparos ahí.
+     * Agua deducida: los barcos tienen que dejar una casilla de separación, así que alrededor de
+     * uno hundido no puede haber nada. Se marca para no gastar disparos ahí.
      */
     private fun deducedWater(board: PlayerBoard): Set<Coord> {
-        if (game?.config?.fleetDef?.mustSeparate != true) return emptySet()
+        if (!Fleet.MUST_SEPARATE) return emptySet()
         val result = HashSet<Coord>()
         board.sunkCells.forEach { c ->
             Coord.NEIGHBOURS_8.forEach { d ->
@@ -836,12 +647,8 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
         private const val AI_THINK_MS = 700L
         private const val AI_SHOT_GAP_MS = 450L
-        private const val HANDOFF_DELAY_MS = 1100L
         private const val HISTORY_LINES = 30
         const val WAITING_RIVAL = "waiting_rival"
         const val RIVAL_LEFT = "rival_left"
     }
 }
-
-/** Atajo: la flota de la configuración, para las pantallas. */
-val GameConfig.fleetOrDefault: Fleet get() = fleetDef

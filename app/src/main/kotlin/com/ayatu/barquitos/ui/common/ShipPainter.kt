@@ -10,14 +10,12 @@ import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.rotate
 import com.ayatu.barquitos.core.Coord
 import com.ayatu.barquitos.core.PlacedShip
-import com.ayatu.barquitos.data.Skin
-import com.ayatu.barquitos.data.SkinPattern
+import com.ayatu.barquitos.data.Palette
 import kotlin.math.min
-import kotlin.random.Random
 
 /**
  * Dibuja los barcos. No hay ni una imagen en el APK: cada barco se pinta con Canvas a partir de
- * su forma ([PlacedShip.cells]) y de la pintura elegida en el Astillero ([Skin]).
+ * su forma ([PlacedShip.cells]) y de los colores de [Palette].
  *
  * El casco es la unión de sus casillas redondeadas; encima van la cubierta, las torretas y el
  * patrón de pintura (camuflaje, rayas de guerra, desgastado o aniversario), todo recortado a la
@@ -34,21 +32,20 @@ object ShipPainter {
         ship: PlacedShip,
         origin: Offset,
         cell: Float,
-        skin: Skin,
         sunk: Boolean = false,
         alpha: Float = 1f,
     ) {
         val cells = ship.cells
-        val hull = if (sunk) skin.hull.darken(0.45f) else skin.hull
-        val deck = if (sunk) skin.deck.darken(0.45f) else skin.deck
-        val accent = if (sunk) skin.accent.darken(0.5f) else skin.accent
+        val colors = Palette.BARCOS
+        val hull = if (sunk) colors.hull.darken(0.45f) else colors.hull
+        val deck = if (sunk) colors.deck.darken(0.45f) else colors.deck
+        val accent = if (sunk) colors.accent.darken(0.5f) else colors.accent
         val inset = cell * 0.08f
 
         val horizontal = (cells.maxOf { it.x } - cells.minOf { it.x }) >=
             (cells.maxOf { it.y } - cells.minOf { it.y })
-        // El casco no se dibuja casilla a casilla (saldrían cuentas sueltas), sino por tramos
-        // seguidos: cada tramo es una cápsula, así un barco recto queda de una pieza y las piezas
-        // que sobresalen (la isla del portaaviones, la torreta del submarino) quedan encima.
+        // El casco no se dibuja casilla a casilla (saldrían cuentas sueltas), sino de una pieza:
+        // una cápsula con punta de proa, que es lo que hace que un barco parezca un barco.
         val runs = contiguousRuns(cells, horizontal)
         val mainRun = runs.maxByOrNull { it.length } ?: return
 
@@ -73,7 +70,6 @@ object ShipPainter {
         drawPath(silhouette, hull, alpha = alpha)
 
         clipPath(silhouette) {
-            drawPattern(ship, origin, cell, skin, alpha * if (sunk) 0.5f else 1f)
 
             // Cubierta: una banda a lo largo del tramo principal.
             val main = mainRun.rect(origin, cell, horizontal, inset)
@@ -196,97 +192,11 @@ object ShipPainter {
         }
     }
 
-    private fun DrawScope.drawPattern(
-        ship: PlacedShip,
-        origin: Offset,
-        cell: Float,
-        skin: Skin,
-        alpha: Float,
-    ) {
-        val cells = ship.cells
-        val bounds = Rect(
-            left = origin.x + cells.minOf { it.x } * cell,
-            top = origin.y + cells.minOf { it.y } * cell,
-            right = origin.x + (cells.maxOf { it.x } + 1) * cell,
-            bottom = origin.y + (cells.maxOf { it.y } + 1) * cell,
-        )
-        // Semilla fija por barco: el patrón sale siempre igual, no baila entre fotogramas.
-        val rng = Random(ship.id * 7919 + cells.size * 31)
-        when (skin.pattern) {
-            SkinPattern.LISO -> Unit
-
-            SkinPattern.CAMUFLAJE -> repeat(5) {
-                val w = bounds.width * rng.nextDouble(0.18, 0.4).toFloat()
-                val h = bounds.height * rng.nextDouble(0.3, 0.75).toFloat()
-                val x = bounds.left + bounds.width * rng.nextDouble(0.0, 0.8).toFloat()
-                val y = bounds.top + bounds.height * rng.nextDouble(0.0, 0.5).toFloat()
-                drawRect(
-                    color = if (it % 2 == 0) skin.deck else skin.hull.darken(0.3f),
-                    topLeft = Offset(x, y),
-                    size = Size(w, h),
-                    alpha = alpha * 0.6f,
-                )
-            }
-
-            SkinPattern.DAZZLE -> {
-                val stripe = cell * 0.3f
-                var x = bounds.left - bounds.height
-                while (x < bounds.right + bounds.height) {
-                    val path = Path().apply {
-                        moveTo(x, bounds.bottom)
-                        lineTo(x + bounds.height, bounds.top)
-                        lineTo(x + bounds.height + stripe, bounds.top)
-                        lineTo(x + stripe, bounds.bottom)
-                        close()
-                    }
-                    drawPath(path, skin.hull.darken(0.45f), alpha = alpha * 0.7f)
-                    x += stripe * 2.4f
-                }
-            }
-
-            SkinPattern.DESGASTADO -> {
-                repeat(14) {
-                    val r = cell * rng.nextDouble(0.06, 0.18).toFloat()
-                    drawCircle(
-                        color = Color(0xFF7A4A2A),
-                        radius = r,
-                        center = Offset(
-                            bounds.left + bounds.width * rng.nextFloat(),
-                            bounds.top + bounds.height * rng.nextFloat(),
-                        ),
-                        alpha = alpha * 0.55f,
-                    )
-                }
-                drawRect(
-                    color = Color.Black,
-                    topLeft = Offset(bounds.left, bounds.bottom - bounds.height * 0.22f),
-                    size = Size(bounds.width, bounds.height * 0.22f),
-                    alpha = alpha * 0.22f,
-                )
-            }
-
-            SkinPattern.ANIVERSARIO -> {
-                drawRect(
-                    color = skin.accent,
-                    topLeft = Offset(bounds.left, bounds.top + bounds.height * 0.12f),
-                    size = Size(bounds.width, bounds.height * 0.1f),
-                    alpha = alpha * 0.9f,
-                )
-                drawRect(
-                    color = skin.accent,
-                    topLeft = Offset(bounds.left, bounds.bottom - bounds.height * 0.22f),
-                    size = Size(bounds.width, bounds.height * 0.1f),
-                    alpha = alpha * 0.9f,
-                )
-            }
-        }
-    }
-
     /**
-     * Dibuja un barco suelto (sin tablero) dentro de [area]: lo usa el Astillero para la vista
-     * previa y la partida para la lista de barcos de cada flota.
+     * Dibuja un barco suelto (sin tablero) dentro de [area]: lo usan la bandeja de colocación y
+     * la lista de barcos de cada flota durante la partida.
      */
-    fun DrawScope.drawShipPreview(ship: PlacedShip, area: Rect, skin: Skin, sunk: Boolean = false) {
+    fun DrawScope.drawShipPreview(ship: PlacedShip, area: Rect, sunk: Boolean = false) {
         val cells = ship.cells
         val w = cells.maxOf { it.x } - cells.minOf { it.x } + 1
         val h = cells.maxOf { it.y } - cells.minOf { it.y } + 1
@@ -295,7 +205,7 @@ object ShipPainter {
             area.left + (area.width - cell * w) / 2f - cells.minOf { it.x } * cell,
             area.top + (area.height - cell * h) / 2f - cells.minOf { it.y } * cell,
         )
-        drawShip(ship, origin, cell, skin, sunk)
+        drawShip(ship, origin, cell, sunk)
     }
 
     /** Una explosión sencilla: núcleo claro, llamas y esquirlas. [progress] va de 0 a 1. */

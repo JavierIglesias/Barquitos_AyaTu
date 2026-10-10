@@ -24,7 +24,6 @@ import com.ayatu.barquitos.R
 import com.ayatu.barquitos.core.Game
 import com.ayatu.barquitos.core.GameMode
 import com.ayatu.barquitos.data.Settings
-import com.ayatu.barquitos.data.Skin
 import com.ayatu.barquitos.ui.common.BarquitosScreen
 import com.ayatu.barquitos.ui.common.BoardView
 import com.ayatu.barquitos.ui.common.StatTile
@@ -34,30 +33,22 @@ import com.ayatu.barquitos.ui.theme.Flota
 @Composable
 fun ResultScreen(
     state: MatchUiState,
-    skin: Skin,
     settings: Settings,
     onReveal: () -> Unit,
     onHome: () -> Unit,
 ) {
-    val draw = state.winner == Game.DRAW
     val won = state.winner == state.localPlayer
-    val title = when {
-        draw -> stringResource(R.string.result_draw)
-        state.config.mode == GameMode.DOS_JUGADORES ->
-            stringResource(R.string.result_winner, playerName(state, settings, state.winner ?: 0))
-        won -> stringResource(R.string.result_victory)
-        else -> stringResource(R.string.result_defeat)
+    val title = if (won) {
+        stringResource(R.string.result_victory)
+    } else {
+        stringResource(R.string.result_defeat)
     }
-    val subtitle = when {
-        draw -> stringResource(R.string.result_draw_desc)
-        won -> stringResource(R.string.result_victory_desc)
-        else -> stringResource(R.string.result_defeat_desc)
+    val subtitle = if (won) {
+        stringResource(R.string.result_victory_desc)
+    } else {
+        stringResource(R.string.result_defeat_desc)
     }
-    val accent = when {
-        draw -> Flota.Oro
-        won -> Flota.Victoria
-        else -> Flota.Derrota
-    }
+    val accent = if (won) Flota.Victoria else Flota.Derrota
 
     BarquitosScreen(title = stringResource(R.string.app_name)) { modifier ->
         Column(
@@ -95,20 +86,6 @@ fun ResultScreen(
                 StatTile(stringResource(R.string.result_rounds), "${state.round}", Modifier.weight(1f))
             }
 
-            if (state.unlocked.isNotEmpty()) {
-                Column(
-                    Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                ) {
-                    state.unlocked.forEach { blueprint ->
-                        Text(
-                            stringResource(R.string.result_unlocked, "${blueprint.name} (${blueprint.year})"),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = Flota.Oro,
-                        )
-                    }
-                }
-            }
 
             Text(
                 stringResource(R.string.game_enemy_waters),
@@ -116,7 +93,7 @@ fun ResultScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             state.enemyRender?.let {
-                BoardView(render = it.copy(enabled = false, showCoords = settings.showCoords), skin = skin)
+                BoardView(render = it.copy(enabled = false, showCoords = settings.showCoords))
             }
 
             Text(
@@ -125,7 +102,7 @@ fun ResultScreen(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             state.myRender?.let {
-                BoardView(render = it.copy(enabled = false, dimmed = false, showCoords = settings.showCoords), skin = skin)
+                BoardView(render = it.copy(enabled = false, dimmed = false, showCoords = settings.showCoords))
             }
 
             OutlinedButton(onClick = onReveal, modifier = Modifier.fillMaxWidth()) {

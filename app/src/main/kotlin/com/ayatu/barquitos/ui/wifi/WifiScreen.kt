@@ -163,9 +163,8 @@ fun WifiScreen(
         SetupScreen(
             mode = GameMode.WIFI_LOCAL,
             initial = lastConfig.copy(mode = GameMode.WIFI_LOCAL),
-            player1 = playerName,
-            player2 = "",
-            onNames = { _, _ -> },
+            playerName = playerName,
+            onName = { },
             onBack = { step = WifiStep.ELEGIR },
             onStart = { config ->
                 viewModel.startHosting(playerName, config)

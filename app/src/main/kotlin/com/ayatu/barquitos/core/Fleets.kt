@@ -1,96 +1,45 @@
 package com.ayatu.barquitos.core
 
 import com.ayatu.barquitos.core.ShipShape.Companion.line
-import com.ayatu.barquitos.core.ShipShape.Companion.shapeOf
-
-/** Las tres flotas del juego. */
-enum class FleetType(val resKey: String) {
-    ESTANDAR("fleet_standard"),
-    CLASICA("fleet_classic"),
-    RUSA("fleet_russian"),
-}
 
 /**
- * Una flota: qué barcos la componen, en qué tablero juega y si sus barcos pueden tocarse.
+ * La flota, que es una sola: la del juego de lápiz y papel de toda la vida. Diez barcos rectos
+ * sobre un tablero de 10×10 —uno de cuatro casillas, dos de tres, tres de dos y cuatro de una,
+ * veinte casillas en total— y la regla de que **dos barcos nunca pueden tocarse**, tampoco en
+ * diagonal.
  *
- * - **Estándar**: seis barcos, dos de ellos con forma especial (el portaaviones tiene isla de
- *   mando y el submarino torreta), así que no son simples líneas rectas. Pueden tocarse.
- * - **Clásica**: la de toda la vida, cinco barcos rectos de 5-4-3-3-2. Pueden tocarse.
- * - **Rusa**: diez barcos (4, 3×2, 2×3, 1×4) que han de dejar **siempre una casilla de
- *   separación** entre ellos, también en diagonal.
+ * Esa separación obligatoria no es un adorno: con cuatro submarinos de una sola casilla, si los
+ * barcos pudieran quedar pegados no habría manera de saber si dos impactos seguidos son un
+ * destructor o dos submarinos, y hundir dejaría de estar definido.
  */
-data class Fleet(
-    val type: FleetType,
-    val ships: List<ShipDef>,
-    val boardSize: Int = 10,
-    /** True si los barcos han de quedar separados por al menos una casilla (flota Rusa). */
-    val mustSeparate: Boolean = false,
-) {
-    val totalCells: Int get() = ships.sumOf { it.size }
+object Fleet {
+
+    const val BOARD_SIZE = 10
+
+    /** Los barcos han de dejar siempre una casilla de agua alrededor, diagonales incluidas. */
+    const val MUST_SEPARATE = true
+
+    val ships: List<ShipDef> = listOf(
+        ShipDef(1, ShipKind.PORTAAVIONES, line(4)),
+        ShipDef(2, ShipKind.ACORAZADO, line(3)),
+        ShipDef(3, ShipKind.ACORAZADO, line(3)),
+        ShipDef(4, ShipKind.DESTRUCTOR, line(2)),
+        ShipDef(5, ShipKind.DESTRUCTOR, line(2)),
+        ShipDef(6, ShipKind.DESTRUCTOR, line(2)),
+        ShipDef(7, ShipKind.SUBMARINO, line(1)),
+        ShipDef(8, ShipKind.SUBMARINO, line(1)),
+        ShipDef(9, ShipKind.SUBMARINO, line(1)),
+        ShipDef(10, ShipKind.SUBMARINO, line(1)),
+    )
+
+    /** 20 casillas de barco sobre las 100 del tablero. */
+    val totalCells: Int = ships.sumOf { it.size }
+
     val shipCount: Int get() = ships.size
 
     fun shipById(id: Int): ShipDef? = ships.firstOrNull { it.id == id }
 
-    companion object {
-
-        /** Portaaviones: casco de cinco más la isla de mando. Seis casillas. */
-        val PORTAAVIONES_SHAPE = shapeOf(
-            "..#..",
-            "#####",
-        )
-
-        /** Submarino: casco de tres con la torreta en el centro. Cuatro casillas. */
-        val SUBMARINO_SHAPE = shapeOf(
-            ".#.",
-            "###",
-        )
-
-        val ESTANDAR = Fleet(
-            type = FleetType.ESTANDAR,
-            ships = listOf(
-                ShipDef(1, ShipKind.PORTAAVIONES, PORTAAVIONES_SHAPE),
-                ShipDef(2, ShipKind.ACORAZADO, line(4)),
-                ShipDef(3, ShipKind.SUBMARINO, SUBMARINO_SHAPE),
-                ShipDef(4, ShipKind.CRUCERO, line(3)),
-                ShipDef(5, ShipKind.DESTRUCTOR, line(2)),
-                ShipDef(6, ShipKind.PATRULLERA, line(2)),
-            ),
-        )
-
-        val CLASICA = Fleet(
-            type = FleetType.CLASICA,
-            ships = listOf(
-                ShipDef(1, ShipKind.PORTAAVIONES, line(5)),
-                ShipDef(2, ShipKind.ACORAZADO, line(4)),
-                ShipDef(3, ShipKind.CRUCERO, line(3)),
-                ShipDef(4, ShipKind.SUBMARINO, line(3)),
-                ShipDef(5, ShipKind.DESTRUCTOR, line(2)),
-            ),
-        )
-
-        val RUSA = Fleet(
-            type = FleetType.RUSA,
-            mustSeparate = true,
-            ships = listOf(
-                ShipDef(1, ShipKind.ACORAZADO, line(4)),
-                ShipDef(2, ShipKind.CRUCERO, line(3)),
-                ShipDef(3, ShipKind.CRUCERO, line(3)),
-                ShipDef(4, ShipKind.DESTRUCTOR, line(2)),
-                ShipDef(5, ShipKind.DESTRUCTOR, line(2)),
-                ShipDef(6, ShipKind.DESTRUCTOR, line(2)),
-                ShipDef(7, ShipKind.LANCHA, line(1)),
-                ShipDef(8, ShipKind.LANCHA, line(1)),
-                ShipDef(9, ShipKind.LANCHA, line(1)),
-                ShipDef(10, ShipKind.LANCHA, line(1)),
-            ),
-        )
-
-        fun of(type: FleetType): Fleet = when (type) {
-            FleetType.ESTANDAR -> ESTANDAR
-            FleetType.CLASICA -> CLASICA
-            FleetType.RUSA -> RUSA
-        }
-
-        val all: List<Fleet> get() = listOf(ESTANDAR, CLASICA, RUSA)
-    }
+    /** Cuántos barcos hay de cada clase, para los resúmenes de flota. */
+    val byKind: List<Pair<ShipKind, Int>>
+        get() = ships.groupingBy { it.kind }.eachCount().toList()
 }

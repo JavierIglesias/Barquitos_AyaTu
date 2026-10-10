@@ -5,9 +5,9 @@ package com.ayatu.barquitos.core
  * Android), para que se pueda probar con pruebas unitarias y para que el fichero se pueda leer de
  * un vistazo si hay que depurar algo.
  *
- * Una partida contra la IA o a dos en el mismo móvil dura varios minutos, y Android puede matar
- * la app en cualquier momento mientras está en segundo plano; con esto, al volver se recupera
- * exactamente donde estaba.
+ * Una partida contra la máquina dura varios minutos, y Android puede matar la app en cualquier
+ * momento mientras está en segundo plano; con esto, al volver se recupera exactamente donde
+ * estaba.
  *
  * Formato: una línea por clave, `clave=valor`. Si cambia el formato se sube [VERSION] y los
  * guardados viejos se descartan en silencio (una partida perdida no es un drama; un fallo al
@@ -15,7 +15,7 @@ package com.ayatu.barquitos.core
  */
 object GameSave {
 
-    const val VERSION = 1
+    const val VERSION = 2
 
     private const val NO_WINNER = -99
 
@@ -23,13 +23,10 @@ object GameSave {
         val (fired, hits) = game.snapshotCounters()
         line("v", VERSION)
         line("mode", game.config.mode.name)
-        line("fleet", game.config.fleet.name)
         line("rule", game.config.shotRule.name)
-        line("multi", game.config.multiShotCount)
         line("diff", game.config.difficulty.name)
         line("start", game.config.startingPlayer ?: -1)
         line("current", game.current)
-        line("shotsLeft", game.shotsLeft)
         line("round", game.round)
         line("winner", game.winner ?: NO_WINNER)
         line("fired", fired.joinToString(","))
@@ -61,22 +58,19 @@ object GameSave {
 
         val config = GameConfig(
             mode = GameMode.valueOf(map.getValue("mode")),
-            fleet = FleetType.valueOf(map.getValue("fleet")),
             shotRule = ShotRule.valueOf(map.getValue("rule")),
-            multiShotCount = map.getValue("multi").toInt(),
             difficulty = Difficulty.valueOf(map.getValue("diff")),
             startingPlayer = map.getValue("start").toInt().takeIf { it >= 0 },
         )
-        val fleet = config.fleetDef
         val boards = (0..1).map { p ->
             val ships = map.getValue("ships$p").split(";").filter { it.isNotBlank() }.map { spec ->
                 val parts = spec.split(":")
-                val def = fleet.shipById(parts[0].toInt()) ?: error("Barco ${parts[0]} desconocido")
+                val def = Fleet.shipById(parts[0].toInt()) ?: error("Barco ${parts[0]} desconocido")
                 val anchor = parts[1].split(",").map(String::toInt)
                 PlacedShip(def, Coord(anchor[0], anchor[1]), Orientation.valueOf(parts[2]))
             }
-            require(ships.size == fleet.shipCount) { "Flota incompleta en el guardado" }
-            PlayerBoard(fleet.boardSize, ships).apply { restoreShots(parseCoords(map["shots$p"])) }
+            require(ships.size == Fleet.shipCount) { "Flota incompleta en el guardado" }
+            PlayerBoard(Fleet.BOARD_SIZE, ships).apply { restoreShots(parseCoords(map["shots$p"])) }
         }
         val game = Game(config, boards, startingPlayer = config.startingPlayer ?: 0)
         val fired = map.getValue("fired").split(",").map(String::toInt)
@@ -84,7 +78,6 @@ object GameSave {
         val winnerRaw = map.getValue("winner").toInt()
         game.restore(
             current = map.getValue("current").toInt(),
-            shotsLeft = map.getValue("shotsLeft").toInt(),
             round = map.getValue("round").toInt(),
             winner = winnerRaw.takeIf { it != NO_WINNER },
             history = parseHistory(map["hist"]),

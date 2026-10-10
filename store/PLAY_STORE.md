@@ -16,7 +16,7 @@ datos que se tratan, versión). Al final está la lista de comprobaciones antes 
 | Formato de subida | Android App Bundle (`.aab`) |
 | Firma | Almacén `barquitos-release.jks`, alias `barquitos` (ver «Clave de firma») |
 | Idiomas | Español (por defecto) e inglés |
-| Tamaño real del APK de publicación | **1,49 MB** (no lleva imágenes ni audio: todo se dibuja y se sintetiza) |
+| Tamaño real del APK de publicación | **1,47 MB** (no lleva imágenes ni audio: todo se dibuja y se sintetiza) |
 
 Compilar la versión de publicación:
 
@@ -56,63 +56,68 @@ Barquitos AyaTu
 ### Descripción breve (máx. 80)
 
 ```
-Hunde la flota: 3 flotas, 5 reglas, contra la máquina, a dos o por WiFi local.
+Hunde la flota de siempre: contra la máquina o contra otro móvil por WiFi local.
 ```
 
 ### Descripción completa (máx. 4000)
 
 ```
-Barquitos AyaTu es el juego de hundir la flota de toda la vida, con todo lo que hace falta para
-echar partidas de verdad y sin nada de lo que sobra: no hay anuncios, ni compras, ni cuentas, ni
-publicidad, ni rastreo. Lo que juegas se queda en tu móvil.
+Barquitos AyaTu es el juego de hundir la flota de toda la vida, el de lápiz y papel, sin nada de lo
+que sobra: no hay anuncios, ni compras, ni cuentas, ni rastreo. Lo que juegas se queda en tu móvil.
 
-TRES FLOTAS
+LA FLOTA DE SIEMPRE
 
-• Estándar — Seis barcos, y dos de ellos no son líneas rectas: el portaaviones lleva isla de mando y
-  el submarino torreta, así que giran en cuatro posiciones y cuesta mucho más encontrarlos.
-• Clásica — La de siempre: barcos de 5, 4, 3, 3 y 2 casillas.
-• Rusa — Diez barcos que tienen que dejar siempre una casilla de separación, también en diagonal.
-  Cuando hundes uno sabes seguro que todo lo que lo rodea es agua.
+Tablero de 10 x 10 y diez barcos: un portaaviones de 4 casillas, dos acorazados de 3, tres
+destructores de 2 y cuatro submarinos de 1. Veinte casillas en total.
 
-CINCO REGLAS DE DISPARO
+Y la regla que lo cambia todo: dos barcos nunca pueden tocarse, tampoco en diagonal. Así que cuando
+hundes uno sabes seguro que todo lo que lo rodea es agua, y la app te lo marca para que no gastes
+disparos ahí.
 
-• Un disparo — Un disparo por turno, turnos alternos.
-• Racha — Sigues disparando mientras aciertes.
-• Salva — Los dos disparáis a la vez, un disparo por cada barco que os quede a flote.
-• Fuego en cadena — Un disparo por barco a flote, pero de uno en uno.
-• Multidisparo — De 2 a 6 disparos fijos por turno.
+DOS REGLAS DE DISPARO
+
+• Racha — Sigues disparando mientras aciertes. El primer fallo acaba tu turno. Es como se juega
+  normalmente.
+• Un disparo — Un disparo por turno y se pasa, aciertes o no.
 
 CONTRA QUIÉN
 
-• Contra la máquina, sin conexión, en tres niveles. En Difícil calcula en cada tirada dónde es más
-  probable que te queden barcos. No hace trampas: solo ve lo mismo que verías tú.
-• A dos en el mismo móvil, con una pantalla de traspaso entre turnos para que nadie vea la flota del
-  otro.
+• Contra la máquina, sin conexión de ningún tipo, en tres niveles. En Difícil calcula en cada
+  tirada de cuántas maneras podría estar cada barco que te queda en cada casilla y dispara a la más
+  probable. No hace trampas: solo ve lo mismo que verías tú.
 • Por WiFi local: dos móviles en la misma red se encuentran solos y juegan directamente, sin
-  servidor y sin internet.
+  servidor, sin cuenta y sin salir a internet.
+
+COLOCAR LA FLOTA ES ARRASTRAR
+
+Toca, mantén pulsado o arrastra, da lo mismo: mientras el dedo está sobre el tablero ves la sombra
+del barco, verde si cabe y roja si no, y se coloca al levantarlo. Arrastra un barco ya puesto para
+moverlo, o sácalo del tablero para devolverlo a la bandeja. Y si tienes prisa, el botón "Al azar"
+reparte la flota entera.
 
 Y ADEMÁS
 
 • La partida se guarda sola: si cierras la app, al volver la sigues donde estaba.
-• Astillero con 14 armadas, 100 pinturas de casco, 12 emblemas y 22 planos de buques históricos que
-  se desbloquean hundiendo barcos.
-• Estadísticas completas y 14 medallas.
-• Manual de usuario y registro de la app, dentro de la propia app.
+• Estadísticas y 14 medallas.
+• Manual de usuario, novedades y registro de la app, dentro de la propia app.
 • Aspecto claro u oscuro, con letras y números en el tablero si los quieres.
+• Pesa menos de 2 MB: no lleva ni una imagen ni un fichero de sonido, todo lo dibuja y lo sintetiza
+  el propio programa.
 ```
 
 ### Textos de la versión (notas de la versión 1.0.0)
 
 ```
-Primera versión. Tres flotas (Estándar, Clásica y Rusa), cinco reglas de disparo, partidas contra la
-máquina en tres niveles, a dos en el mismo móvil y por WiFi local. Astillero con pinturas, emblemas
-y planos de buques históricos, estadísticas y medallas. Sin anuncios ni compras.
+Primera versión. El barquitos de toda la vida: diez barcos (uno de 4, dos de 3, tres de 2 y cuatro
+de 1) que no pueden tocarse, dos reglas de disparo, partidas contra la máquina en tres niveles y
+por WiFi local entre dos móviles. Estadísticas y medallas. Sin anuncios, sin compras y sin
+conexión.
 ```
 
 ### Categoría y etiquetas
 
 - **Categoría**: Juegos → Tablero (Board).
-- **Etiquetas sugeridas**: juego de mesa, estrategia, por turnos, multijugador local, sin conexión.
+- **Etiquetas sugeridas**: juego de mesa, estrategia, por turnos, multijugador local, sin conexión, hundir la flota.
 
 ---
 
@@ -183,7 +188,7 @@ por la red local.
 |---|---|---|
 | Icono de la app | 512 × 512 PNG, 32 bits | **Pendiente**: exportar desde `app/src/main/res/drawable/ic_launcher_foreground.xml` sobre el fondo `#071A2B` |
 | Gráfico destacado | 1024 × 500 PNG | **Pendiente** |
-| Capturas de teléfono | mín. 2, máx. 8; 16:9 o 9:16, lado corto ≥ 320 px | **Pendiente**: puerto, colocación de la flota, batalla con impactos, resultado, astillero |
+| Capturas de teléfono | mín. 2, máx. 8; 16:9 o 9:16, lado corto ≥ 320 px | **Pendiente**: puerto, nueva partida, colocación de la flota, batalla con impactos, resultado |
 | Capturas de tablet de 7" y 10" | opcionales | Pendiente |
 | Vídeo promocional | opcional (YouTube) | No previsto |
 

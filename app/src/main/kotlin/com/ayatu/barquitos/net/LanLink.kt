@@ -3,7 +3,6 @@ package com.ayatu.barquitos.net
 import com.ayatu.barquitos.core.Coord
 import com.ayatu.barquitos.core.Difficulty
 import com.ayatu.barquitos.core.Fleet
-import com.ayatu.barquitos.core.FleetType
 import com.ayatu.barquitos.core.GameConfig
 import com.ayatu.barquitos.core.GameMode
 import com.ayatu.barquitos.core.Orientation
@@ -37,7 +36,6 @@ sealed interface NetMessage {
     data class Shot(val target: Coord) : NetMessage
 
     /** Los objetivos de una salva (regla SALVA). */
-    data class Salvo(val targets: List<Coord>) : NetMessage
 
     /** El que lo manda se rinde. */
     data object Surrender : NetMessage
@@ -57,25 +55,21 @@ object NetCodec {
     fun encodeHello(hello: Hello): String = listOf(
         HELLO_PREFIX,
         hello.name.replace('|', ' '),
-        hello.config.fleet.name,
         hello.config.shotRule.name,
-        hello.config.multiShotCount.toString(),
         (hello.config.startingPlayer ?: -1).toString(),
     ).joinToString("|")
 
     fun decodeHello(line: String): Hello? {
         val parts = line.trim().split("|")
-        if (parts.size < 6 || parts[0] != HELLO_PREFIX) return null
+        if (parts.size < 4 || parts[0] != HELLO_PREFIX) return null
         return runCatching {
             Hello(
                 name = parts[1],
                 config = GameConfig(
                     mode = GameMode.WIFI_LOCAL,
-                    fleet = FleetType.valueOf(parts[2]),
-                    shotRule = ShotRule.valueOf(parts[3]),
-                    multiShotCount = parts[4].toInt(),
+                    shotRule = ShotRule.valueOf(parts[2]),
                     difficulty = Difficulty.NORMAL,
-                    startingPlayer = parts[5].toInt().takeIf { it >= 0 },
+                    startingPlayer = parts[3].toInt().takeIf { it >= 0 },
                 ),
             )
         }.getOrNull()
@@ -86,12 +80,11 @@ object NetCodec {
             "${it.id}:${it.anchor.x},${it.anchor.y}:${it.orientation.name}"
         }
         is NetMessage.Shot -> "SHOT|${message.target.x},${message.target.y}"
-        is NetMessage.Salvo -> "SALVO|" + message.targets.joinToString(";") { "${it.x},${it.y}" }
         NetMessage.Surrender -> "SURRENDER"
         NetMessage.Bye -> "BYE"
     }
 
-    fun decode(line: String, fleet: Fleet): NetMessage? {
+    fun decode(line: String): NetMessage? {
         val trimmed = line.trim()
         val head = trimmed.substringBefore('|')
         val body = trimmed.substringAfter('|', "")
@@ -100,7 +93,7 @@ object NetCodec {
                 "LAYOUT" -> NetMessage.Layout(
                     body.split(";").filter { it.isNotBlank() }.map { spec ->
                         val parts = spec.split(":")
-                        val def = fleet.shipById(parts[0].toInt()) ?: error("barco ${parts[0]}")
+                        val def = Fleet.shipById(parts[0].toInt()) ?: error("barco ${parts[0]}")
                         val anchor = parts[1].split(",").map(String::toInt)
                         PlacedShip(def, Coord(anchor[0], anchor[1]), Orientation.valueOf(parts[2]))
                     },
@@ -109,12 +102,6 @@ object NetCodec {
                     val xy = body.split(",").map(String::toInt)
                     NetMessage.Shot(Coord(xy[0], xy[1]))
                 }
-                "SALVO" -> NetMessage.Salvo(
-                    body.split(";").filter { it.isNotBlank() }.map {
-                        val xy = it.split(",").map(String::toInt)
-                        Coord(xy[0], xy[1])
-                    },
-                )
                 "SURRENDER" -> NetMessage.Surrender
                 "BYE" -> NetMessage.Bye
                 else -> null
@@ -132,7 +119,6 @@ class LanLink(
     private val socket: Socket,
     /** 0 si este móvil es el anfitrión, 1 si es el invitado. */
     val localPlayer: Int,
-    private val fleet: Fleet,
     val rivalName: String,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -153,7 +139,7 @@ class LanLink(
             runCatching {
                 while (!closed) {
                     val line = reader.readLine() ?: break
-                    NetCodec.decode(line, fleet)?.let { _incoming.emit(it) }
+                    NetCodec.decode(line)?.let { _incoming.emit(it) }
                 }
             }
             if (!closed) _incoming.emit(NetMessage.Bye)

@@ -1,6 +1,39 @@
 # Novedades
 
-## 10 de octubre de 2026 — versión 1.0.0
+## 10 de octubre de 2026 — versión 1.0.0 (simplificación)
+
+### El juego se ha simplificado: una flota y dos reglas
+
+La primera versión traía tres flotas, cinco reglas de disparo y un astillero con cien pinturas.
+Era demasiado. Ahora el juego es **el de siempre** y poco más:
+
+- **Una sola flota**, la de lápiz y papel: un portaaviones de 4, dos acorazados de 3, tres
+  destructores de 2 y cuatro submarinos de 1. Diez barcos, veinte casillas, tablero de 10 × 10.
+- **Los barcos no pueden tocarse**, tampoco en diagonal. Y como eso lo sabéis los dos, al hundir
+  un barco todo lo que lo rodea es agua segura: la app te la marca para que no gastes disparos.
+- **Dos reglas de disparo**: *Racha* (sigues mientras aciertes), que es la de siempre y viene
+  puesta, y *Un disparo* (turnos alternos pase lo que pase), por si la prefieres.
+- **Dos modos**: contra la máquina y por WiFi local. Ya no está el de dos jugadores en el mismo
+  móvil.
+- **Fuera el astillero**: ni armadas, ni pinturas, ni emblemas, ni planos. Las **estadísticas y
+  las medallas** se quedan.
+
+### Las opciones, por grupos
+
+Tanto en **Nueva partida** como en **Ajustes**, las opciones van ahora en tarjetas que se abren y
+se cierran, igual que en Radio AyaTu y en Rutas AyaTu. Con la tarjeta cerrada se ve debajo del
+título lo que tienes elegido, así que no hay que abrirlas una a una para enterarte de cómo está
+puesta la partida.
+
+### La máquina juega mejor en Normal
+
+El nivel Normal descarta ahora el agua segura que rodea a los barcos hundidos, que es lo que hace
+cualquiera jugando a mano. Antes no lo hacía y, con esta flota, acababa gastando más disparos que
+el nivel Fácil.
+
+---
+
+## 10 de octubre de 2026 — versión 1.0.0 (colocación por arrastre)
 
 ### Colocar la flota es ahora arrastrar
 

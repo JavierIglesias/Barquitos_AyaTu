@@ -23,7 +23,6 @@ import com.ayatu.barquitos.ui.match.MatchScreen
 import com.ayatu.barquitos.ui.match.MatchViewModel
 import com.ayatu.barquitos.ui.settings.SettingsScreen
 import com.ayatu.barquitos.ui.setup.SetupScreen
-import com.ayatu.barquitos.ui.shipyard.ShipyardScreen
 import com.ayatu.barquitos.ui.stats.StatsScreen
 import com.ayatu.barquitos.ui.theme.BarquitosTheme
 import com.ayatu.barquitos.ui.wifi.LanSession
@@ -45,7 +44,6 @@ private object Routes {
     const val SETUP = "setup/{mode}"
     const val MATCH = "match"
     const val STATS = "stats"
-    const val SHIPYARD = "shipyard"
     const val SETTINGS = "settings"
     const val WIFI = "wifi"
     const val LOG = "log"
@@ -71,13 +69,11 @@ private fun BarquitosApp() {
                 HomeScreen(
                     appViewModel = appViewModel,
                     onSinglePlayer = { navController.navigate(Routes.setup(GameMode.UN_JUGADOR)) },
-                    onHotseat = { navController.navigate(Routes.setup(GameMode.DOS_JUGADORES)) },
                     onWifi = { navController.navigate(Routes.WIFI) },
                     onResume = {
                         matchViewModel.resumeSaved(onNothing = { appViewModel.refreshSaved() })
                         navController.navigate(Routes.MATCH)
                     },
-                    onShipyard = { navController.navigate(Routes.SHIPYARD) },
                     onStats = { navController.navigate(Routes.STATS) },
                     onSettings = { navController.navigate(Routes.SETTINGS) },
                     onManual = { navController.navigate(Routes.docs(DocKind.MANUAL)) },
@@ -96,12 +92,8 @@ private fun BarquitosApp() {
                 SetupScreen(
                     mode = mode,
                     initial = settings.lastConfig.copy(mode = mode),
-                    player1 = settings.playerName,
-                    player2 = settings.player2Name,
-                    onNames = { first, second ->
-                        appViewModel.setPlayerName(first)
-                        appViewModel.setPlayer2Name(second)
-                    },
+                    playerName = settings.playerName,
+                    onName = appViewModel::setPlayerName,
                     onBack = { navController.popBackStack() },
                     onStart = { config ->
                         matchViewModel.startNew(config)
@@ -140,10 +132,6 @@ private fun BarquitosApp() {
 
             composable(Routes.STATS) {
                 StatsScreen(appViewModel = appViewModel, onBack = { navController.popBackStack() })
-            }
-
-            composable(Routes.SHIPYARD) {
-                ShipyardScreen(appViewModel = appViewModel, onBack = { navController.popBackStack() })
             }
 
             composable(Routes.SETTINGS) {

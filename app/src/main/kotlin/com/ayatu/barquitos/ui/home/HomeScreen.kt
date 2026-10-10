@@ -23,9 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Anchor
 import androidx.compose.material.icons.filled.BarChart
-import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Description
-import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
@@ -51,11 +49,7 @@ import com.ayatu.barquitos.core.Coord
 import com.ayatu.barquitos.core.Fleet
 import com.ayatu.barquitos.core.Orientation
 import com.ayatu.barquitos.core.PlacedShip
-import com.ayatu.barquitos.data.Nations
-import com.ayatu.barquitos.data.Skins
 import com.ayatu.barquitos.ui.AppViewModel
-import com.ayatu.barquitos.ui.common.EmblemView
-import com.ayatu.barquitos.ui.common.FlagView
 import com.ayatu.barquitos.ui.common.MenuButton
 import com.ayatu.barquitos.ui.common.SeaBackdrop
 import com.ayatu.barquitos.ui.common.ShipPainter.drawShipPreview
@@ -67,10 +61,8 @@ import com.ayatu.barquitos.ui.theme.Mar
 fun HomeScreen(
     appViewModel: AppViewModel,
     onSinglePlayer: () -> Unit,
-    onHotseat: () -> Unit,
     onWifi: () -> Unit,
     onResume: () -> Unit,
-    onShipyard: () -> Unit,
     onStats: () -> Unit,
     onSettings: () -> Unit,
     onManual: () -> Unit,
@@ -80,8 +72,6 @@ fun HomeScreen(
     val settings by appViewModel.settings.collectAsStateWithLifecycle()
     val stats by appViewModel.stats.collectAsStateWithLifecycle()
     val hasSaved by appViewModel.hasSavedMatch.collectAsStateWithLifecycle()
-    val nation = Nations.byId(settings.nationId)
-    val skin = Skins.byId(settings.skinId)
 
     SeaBackdrop {
         Column(
@@ -94,30 +84,17 @@ fun HomeScreen(
                 .padding(horizontal = 18.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            // Cabecera: título, bandera y emblema del jugador.
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(
-                        stringResource(R.string.app_name),
-                        style = MaterialTheme.typography.displaySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Text(
-                        stringResource(R.string.app_tagline),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-                Box(contentAlignment = Alignment.Center) {
-                    FlagView(
-                        nation,
-                        Modifier
-                            .size(width = 54.dp, height = 36.dp)
-                            .clip(RoundedCornerShape(4.dp)),
-                    )
-                }
-                Spacer(Modifier.width(8.dp))
-                EmblemView(settings.emblemId, Flota.Oro, Modifier.size(34.dp))
+            Column {
+                Text(
+                    stringResource(R.string.app_name),
+                    style = MaterialTheme.typography.displaySmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                Text(
+                    stringResource(R.string.app_tagline),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
 
             // Un barco grande navegando, para que el puerto no esté vacío.
@@ -128,11 +105,10 @@ fun HomeScreen(
                     .clip(RoundedCornerShape(16.dp))
                     .background(Mar.Medio),
             ) {
-                val ship = PlacedShip(Fleet.ESTANDAR.ships[0], Coord(0, 0), Orientation.NORTE)
+                val ship = PlacedShip(Fleet.ships[0], Coord(0, 0), Orientation.HORIZONTAL)
                 drawShipPreview(
                     ship,
                     Rect(size.width * 0.08f, size.height * 0.12f, size.width * 0.92f, size.height * 0.8f),
-                    skin,
                 )
                 // Línea de flotación.
                 val wave = Path().apply {
@@ -181,12 +157,6 @@ fun HomeScreen(
                 onClick = onSinglePlayer,
             )
             MenuButton(
-                title = stringResource(R.string.home_hotseat),
-                subtitle = stringResource(R.string.home_hotseat_desc),
-                icon = { Icon(Icons.Default.Groups, contentDescription = null) },
-                onClick = onHotseat,
-            )
-            MenuButton(
                 title = stringResource(R.string.home_wifi),
                 subtitle = stringResource(R.string.home_wifi_desc),
                 icon = { Icon(Icons.Default.Wifi, contentDescription = null) },
@@ -196,12 +166,6 @@ fun HomeScreen(
             Spacer(Modifier.height(6.dp))
 
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                SmallTile(
-                    label = stringResource(R.string.home_shipyard),
-                    icon = { Icon(Icons.Default.Build, contentDescription = null) },
-                    modifier = Modifier.weight(1f),
-                    onClick = onShipyard,
-                )
                 SmallTile(
                     label = stringResource(R.string.home_stats),
                     icon = { Icon(Icons.Default.BarChart, contentDescription = null) },
@@ -218,7 +182,7 @@ fun HomeScreen(
 
             if (!stats.isEmpty) {
                 Text(
-                    "${stringResource(R.string.stats_played)}: ${stats.played + stats.hotseatPlayed}  ·  " +
+                    "${stringResource(R.string.stats_played)}: ${stats.played}  ·  " +
                         "${stringResource(R.string.stats_won)}: ${stats.won}  ·  " +
                         "${stringResource(R.string.stats_sunk)}: ${stats.sunkByMe}",
                     style = MaterialTheme.typography.bodySmall,

@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.ayatu.barquitos.core.Difficulty
-import com.ayatu.barquitos.core.FleetType
 import com.ayatu.barquitos.core.GameConfig
 import com.ayatu.barquitos.core.GameMode
 import com.ayatu.barquitos.core.ShotRule
@@ -17,7 +16,7 @@ import com.ayatu.barquitos.ui.theme.ThemeChoice
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-/** Un único DataStore para toda la app: ajustes, estadísticas y desbloqueos. */
+/** Un único DataStore para toda la app: ajustes y estadísticas. */
 val Context.barquitosStore: DataStore<Preferences> by preferencesDataStore(name = "barquitos")
 
 /** Todo lo que el usuario puede tocar en Ajustes, más lo que eligió la última vez que jugó. */
@@ -26,16 +25,12 @@ data class Settings(
     val haptics: Boolean = true,
     val animations: Boolean = true,
     val showCoords: Boolean = true,
-    /** En la flota Rusa, pintar sola el agua alrededor de un barco hundido (ahí no cabe otro). */
+    /** Pintar sola el agua alrededor de un barco hundido: ahí, por regla, no cabe otro. */
     val markWater: Boolean = true,
     /** Pedir una segunda pulsación antes de disparar, para no disparar por error. */
     val confirmShot: Boolean = false,
     val theme: ThemeChoice = ThemeChoice.SISTEMA,
     val playerName: String = "",
-    val player2Name: String = "",
-    val nationId: String = "neutral",
-    val skinId: String = "neutral-liso",
-    val emblemId: String = "ancla",
     /** Lo último que se eligió en «Nueva partida», para no repetir la configuración cada vez. */
     val lastConfig: GameConfig = GameConfig(),
 )
@@ -53,15 +48,9 @@ class SettingsStore(private val context: Context) {
             theme = p[K.THEME]?.let { runCatching { ThemeChoice.valueOf(it) }.getOrNull() }
                 ?: ThemeChoice.SISTEMA,
             playerName = p[K.PLAYER_NAME] ?: "",
-            player2Name = p[K.PLAYER2_NAME] ?: "",
-            nationId = p[K.NATION] ?: "neutral",
-            skinId = p[K.SKIN] ?: "neutral-liso",
-            emblemId = p[K.EMBLEM] ?: "ancla",
             lastConfig = GameConfig(
                 mode = p[K.LAST_MODE]?.let { enumOrNull<GameMode>(it) } ?: GameMode.UN_JUGADOR,
-                fleet = p[K.LAST_FLEET]?.let { enumOrNull<FleetType>(it) } ?: FleetType.CLASICA,
-                shotRule = p[K.LAST_RULE]?.let { enumOrNull<ShotRule>(it) } ?: ShotRule.UN_DISPARO,
-                multiShotCount = p[K.LAST_MULTI] ?: 3,
+                shotRule = p[K.LAST_RULE]?.let { enumOrNull<ShotRule>(it) } ?: ShotRule.RACHA,
                 difficulty = p[K.LAST_DIFFICULTY]?.let { enumOrNull<Difficulty>(it) } ?: Difficulty.NORMAL,
                 startingPlayer = (p[K.LAST_START] ?: -1).takeIf { it >= 0 },
             ),
@@ -76,17 +65,11 @@ class SettingsStore(private val context: Context) {
     suspend fun setConfirmShot(value: Boolean) = put(K.CONFIRM_SHOT, value)
     suspend fun setTheme(value: ThemeChoice) = put(K.THEME, value.name)
     suspend fun setPlayerName(value: String) = put(K.PLAYER_NAME, value)
-    suspend fun setPlayer2Name(value: String) = put(K.PLAYER2_NAME, value)
-    suspend fun setNation(value: String) = put(K.NATION, value)
-    suspend fun setSkin(value: String) = put(K.SKIN, value)
-    suspend fun setEmblem(value: String) = put(K.EMBLEM, value)
 
     suspend fun saveLastConfig(config: GameConfig) {
         context.barquitosStore.edit { p ->
             p[K.LAST_MODE] = config.mode.name
-            p[K.LAST_FLEET] = config.fleet.name
             p[K.LAST_RULE] = config.shotRule.name
-            p[K.LAST_MULTI] = config.multiShotCount
             p[K.LAST_DIFFICULTY] = config.difficulty.name
             p[K.LAST_START] = config.startingPlayer ?: -1
         }
@@ -105,14 +88,8 @@ class SettingsStore(private val context: Context) {
         val CONFIRM_SHOT = booleanPreferencesKey("confirm_shot")
         val THEME = stringPreferencesKey("theme")
         val PLAYER_NAME = stringPreferencesKey("player_name")
-        val PLAYER2_NAME = stringPreferencesKey("player2_name")
-        val NATION = stringPreferencesKey("nation")
-        val SKIN = stringPreferencesKey("skin")
-        val EMBLEM = stringPreferencesKey("emblem")
         val LAST_MODE = stringPreferencesKey("last_mode")
-        val LAST_FLEET = stringPreferencesKey("last_fleet")
         val LAST_RULE = stringPreferencesKey("last_rule")
-        val LAST_MULTI = intPreferencesKey("last_multi")
         val LAST_DIFFICULTY = stringPreferencesKey("last_difficulty")
         val LAST_START = intPreferencesKey("last_start")
     }

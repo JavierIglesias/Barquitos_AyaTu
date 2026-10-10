@@ -1,7 +1,7 @@
 # Manual de usuario — Barquitos AyaTu
 
-Hundir la flota de toda la vida, en el móvil. Tres flotas distintas, cinco reglas de disparo, contra
-la máquina, contra alguien en el mismo móvil o contra otro móvil por WiFi.
+Hundir la flota de toda la vida, en el móvil. La flota de siempre, contra la máquina o contra otro
+móvil por WiFi. Sin anuncios, sin cuentas y sin internet.
 
 ---
 
@@ -10,64 +10,47 @@ la máquina, contra alguien en el mismo móvil o contra otro móvil por WiFi.
 La pantalla principal es el puerto. Desde ahí sales a jugar:
 
 - **Un jugador** — contra la máquina. No hace falta conexión de ningún tipo.
-- **Dos jugadores** — por turnos en este mismo móvil, pasándooslo. La app tapa la pantalla entre
-  turno y turno para que nadie vea la flota del otro.
 - **WiFi local** — dos móviles en la misma red WiFi.
 - **Seguir la partida** — aparece solo si dejaste una batalla a medias. La recupera tal y como
   estaba, aunque hayas cerrado la app o se haya apagado el móvil.
 
-Abajo tienes **Astillero** (pintura y emblema de tu flota), **Estadísticas**, **Ajustes** y los tres
-documentos: **Manual**, **Novedades** y **Registro**.
-
-Arriba a la derecha se ven la bandera de tu armada y tu emblema, los que hayas elegido en el
-Astillero.
+Abajo tienes **Estadísticas**, **Ajustes** y los tres documentos: **Manual**, **Novedades** y
+**Registro**.
 
 ---
 
-## Las tres flotas
+## La flota
 
-Al crear la partida eliges con qué flota se juega. Las dos partes juegan siempre con la misma.
+Es siempre la misma, la del juego de lápiz y papel, sobre un tablero de **10 × 10**:
 
-### Estándar — 6 barcos, 21 casillas
-
-| Barco | Casillas | Forma |
+| Barco | Casillas | Cuántos |
 |---|---|---|
-| Portaaviones | 6 | casco de 5 más la isla de mando, que sobresale |
-| Acorazado | 4 | recto |
-| Submarino | 4 | casco de 3 más la torreta, que sobresale |
-| Crucero | 3 | recto |
-| Destructor | 2 | recto |
-| Patrullera | 2 | recto |
+| Portaaviones | 4 | 1 |
+| Acorazado | 3 | 2 |
+| Destructor | 2 | 3 |
+| Submarino | 1 | 4 |
 
-El portaaviones y el submarino **no son líneas rectas**: tienen una casilla que sobresale, así que
-giran en cuatro posiciones en vez de dos y son más difíciles de cazar. Los barcos pueden quedar
-pegados unos a otros.
+Son **10 barcos y 20 casillas**: una quinta parte del tablero.
 
-### Clásica — 5 barcos, 17 casillas
+Y una regla que importa mucho: **dos barcos nunca pueden tocarse**, tampoco en diagonal. Siempre
+queda al menos una casilla de agua entre ellos. No es un capricho: con cuatro submarinos de una
+sola casilla, si los barcos pudieran quedar pegados no habría forma de saber si dos impactos
+seguidos son un destructor o dos submarinos.
 
-La de toda la vida: barcos rectos de **5, 4, 3, 3 y 2** casillas. Pueden quedar pegados.
-
-### Rusa — 10 barcos, 20 casillas
-
-Uno de 4, dos de 3, tres de 2 y cuatro de 1 casilla. Aquí hay una regla más: **los barcos tienen que
-dejar siempre una casilla de separación entre ellos**, también en diagonal. Eso cambia mucho la
-partida: cuando hundes un barco sabes seguro que todo lo que lo rodea es agua, y la app te lo marca
-sola (se puede quitar en Ajustes).
+Esa misma regla juega a tu favor cuando hundes algo: **todo lo que rodea a un barco hundido es agua
+segura**, así que ahí no hace falta disparar. La app lo marca sola con puntitos (se puede quitar en
+Ajustes).
 
 ---
 
-## Las cinco reglas de disparo
+## Las dos reglas de disparo
 
-| Regla | Cómo va |
+Se eligen al crear la partida, en **Reglas de disparo**. Las dos partes juegan con la misma.
+
+| Regla | Qué pasa |
 |---|---|
-| **Un disparo** | Un disparo por turno, turnos alternos. La regla clásica. |
-| **Racha** | Sigues disparando mientras aciertes. El primer fallo acaba tu turno. |
-| **Salva** | Los dos disparáis **a la vez**, un disparo por cada barco que os quede a flote. Según se hunde tu flota, disparas menos. |
-| **Fuego en cadena** | Disparas tantas veces como barcos te queden a flote, pero **uno a uno**: ves el resultado de cada disparo antes de elegir el siguiente. |
-| **Multidisparo** | Un número fijo de disparos por turno: 2, 3, 4, 5 o 6, el que elijas al crear la partida. |
-
-En **Salva**, como los dos disparan a la vez, puede pasar que las dos flotas se hundan en la misma
-ronda: entonces la partida queda en **empate**.
+| **Racha** | Sigues disparando mientras aciertes. El primer fallo acaba tu turno. Es como se juega normalmente, y es la que viene puesta. |
+| **Un disparo** | Un disparo por turno y se pasa, aciertes o no. Turnos estrictamente alternos. |
 
 ---
 
@@ -77,18 +60,14 @@ ronda: entonces la partida queda en **empate**.
 2. Llévalo al tablero con el dedo. Da igual que lo toques, que lo mantengas pulsado o que arrastres:
    mientras el dedo está encima se ve la **sombra del barco**, y se coloca al levantarlo. El barco
    va siempre **centrado donde pongas el dedo**.
-3. La sombra te dice si cabe: **verde** sí, **roja** no (se sale, pisa a otro o, en la flota Rusa,
-   queda pegado a otro). Si sueltas con la sombra en rojo, no se coloca.
-4. **Girar** lo rota. Los barcos rectos tienen dos posiciones; el portaaviones y el submarino,
-   cuatro.
+3. La sombra te dice si cabe: **verde** sí, **roja** no (se sale, pisa a otro o queda pegado a
+   otro). Si sueltas con la sombra en rojo, no se coloca.
+4. **Girar** lo pone en vertical u horizontal.
 5. Para **mover** un barco ya puesto, pon el dedo encima y arrástralo: se levanta y lo llevas a otro
    sitio. Para **quitarlo**, arrástralo fuera del tablero y suéltalo: vuelve a la bandeja.
 6. **Al azar** reparte la flota entera de golpe (vuelve a repartir todos los barcos, también los que
    ya habías puesto). **La papelera** vacía el tablero.
 7. Cuando no te quede ninguno, el botón de abajo pasa a decir **A la batalla**.
-
-En dos jugadores en el mismo móvil, coloca primero uno, aparece la pantalla de traspaso, y coloca el
-otro.
 
 ---
 
@@ -101,21 +80,14 @@ cuadradito por casilla: gris si está entera, naranja si está tocada, rojo y ta
 - Toca una casilla del tablero de arriba para disparar.
 - **Agua**: un círculo claro con su onda.
 - **Tocado**: una explosión naranja.
-- **Hundido**: se revela el barco entero y se tacha en rojo.
-- En **Racha**, al acertar sale «¡Otra vez!» y sigues tú.
-- En **Salva**, vas marcando objetivos (salen numerados) y luego pulsas **¡Fuego!**. Puedes
-  desmarcar tocando otra vez. Cuando los dos habéis disparado se enseña el resultado de la ronda.
+- **Hundido**: se revela el barco entero, se tacha en rojo y se marca el agua de alrededor.
+- Con la regla **Racha**, al acertar sale «¡Otra vez!» y sigues tú.
 
 Debajo del todo está el **Parte de batalla**: las últimas jugadas, con la casilla, quién disparó y
 qué pasó.
 
 Arriba a la derecha, la **bandera blanca** es rendirse (cuenta como derrota). La **flecha de volver**
 deja la partida guardada para seguirla luego.
-
-### Dos jugadores en el mismo móvil
-
-Entre turno y turno sale una pantalla que tapa el tablero: **«Pásale el móvil a…»**. El que recibe
-el móvil pulsa **Ya lo tengo** y entonces, y solo entonces, se ve su tablero.
 
 ### WiFi local
 
@@ -130,43 +102,36 @@ conexión, así que las de WiFi no se guardan para seguirlas luego.
 
 ---
 
-## Astillero
-
-- **Tu nombre** — el que sale en la partida y en el traspaso del móvil.
-- **Armada** — 14 banderas. Es cosmético.
-- **Pintura** — 100 pinturas de casco (liso, camuflaje, rayas de guerra, desgastado y aniversario,
-  en 20 colores). Las diez primeras vienen de serie; el resto se van desbloqueando **cada dos barcos
-  que hundas**.
-- **Emblema** — 12 emblemas; algunos piden un número de victorias.
-- **Planos** — 22 buques históricos reales (del HMS Dreadnought al Yamato). Cada barco que hundes te
-  acerca al siguiente plano. Debajo de cada uno verás cuántos barcos hundidos hacen falta.
-
----
-
 ## Estadísticas
 
 Partidas, victorias, porcentaje de acierto, barcos hundidos, mejor victoria (la que ganaste con
-menos disparos), racha actual y mejor racha; el desglose por flota, por regla y por nivel de la
-máquina; y las **medallas**.
+menos disparos), racha actual y mejor racha; el desglose por regla y por nivel de la máquina; y las
+**medallas**.
 
-Solo cuentan en tu marcador las partidas **contra la máquina y por WiFi**: en las de dos jugadores
-en el mismo móvil las dos flotas son tuyas, así que se apuntan aparte y no tocan tu porcentaje de
-victorias.
+Cuentan las partidas contra la máquina y las de WiFi local.
 
-El icono de la papelera, arriba a la derecha, borra las estadísticas (no se puede deshacer; los
-desbloqueos del Astillero sí dependen de ellas, así que al borrarlas se vuelven a bloquear).
+El icono de la papelera, arriba a la derecha, borra las estadísticas. No se puede deshacer, y las
+medallas se pierden con ellas.
 
 ---
 
 ## Ajustes
 
-- **Sonido** — cañonazos, impactos y hundimientos.
-- **Vibración** — un toque corto al acertar, uno largo al hundir.
-- **Animaciones** — explosiones y chapoteos.
-- **Letras y números** — rotula los bordes del tablero (A-J, 1-10).
-- **Marcar agua al hundir** — en la flota Rusa, pinta sola el agua que rodea a un barco hundido.
-- **Confirmar disparo** — pide una segunda pulsación antes de disparar, para no hacerlo sin querer.
+Las opciones van en grupos: toca la cabecera para abrir o cerrar cada uno. Debajo del título se ve
+lo que hay elegido sin necesidad de abrirlo.
+
+- **Partida**
+  - *Confirmar disparo* — pide una segunda pulsación antes de disparar, para no hacerlo sin querer.
+  - *Marcar agua al hundir* — pinta sola el agua que rodea a un barco hundido.
+- **Tablero**
+  - *Letras y números* — rotula los bordes del tablero (A-J, 1-10).
+  - *Animaciones* — explosiones y chapoteos.
+- **Sonido y vibración**
+  - *Sonido* — cañonazos, impactos y hundimientos.
+  - *Vibración* — un toque corto al acertar, uno largo al hundir.
 - **Aspecto** — como el sistema, claro u oscuro.
+- **Tu nombre** — el que sale en la partida.
+- **Acerca de** — la versión.
 
 ---
 
@@ -189,17 +154,24 @@ Si algo va mal, lo primero que ayuda es el registro.
 
 **¿Hace trampas la máquina?**
 No. En ningún nivel. La IA solo recibe lo mismo que verías tú: dónde ha disparado, qué disparos
-dieron en algo y qué barcos ha hundido. En **Difícil** calcula en cada tirada de cuántas maneras
-podría estar cada barco que te queda en cada casilla y dispara a la más probable; es dura, pero no
-mira tu tablero.
+dieron en algo y qué barcos ha hundido.
+
+- **Fácil** dispara casi a ciegas y solo a veces remata lo que ha tocado.
+- **Normal** sigue la línea de un barco tocado y descarta el agua segura de alrededor de los
+  hundidos, que es lo que haría cualquiera a mano.
+- **Difícil** calcula en cada tirada de cuántas maneras podría estar cada barco que te queda en
+  cada casilla y dispara a la más probable. Es dura, pero no mira tu tablero.
+
+Con esta flota ni la mejor IA hace milagros: cuatro submarinos de una casilla sueltos por el tablero
+no dejan pistas, y hay que buscarlos uno a uno.
 
 **¿Se pierde la partida si cierro la app?**
 No, salvo las de WiFi local. Al volver, el puerto te ofrece **Seguir la partida**.
 
 **¿Necesito internet?**
-No. Un jugador y dos jugadores funcionan sin conexión ninguna. WiFi local necesita que los dos
-móviles estén en la misma red, pero no sale a internet.
+No. Un jugador funciona sin conexión ninguna. WiFi local necesita que los dos móviles estén en la
+misma red, pero no sale a internet.
 
 **¿Qué datos se envían?**
-Ninguno. La app no tiene cuentas, ni publicidad, ni analítica. Todo (ajustes, estadísticas,
-desbloqueos, registro) se queda en tu móvil.
+Ninguno. La app no tiene cuentas, ni publicidad, ni analítica. Todo (ajustes, estadísticas y
+registro) se queda en tu móvil.

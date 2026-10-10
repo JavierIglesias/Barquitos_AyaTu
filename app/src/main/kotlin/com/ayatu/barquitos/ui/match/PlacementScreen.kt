@@ -28,8 +28,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ayatu.barquitos.R
 import com.ayatu.barquitos.core.Coord
+import com.ayatu.barquitos.core.Fleet
 import com.ayatu.barquitos.data.Settings
-import com.ayatu.barquitos.data.Skin
 import com.ayatu.barquitos.ui.common.BarquitosScreen
 import com.ayatu.barquitos.ui.common.BoardRender
 import com.ayatu.barquitos.ui.common.BoardView
@@ -47,7 +47,6 @@ import com.ayatu.barquitos.ui.common.labelRes
 @Composable
 fun PlacementScreen(
     state: MatchUiState,
-    skin: Skin,
     settings: Settings,
     onSelect: (Int) -> Unit,
     onRotate: () -> Unit,
@@ -58,14 +57,7 @@ fun PlacementScreen(
     onReady: () -> Unit,
     onBack: () -> Unit,
 ) {
-    val fleet = state.config.fleetDef
-    val title = if (state.config.mode == com.ayatu.barquitos.core.GameMode.DOS_JUGADORES) {
-        stringResource(R.string.placement_turn, playerName(state, settings, state.placingPlayer))
-    } else {
-        stringResource(R.string.placement_title)
-    }
-
-    BarquitosScreen(title = title, onBack = onBack) { modifier ->
+    BarquitosScreen(title = stringResource(R.string.placement_title), onBack = onBack) { modifier ->
         Column(
             modifier
                 .fillMaxSize()
@@ -78,13 +70,11 @@ fun PlacementScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            if (fleet.mustSeparate) {
-                Text(
-                    stringResource(R.string.placement_separation),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-            }
+            Text(
+                stringResource(R.string.placement_separation),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary,
+            )
 
             BoardView(
                 render = BoardRender(
@@ -95,19 +85,17 @@ fun PlacementScreen(
                     showCoords = settings.showCoords,
                     enabled = true,
                 ),
-                skin = skin,
                 onAim = onAim,
                 onDrop = onDrop,
             )
 
             // Bandeja de barcos pendientes y colocados.
             LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(fleet.ships, key = { it.id }) { def ->
+                items(Fleet.ships, key = { it.id }) { def ->
                     val placed = state.placed.any { it.id == def.id }
                     ShipChip(
                         def = def,
-                        skin = skin,
-                        selected = state.selectedShipId == def.id && !placed,
+                                selected = state.selectedShipId == def.id && !placed,
                         placed = placed,
                         label = stringResource(def.kind.labelRes),
                         onClick = { onSelect(def.id) },

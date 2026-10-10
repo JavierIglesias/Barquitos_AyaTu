@@ -54,7 +54,7 @@ class LanHost(
         writer.write(NetCodec.encodeHello(Hello(playerName.ifBlank { "Anfitrión" }, config)))
         writer.newLine()
         writer.flush()
-        LanLink(socket, localPlayer = 0, fleet = config.fleetDef, rivalName = "")
+        LanLink(socket, localPlayer = 0, rivalName = "")
     }
 
     private fun register(port: Int) {
@@ -143,7 +143,6 @@ class LanBrowser(context: Context) {
             LanLink(
                 socket = socket,
                 localPlayer = 1,
-                fleet = hello.config.fleetDef,
                 rivalName = hello.name,
             ) to hello.config
         }

@@ -52,10 +52,6 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun setConfirmShot(value: Boolean) = edit { settingsStore.setConfirmShot(value) }
     fun setTheme(value: ThemeChoice) = edit { settingsStore.setTheme(value) }
     fun setPlayerName(value: String) = edit { settingsStore.setPlayerName(value) }
-    fun setPlayer2Name(value: String) = edit { settingsStore.setPlayer2Name(value) }
-    fun setNation(value: String) = edit { settingsStore.setNation(value) }
-    fun setSkin(value: String) = edit { settingsStore.setSkin(value) }
-    fun setEmblem(value: String) = edit { settingsStore.setEmblem(value) }
     fun resetStats() = edit { statsStore.reset() }
 
     private fun edit(block: suspend () -> Unit) {

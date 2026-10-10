@@ -1,5 +1,84 @@
 # Historial de Cambios
 
+## 10-10-2026 19:30 [1.0.0]
+
+Poda grande: el juego pasa de «todo lo que hace Fleet Battle» a **el barquitos de toda la vida**,
+a petición de Javier. De 8220 líneas de Kotlin a 6539, y el APK de publicación de 1,49 MB a
+1,47 MB.
+
+### Quitado
+
+- **Las flotas Estándar y Clásica**, y con ellas el enumerado `FleetType`, las formas no rectas
+  (`shapeOf`, `ShipShape.isStraight`) y la elección de flota en la pantalla de nueva partida, en
+  el guardado (`GameSave`), en el saludo de red (`NetCodec.encodeHello`) y en las estadísticas.
+  Queda una sola flota, la que era «Rusa»: 1×4, 2×3, 3×2 y 4×1, veinte casillas, con separación
+  obligatoria. `Fleet` pasa de `data class` con tres instancias a `object` con constantes
+  (`BOARD_SIZE`, `MUST_SEPARATE`), de modo que `Placement` y `ShipAi` ya no reciben la flota por
+  parámetro.
+- **Los nombres de barco que sobraban**: `ShipKind` se queda en PORTAAVIONES (4), ACORAZADO (3),
+  DESTRUCTOR (2) y SUBMARINO (1). Fuera CRUCERO, PATRULLERA y LANCHA.
+- **Tres reglas de disparo**: SALVA, FUEGO_EN_CADENA y MULTIDISPARO. Con SALVA se va **toda la
+  maquinaria de turnos simultáneos**, que era la parte más enrevesada del motor: `Game.toggleAim`,
+  `setAim`, `confirmAim`, `resolveSalvo`, `salvoSize`, `SalvoRound`, `Game.DRAW` y el empate,
+  `ShotRule.isSimultaneous`/`scalesWithFleet`, `GameConfig.multiShotCount`, `Game.shotsLeft`,
+  `ShipAi.chooseShots`, `NetMessage.Salvo`, el diálogo de resumen de salva y los `plurals`
+  `salvo_hits`/`salvo_sunk`. También desaparece `MatchResult.EMPATADA` y el contador de empates.
+- **El modo de dos jugadores en el mismo móvil** (`GameMode.DOS_JUGADORES`): con él se van la fase
+  `MatchPhase.TRASPASO`, `HandoffScreen`, `handoffDone()`, `handleTurnChange()`, `placingPlayer`,
+  el segundo nombre de jugador y el contador `hotseatPlayed` de las estadísticas.
+- **El astillero entero** (`ui/shipyard/`, 318 líneas) y su catálogo: 14 armadas con sus banderas
+  geométricas, 100 pinturas, 12 emblemas y 22 planos históricos. De `Catalog.kt` (359 líneas)
+  quedan 60: los colores de los barcos y las medallas. Con ello se van `FlagView`, `EmblemView` y
+  `ShipPainter.drawPattern`, y el parámetro `skin` desaparece de `BoardView`, `ShipPainter`,
+  `ShipChip` y las cuatro pantallas de partida.
+- **`Orientation`** pasa de cuatro valores (NORTE/ESTE/SUR/OESTE) a dos (HORIZONTAL/VERTICAL):
+  todos los barcos son líneas rectas, así que la mitad de los giros daba el mismo dibujo.
+
+### Añadido
+
+- **`OptionGroup`** (`ui/common/Widgets.kt`): grupo de opciones plegable con icono, título,
+  resumen de lo elegido y chevron. Es el mismo patrón de `SettingsSection` de Radio AyaTu
+  (`com.ayatu.audio`) y Rutas AyaTu, para que las tres apps se manejen igual. Lo usan la pantalla
+  de **Nueva partida** (reglas, nivel, quién empieza, nombre) y la de **Ajustes** (partida,
+  tablero, sonido, aspecto, nombre, acerca de).
+- **Medallas recalibradas** para esta flota: con 20 casillas de barco sobre 100, el 50 % y el 65 %
+  de acierto de antes eran inalcanzables. Ahora son 35 % y 45 %, y «victoria limpia» pasa de 40 a
+  50 disparos. Fuera «Las tres flotas», entra «Cazaflotas» (100 barcos hundidos), y «Todas las
+  reglas» pasa a ser «Las dos reglas».
+
+### Corregido
+
+- **La IA en nivel Normal jugaba peor que en Fácil** con esta flota: 90,1 disparos de media frente
+  a 83,8 en una tanda de doce partidas. Causa: `parityCells` elegía el paso del tresbolillo a
+  partir del barco más pequeño que le quedaba al rival, y aquí hay submarinos de **una** casilla,
+  con lo que el paso era 1 y el filtro no descartaba nada; Normal acababa buscando tan a ciegas
+  como Fácil, sin ninguna ventaja que compensara. Arreglado dándole a Normal la deducción que hace
+  cualquier humano con esta flota: `ShipAi.knownWater()` descarta las ocho casillas que rodean a
+  un barco hundido, porque la regla de separación garantiza que son agua. `parityCells` devuelve
+  además lista vacía cuando al rival solo le quedan barcos de una casilla, que es cuando el
+  tresbolillo no vale para nada. El nivel Fácil se queda como estaba, sin deducir nada.
+- **Texto desactualizado** en «Marcar agua al hundir» («En la flota Rusa…») y en el aviso de la
+  pantalla de colocación. Causa: hablaban de una flota que ya no existe.
+
+### Cambiado
+
+- `GameSave.VERSION` pasa de 1 a 2: el formato pierde los campos `fleet`, `multi` y `shotsLeft`.
+  Las partidas guardadas con la versión anterior se descartan en silencio, que es lo correcto
+  porque además la flota ha cambiado.
+- Pruebas unitarias rehechas: 33 en verde (antes 34). Cubren la composición exacta de la flota
+  (1×4, 2×3, 3×2, 4×1), la separación obligatoria en los cuatro sentidos y en diagonal, que el
+  reparto al azar la respeta con cincuenta semillas distintas, las dos reglas de disparo, el ida y
+  vuelta del guardado, y que la IA Difícil barre la flota en menos de 80 disparos de media y queda
+  por delante de Normal, que a su vez queda por delante de Fácil.
+
+### Comprobado
+
+- En el emulador (API 36): puerto, nueva partida con los grupos plegables, colocación manual y al
+  azar con la flota de diez barcos, batalla completa con impactos, hundimientos y marcado
+  automático del agua alrededor de los submarinos hundidos, y Ajustes con los seis grupos. Sin
+  nada en `logcat -b crash`.
+- Sin cambio de versión: la 1.0.0 sigue sin publicarse en Google Play.
+
 ## 10-10-2026 14:40 [1.0.0]
 
 ### Corregido

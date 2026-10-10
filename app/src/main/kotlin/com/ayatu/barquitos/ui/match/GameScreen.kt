@@ -51,7 +51,6 @@ import com.ayatu.barquitos.R
 import com.ayatu.barquitos.core.Coord
 import com.ayatu.barquitos.core.ShotRule
 import com.ayatu.barquitos.data.Settings
-import com.ayatu.barquitos.data.Skin
 import com.ayatu.barquitos.ui.common.BarquitosScreen
 import com.ayatu.barquitos.ui.common.BoardView
 import com.ayatu.barquitos.ui.common.FleetStatus
@@ -65,12 +64,9 @@ import com.ayatu.barquitos.ui.theme.Flota
 @Composable
 fun GameScreen(
     state: MatchUiState,
-    skin: Skin,
     settings: Settings,
     onTapEnemy: (Coord) -> Unit,
     onCancelPending: () -> Unit,
-    onConfirmSalvo: () -> Unit,
-    onDismissSalvo: () -> Unit,
     onSurrender: () -> Unit,
     onBack: () -> Unit,
 ) {
@@ -97,13 +93,9 @@ fun GameScreen(
         }
     }
 
-    val salvoMode = state.config.shotRule == ShotRule.SALVA
     val turnText = when {
-        state.busy && state.config.mode == com.ayatu.barquitos.core.GameMode.UN_JUGADOR ->
-            stringResource(R.string.game_rival_turn)
+        state.busy -> stringResource(R.string.game_rival_turn)
         state.isMyTurn -> stringResource(R.string.game_your_turn)
-        state.config.mode == com.ayatu.barquitos.core.GameMode.DOS_JUGADORES ->
-            stringResource(R.string.game_player_turn, playerName(state, settings, state.current))
         else -> stringResource(R.string.game_rival_turn)
     }
 
@@ -136,11 +128,7 @@ fun GameScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     Text(
-                        if (salvoMode) {
-                            stringResource(R.string.game_salvo_pick, state.salvoSize)
-                        } else {
-                            stringResource(R.string.game_shots_left, state.shotsLeft)
-                        },
+                        stringResource(state.config.shotRule.labelRes),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.Bold,
@@ -161,27 +149,11 @@ fun GameScreen(
                             showCoords = settings.showCoords,
                             enabled = state.isMyTurn && !state.busy && !state.finished,
                         ),
-                        skin = skin,
                         onTap = onTapEnemy,
                     )
                 }
 
-                if (salvoMode && state.isMyTurn) {
-                    Button(
-                        onClick = onConfirmSalvo,
-                        enabled = state.aimCount == state.salvoSize && state.salvoSize > 0,
-                        modifier = Modifier.fillMaxWidth().height(48.dp),
-                    ) {
-                        Icon(Icons.Default.LocalFireDepartment, contentDescription = null)
-                        Spacer(Modifier.padding(2.dp))
-                        Text(
-                            "${stringResource(R.string.game_salvo_fire)}  ${state.aimCount}/${state.salvoSize}",
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    }
-                }
-
-                if (state.busy && !salvoMode) {
+                if (state.busy) {
                     LinearProgressIndicator(Modifier.fillMaxWidth())
                 }
 
@@ -201,8 +173,7 @@ fun GameScreen(
                                     shotProgress = shotProgress,
                                     showCoords = false,
                                 ),
-                                skin = skin,
-                            )
+                                    )
                         }
                     }
                     Column(
@@ -262,10 +233,6 @@ fun GameScreen(
         }
     }
 
-    state.salvoSummary?.let { summary ->
-        SalvoDialog(summary = summary, onDismiss = onDismissSalvo)
-    }
-
     if (state.pendingShot != null) {
         AlertDialog(
             onDismissRequest = onCancelPending,
@@ -273,7 +240,7 @@ fun GameScreen(
             text = { Text(stringResource(R.string.settings_confirm_shot_desc)) },
             confirmButton = {
                 TextButton(onClick = { onTapEnemy(state.pendingShot) }) {
-                    Text(stringResource(R.string.game_salvo_fire))
+                    Text(stringResource(R.string.game_fire))
                 }
             },
             dismissButton = {
@@ -327,50 +294,4 @@ private fun FlashBanner(flash: Flash) {
             .background(Color.Black.copy(alpha = 0.55f))
             .padding(horizontal = 22.dp, vertical = 12.dp),
     )
-}
-
-/** Resumen de una ronda de SALVA: los dos disparan a la vez, así que se ve todo junto. */
-@Composable
-private fun SalvoDialog(summary: SalvoSummary, onDismiss: () -> Unit) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.rule_salvo)) },
-        text = {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                SalvoLine(
-                    label = stringResource(R.string.common_you),
-                    shots = summary.myShots,
-                    sunk = summary.mySunk.size,
-                )
-                SalvoLine(
-                    label = stringResource(R.string.common_rival),
-                    shots = summary.rivalShots,
-                    sunk = summary.rivalSunk.size,
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(R.string.common_ok)) }
-        },
-    )
-}
-
-@Composable
-private fun SalvoLine(label: String, shots: List<Pair<Coord, Boolean>>, sunk: Int) {
-    Column {
-        Text(label, style = MaterialTheme.typography.labelLarge)
-        Text(
-            shots.joinToString("   ") { (coord, hit) -> coord.label() + if (hit) "✶" else "·" },
-            style = MaterialTheme.typography.bodyMedium,
-            fontFamily = FontFamily.Monospace,
-        )
-        val hits = shots.count { it.second }
-        Text(
-            "${hits}/${shots.size} " +
-                pluralStringResource(R.plurals.salvo_hits, hits, hits).substringAfter(' ') +
-                if (sunk > 0) "  ·  ${pluralStringResource(R.plurals.salvo_sunk, sunk, sunk)}" else "",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
 }

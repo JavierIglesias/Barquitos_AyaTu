@@ -5,13 +5,10 @@
     <!-- Main screen -->
     <string name="home_single">One player</string>
     <string name="home_single_desc">Against the computer, offline</string>
-    <string name="home_hotseat">Two players</string>
-    <string name="home_hotseat_desc">Taking turns on this same phone</string>
     <string name="home_wifi">Local Wi-Fi</string>
     <string name="home_wifi_desc">Two phones on the same network</string>
     <string name="home_resume">Resume game</string>
     <string name="home_resume_desc">You have a battle in progress</string>
-    <string name="home_shipyard">Shipyard</string>
     <string name="home_stats">Statistics</string>
     <string name="home_settings">Settings</string>
     <string name="home_manual">Manual</string>
@@ -21,9 +18,7 @@
 
     <!-- Game setup -->
     <string name="setup_title">New game</string>
-    <string name="setup_fleet">Fleet</string>
     <string name="setup_rule">Shot rule</string>
-    <string name="setup_shots_per_turn">Shots per turn</string>
     <string name="setup_difficulty">Computer level</string>
     <string name="setup_who_starts">Who starts</string>
     <string name="setup_start_me">Me</string>
@@ -31,26 +26,11 @@
     <string name="setup_start_random">Random</string>
     <string name="setup_play">Start</string>
     <string name="setup_player_names">Names</string>
-    <string name="setup_player1">Player 1</string>
-    <string name="setup_player2">Player 2</string>
-
-    <string name="fleet_standard">Standard</string>
-    <string name="fleet_classic">Classic</string>
-    <string name="fleet_russian">Russian</string>
-    <string name="fleet_standard_desc">Six ships, two with a special shape: the carrier has an island and the submarine a conning tower. They may touch each other.</string>
-    <string name="fleet_classic_desc">The usual one: five straight ships of 5, 4, 3, 3 and 2 cells. They may touch each other.</string>
-    <string name="fleet_russian_desc">Ten ships (one of 4, two of 3, three of 2 and four of 1) that must always keep one cell apart, diagonals included.</string>
 
     <string name="rule_one_shot">One shot</string>
     <string name="rule_streak">Streak</string>
-    <string name="rule_salvo">Salvo</string>
-    <string name="rule_chainfire">Chainfire</string>
-    <string name="rule_multishot">Multi shot</string>
     <string name="rule_one_shot_desc">One shot per turn, strictly alternating. The classic rule.</string>
     <string name="rule_streak_desc">You keep firing as long as you hit. The first miss ends your turn.</string>
-    <string name="rule_salvo_desc">You both fire at the same time, one shot for each ship still afloat. As your fleet sinks, you fire less.</string>
-    <string name="rule_chainfire_desc">You fire as many times as you have ships afloat, but one at a time: you see each result before choosing the next target.</string>
-    <string name="rule_multishot_desc">A fixed number of shots per turn, from 2 to 6, chosen when the game is created.</string>
 
     <string name="difficulty_easy">Easy</string>
     <string name="difficulty_normal">Normal</string>
@@ -60,17 +40,13 @@
     <string name="difficulty_hard_desc">Works out on every turn where your remaining ships most likely are. It does not cheat, but it does not forgive either.</string>
 
     <string name="mode_single">One player</string>
-    <string name="mode_hotseat">Two players</string>
     <string name="mode_wifi">Local Wi-Fi</string>
 
     <!-- Ships -->
     <string name="ship_carrier">Carrier</string>
     <string name="ship_battleship">Battleship</string>
-    <string name="ship_cruiser">Cruiser</string>
     <string name="ship_submarine">Submarine</string>
     <string name="ship_destroyer">Destroyer</string>
-    <string name="ship_patrol">Patrol boat</string>
-    <string name="ship_boat">Boat</string>
 
     <!-- Placement -->
     <string name="placement_title">Place your fleet</string>
@@ -80,25 +56,17 @@
     <string name="placement_clear">Clear</string>
     <string name="placement_ready">To battle</string>
     <string name="placement_pending">%1$d ships left</string>
-    <string name="placement_separation">In this fleet ships may not touch each other.</string>
-    <string name="placement_turn">%1$s\'s fleet</string>
+    <string name="placement_separation">Ships may not touch each other, not even diagonally.</string>
 
     <!-- Game -->
     <string name="game_enemy_waters">Enemy waters</string>
     <string name="game_my_fleet">My fleet</string>
     <string name="game_your_turn">Your turn</string>
     <string name="game_rival_turn">Opponent\'s turn</string>
-    <string name="game_player_turn">%1$s\'s turn</string>
-    <string name="game_shots_left">Shots: %1$d</string>
-    <string name="game_salvo_pick">Pick %1$d targets</string>
-    <string name="game_salvo_fire">Fire!</string>
     <string name="game_hit">Hit!</string>
     <string name="game_miss">Miss</string>
     <string name="game_sunk">Sunk! %1$s</string>
     <string name="game_streak_again">Again!</string>
-    <string name="game_handoff">Pass the phone to %1$s</string>
-    <string name="game_handoff_ready">Got it</string>
-    <string name="game_handoff_hidden">Covered so the other player cannot see your fleet.</string>
     <string name="game_report">Battle report</string>
     <string name="game_surrender">Surrender</string>
     <string name="game_surrender_ask">Surrender for sure? The game counts as a defeat.</string>
@@ -111,18 +79,14 @@
     <!-- Result -->
     <string name="result_victory">Victory!</string>
     <string name="result_defeat">Defeat</string>
-    <string name="result_draw">Draw</string>
     <string name="result_victory_desc">You have sunk the enemy fleet.</string>
     <string name="result_defeat_desc">Your fleet is at the bottom of the sea.</string>
-    <string name="result_draw_desc">Both fleets went down in the same salvo.</string>
-    <string name="result_winner">%1$s wins</string>
     <string name="result_shots">Shots</string>
     <string name="result_hits">Hits</string>
     <string name="result_accuracy">Accuracy</string>
     <string name="result_rounds">Rounds</string>
     <string name="result_again">Again</string>
     <string name="result_home">Back to port</string>
-    <string name="result_unlocked">Unlocked: %1$s</string>
     <string name="result_show_boards">Show the boards</string>
 
     <!-- Statistics -->
@@ -130,7 +94,6 @@
     <string name="stats_played">Games</string>
     <string name="stats_won">Won</string>
     <string name="stats_lost">Lost</string>
-    <string name="stats_drawn">Drawn</string>
     <string name="stats_winrate">Win rate</string>
     <string name="stats_shots">Shots</string>
     <string name="stats_hits">Hits</string>
@@ -140,7 +103,6 @@
     <string name="stats_best_value">%1$d shots</string>
     <string name="stats_streak">Current streak</string>
     <string name="stats_best_streak">Best streak</string>
-    <string name="stats_by_fleet">By fleet</string>
     <string name="stats_by_rule">By rule</string>
     <string name="stats_by_difficulty">By level</string>
     <string name="stats_reset">Clear statistics</string>
@@ -149,19 +111,8 @@
     <string name="stats_medals">Medals</string>
 
     <!-- Shipyard -->
-    <string name="shipyard_title">Shipyard</string>
-    <string name="shipyard_nation">Navy</string>
-    <string name="shipyard_skin">Paint</string>
-    <string name="shipyard_emblem">Emblem</string>
     <string name="shipyard_name">Your name</string>
-    <string name="shipyard_blueprints">Blueprints</string>
-    <string name="shipyard_blueprints_desc">Every ship you sink brings the next historic battleship blueprint closer.</string>
-    <string name="shipyard_locked">Locked</string>
-    <string name="shipyard_unlock_at">At %1$d ships sunk</string>
     <string name="shipyard_sunk_total">Ships sunk: %1$d</string>
-    <string name="shipyard_preview">Preview</string>
-    <string name="shipyard_selected">In use</string>
-    <string name="shipyard_use">Use</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -174,7 +125,7 @@
     <string name="settings_show_coords">Letters and numbers</string>
     <string name="settings_show_coords_desc">Label the board edges (A-J, 1-10).</string>
     <string name="settings_mark_water">Mark water on sinking</string>
-    <string name="settings_mark_water_desc">In the Russian fleet, paints the water around a sunken ship by itself.</string>
+    <string name="settings_mark_water_desc">Paints the water around a sunken ship by itself: by the separation rule, no other ship can be there.</string>
     <string name="settings_confirm_shot">Confirm shot</string>
     <string name="settings_confirm_shot_desc">Asks for a second tap so you do not fire by mistake.</string>
     <string name="settings_theme">Appearance</string>
@@ -223,13 +174,16 @@
     <string name="common_machine">Computer</string>
     <string name="common_rival">Opponent</string>
 
-    <!-- Salvo summary -->
-    <plurals name="salvo_hits">
-        <item quantity="one">%1$d hit</item>
-        <item quantity="other">%1$d hits</item>
-    </plurals>
-    <plurals name="salvo_sunk">
-        <item quantity="one">%1$d ship sunk</item>
-        <item quantity="other">%1$d ships sunk</item>
-    </plurals>
+    <!-- Option groups -->
+    <string name="setup_fleet_fixed">Always the same fleet: %1$d ships, %2$d cells. Ships may never touch, not even diagonally.</string>
+    <string name="settings_group_game">Game</string>
+    <string name="settings_group_game_summary">Confirm shot, water on sinking</string>
+    <string name="settings_group_board">Board</string>
+    <string name="settings_group_board_summary">Letters and numbers, animations</string>
+    <string name="settings_group_sound">Sound and vibration</string>
+    <string name="settings_group_sound_summary">Gunfire, hits and sinkings</string>
+    <string name="settings_about_desc">A battleship game with no ads, no accounts and no connection. Everything you see is drawn by the program itself.</string>
+    <string name="common_expand">Expand</string>
+    <string name="common_collapse">Collapse</string>
+    <string name="game_fire">Fire!</string>
 </resources>

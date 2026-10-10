@@ -26,13 +26,12 @@ data class Coord(val x: Int, val y: Int) {
     }
 }
 
-/** Las cuatro orientaciones posibles de un barco. Importan porque las formas de la flota
- *  Estándar no son simétricas (el portaaviones tiene isla y el submarino torreta). */
+/** Cómo se apoya un barco en el tablero. Todos los barcos son líneas rectas, así que con dos
+ *  posiciones basta. */
 enum class Orientation {
-    NORTE, ESTE, SUR, OESTE;
+    HORIZONTAL, VERTICAL;
 
-    fun next(): Orientation = entries[(ordinal + 1) % entries.size]
-    fun prev(): Orientation = entries[(ordinal + entries.size - 1) % entries.size]
+    fun next(): Orientation = if (this == HORIZONTAL) VERTICAL else HORIZONTAL
 }
 
 /**
@@ -46,35 +45,12 @@ data class ShipShape(val cells: List<Coord>) {
     val width: Int get() = (cells.maxOf { it.x } + 1)
     val height: Int get() = (cells.maxOf { it.y } + 1)
 
-    /** Esta misma forma girada. NORTE es el dibujo original; cada paso gira 90° a la derecha. */
-    fun rotated(orientation: Orientation): ShipShape {
-        var current = cells
-        repeat(orientation.ordinal) { current = current.map { Coord(-it.y, it.x) } }
-        return ShipShape(normalize(current))
-    }
-
-    /** True si la forma es una línea recta (todas las casillas en la misma fila o columna). */
-    val isStraight: Boolean
-        get() = cells.all { it.x == 0 } || cells.all { it.y == 0 }
+    /** Esta misma forma puesta en vertical, o tal cual si se pide horizontal. */
+    fun rotated(orientation: Orientation): ShipShape =
+        if (orientation == Orientation.HORIZONTAL) this
+        else ShipShape(normalize(cells.map { Coord(-it.y, it.x) }))
 
     companion object {
-        /**
-         * Construye una forma a partir de un dibujo en texto, con `#` para casilla ocupada y
-         * cualquier otro carácter para hueco. Ejemplo del portaaviones:
-         * ```
-         * shapeOf("..#..",
-         *         "#####")
-         * ```
-         */
-        fun shapeOf(vararg rows: String): ShipShape {
-            val cells = mutableListOf<Coord>()
-            rows.forEachIndexed { y, row ->
-                row.forEachIndexed { x, c -> if (c == '#') cells += Coord(x, y) }
-            }
-            require(cells.isNotEmpty()) { "Una forma de barco no puede estar vacía" }
-            return ShipShape(normalize(cells))
-        }
-
         /** Línea recta horizontal de [n] casillas. */
         fun line(n: Int) = ShipShape((0 until n).map { Coord(it, 0) })
 
@@ -91,15 +67,12 @@ data class ShipShape(val cells: List<Coord>) {
 enum class ShipKind(val resKey: String) {
     PORTAAVIONES("ship_carrier"),
     ACORAZADO("ship_battleship"),
-    CRUCERO("ship_cruiser"),
-    SUBMARINO("ship_submarine"),
     DESTRUCTOR("ship_destroyer"),
-    PATRULLERA("ship_patrol"),
-    LANCHA("ship_boat"),
+    SUBMARINO("ship_submarine"),
 }
 
-/** Un barco de la flota antes de colocarlo: qué es y qué forma tiene. [id] lo distingue de sus
- *  gemelos (la flota Rusa lleva cuatro lanchas iguales). */
+/** Un barco de la flota antes de colocarlo: qué es y de qué largo. [id] lo distingue de sus
+ *  gemelos (la flota lleva cuatro submarinos iguales). */
 data class ShipDef(val id: Int, val kind: ShipKind, val shape: ShipShape) {
     val size: Int get() = shape.size
 }

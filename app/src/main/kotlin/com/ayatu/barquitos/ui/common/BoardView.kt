@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ayatu.barquitos.core.Coord
 import com.ayatu.barquitos.core.PlacedShip
-import com.ayatu.barquitos.data.Skin
 import com.ayatu.barquitos.ui.common.ShipPainter.drawExplosion
 import com.ayatu.barquitos.ui.common.ShipPainter.drawShip
 import com.ayatu.barquitos.ui.common.ShipPainter.drawSplash
@@ -71,7 +70,6 @@ data class BoardRender(
 @Composable
 fun BoardView(
     render: BoardRender,
-    skin: Skin,
     modifier: Modifier = Modifier,
     onTap: ((Coord) -> Unit)? = null,
     onLongPress: ((Coord) -> Unit)? = null,
@@ -167,7 +165,6 @@ fun BoardView(
                         ship = ship,
                         origin = origin,
                         cell = cell,
-                        skin = skin,
                         sunk = ship.id in render.sunkShipIds,
                         alpha = alpha,
                     )

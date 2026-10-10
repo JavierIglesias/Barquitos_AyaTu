@@ -1,8 +1,9 @@
 # Barquitos AyaTu
 
-Juego de hundir la flota para Android. Tres flotas, cinco reglas de disparo, contra la máquina
-(tres niveles), a dos en el mismo móvil o por WiFi local. Sin anuncios, sin compras, sin cuentas y
-sin conexión a ningún servidor.
+Juego de hundir la flota para Android: el de lápiz y papel de toda la vida. Diez barcos (uno de 4,
+dos de 3, tres de 2 y cuatro de 1) que no pueden tocarse ni en diagonal, dos reglas de disparo,
+contra la máquina (tres niveles) o contra otro móvil por WiFi local. Sin anuncios, sin compras, sin
+cuentas y sin conexión a ningún servidor.
 
 ![versión](https://img.shields.io/badge/versi%C3%B3n-1.0.0-blue) ![minSdk](https://img.shields.io/badge/minSdk-24-green)
 
@@ -24,13 +25,13 @@ lo que se lee dentro de la app es exactamente el fichero de este repositorio.
 app/src/main/kotlin/com/ayatu/barquitos/
 ├── core/              Motor del juego. Kotlin puro, sin Android: se prueba con pruebas unitarias.
 │   ├── Model.kt       Coord, ShipShape, PlacedShip, PlayerBoard
-│   ├── Fleets.kt      Las tres flotas (Estándar, Clásica, Rusa)
-│   ├── Rules.kt       Las cinco reglas de disparo y la configuración de partida
+│   ├── Fleets.kt      La flota: 1×4, 2×3, 3×2, 4×1, con separación obligatoria
+│   ├── Rules.kt       Las dos reglas de disparo y la configuración de partida
 │   ├── Placement.kt   Qué colocaciones son legales y reparto al azar
-│   ├── Game.kt        Turnos, disparos, salvas simultáneas, victoria y empate
+│   ├── Game.kt        Turnos, disparos y victoria
 │   ├── GameSave.kt    Guardado de la partida en texto plano
 │   └── ai/ShipAi.kt   La IA (fácil / normal / difícil por mapa de probabilidad)
-├── data/              Ajustes, estadísticas, partida guardada y catálogo de desbloqueos
+├── data/              Ajustes, estadísticas, partida guardada y medallas
 ├── log/               Registro de eventos en fichero, con rotación
 ├── net/               WiFi local: descubrimiento NSD y conexión TCP
 ├── sound/             Efectos sintetizados (no hay ficheros de audio)
@@ -40,8 +41,8 @@ app/src/main/kotlin/com/ayatu/barquitos/
 Dos detalles de los que depende todo lo visual:
 
 - **No hay imágenes de barcos**. `ui/common/ShipPainter.kt` los dibuja con Canvas a partir de su
-  forma y de la pintura elegida; `ui/common/Widgets.kt` hace lo mismo con las banderas y los
-  emblemas.
+  forma, y `ui/common/BoardView.kt` pinta el tablero entero igual: agua, retícula, impactos y
+  animaciones.
 - **No hay ficheros de audio**. `sound/SoundEngine.kt` sintetiza los efectos y los escribe como WAV
   en la caché la primera vez que arranca la app.
 
@@ -50,14 +51,12 @@ Dos detalles de los que depende todo lo visual:
 Hace falta JDK 17 y el SDK de Android (`local.properties` → `sdk.dir`).
 
 ```bash
-./gradlew testDebugUnitTest   # 34 pruebas del motor y de la IA
+./gradlew testDebugUnitTest   # 33 pruebas del motor y de la IA
 ./gradlew assembleDebug       # APK de depuración
 ./gradlew bundleRelease       # .aab firmado para Google Play (necesita keystore.properties)
 ```
 
 ## Licencia y origen
 
-El juego reproduce las reglas del clásico de hundir la flota y el conjunto de modos y variantes que
-popularizó *Fleet Battle* (Smuttlewerk Interactive). Las reglas de un juego no son objeto de derechos
-de autor; el nombre, la marca, los gráficos y el código de esa app sí lo son, y aquí no se usa nada
-de eso: todo el código, el dibujo, los sonidos y los textos son propios.
+El juego reproduce las reglas del clásico de hundir la flota, que no son objeto de derechos de
+autor. Todo el código, el dibujo, los sonidos y los textos son propios.

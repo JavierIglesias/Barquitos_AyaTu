@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ayatu.barquitos.R
 import com.ayatu.barquitos.core.Difficulty
-import com.ayatu.barquitos.core.FleetType
 import com.ayatu.barquitos.core.ShotRule
 import com.ayatu.barquitos.data.Medals
 import com.ayatu.barquitos.data.Record
@@ -81,7 +80,6 @@ fun StatsScreen(appViewModel: AppViewModel, onBack: () -> Unit) {
                 StatTile(stringResource(R.string.stats_played), "${stats.played}", Modifier.weight(1f))
                 StatTile(stringResource(R.string.stats_won), "${stats.won}", Modifier.weight(1f))
                 StatTile(stringResource(R.string.stats_lost), "${stats.lost}", Modifier.weight(1f))
-                StatTile(stringResource(R.string.stats_drawn), "${stats.drawn}", Modifier.weight(1f))
             }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatTile(
@@ -108,12 +106,6 @@ fun StatsScreen(appViewModel: AppViewModel, onBack: () -> Unit) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 StatTile(stringResource(R.string.stats_streak), "${stats.currentStreak}", Modifier.weight(1f))
                 StatTile(stringResource(R.string.stats_best_streak), "${stats.bestStreak}", Modifier.weight(1f))
-                StatTile(stringResource(R.string.mode_hotseat), "${stats.hotseatPlayed}", Modifier.weight(1f))
-            }
-
-            SectionTitle(stringResource(R.string.stats_by_fleet))
-            FleetType.entries.forEach { fleet ->
-                RecordRow(stringResource(fleet.labelRes), stats.byFleet[fleet] ?: Record())
             }
 
             SectionTitle(stringResource(R.string.stats_by_rule))
