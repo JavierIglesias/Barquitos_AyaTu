@@ -6,8 +6,8 @@
     <!-- Pantalla principal -->
     <string name="home_single">Un jugador</string>
     <string name="home_single_desc">Contra la máquina, sin conexión</string>
-    <string name="home_wifi">WiFi local</string>
-    <string name="home_wifi_desc">Dos móviles en la misma red</string>
+    <string name="home_wifi">Dos Jugadores\n(con mismo WIFI)</string>
+    <string name="home_wifi_desc">Uno crea la partida y el otro se une</string>
     <string name="home_resume">Seguir la partida</string>
     <string name="home_resume_desc">Tienes una batalla a medias</string>
     <string name="home_stats">Estadísticas</string>
@@ -29,9 +29,9 @@
     <string name="setup_player_names">Nombres</string>
 
     <string name="rule_one_shot">Un disparo</string>
-    <string name="rule_streak">Racha</string>
+    <string name="rule_continuous">Continuo</string>
     <string name="rule_one_shot_desc">Un disparo por turno, turnos alternos. La regla clásica.</string>
-    <string name="rule_streak_desc">Sigues disparando mientras aciertes. El primer fallo acaba tu turno.</string>
+    <string name="rule_continuous_desc">Sigues disparando mientras aciertes. El primer fallo acaba tu turno.</string>
 
     <string name="difficulty_easy">Fácil</string>
     <string name="difficulty_normal">Normal</string>
@@ -41,7 +41,7 @@
     <string name="difficulty_hard_desc">Calcula en cada tirada dónde es más probable que te queden barcos. No hace trampas, pero no perdona.</string>
 
     <string name="mode_single">Un jugador</string>
-    <string name="mode_wifi">WiFi local</string>
+    <string name="mode_wifi">Dos jugadores (con mismo WiFi)</string>
 
     <!-- Barcos -->
     <string name="ship_carrier">Portaaviones</string>
@@ -121,6 +121,8 @@
     <string name="settings_sound_desc">Disparos, impactos y hundimientos.</string>
     <string name="settings_haptics">Vibración</string>
     <string name="settings_haptics_desc">Un toque corto al acertar y uno largo al hundir.</string>
+    <string name="settings_sound_test">Probar el sonido</string>
+    <string name="settings_sound_test_desc">Suena un impacto. Si no se oye, sube el volumen multimedia del móvil.</string>
     <string name="settings_animations">Animaciones</string>
     <string name="settings_animations_desc">Olas, explosiones y entrada de las pantallas.</string>
     <string name="settings_show_coords">Letras y números</string>
@@ -137,7 +139,7 @@
     <string name="settings_version">Versión %1$s</string>
 
     <!-- WiFi local -->
-    <string name="wifi_title">WiFi local</string>
+    <string name="wifi_title">Dos jugadores</string>
     <string name="wifi_host">Crear partida</string>
     <string name="wifi_join">Unirse a una partida</string>
     <string name="wifi_hint">Los dos móviles tienen que estar en la misma red WiFi.</string>

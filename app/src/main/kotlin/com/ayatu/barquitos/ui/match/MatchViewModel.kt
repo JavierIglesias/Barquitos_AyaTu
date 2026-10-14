@@ -26,7 +26,6 @@ import com.ayatu.barquitos.data.StatsStore
 import com.ayatu.barquitos.net.LanLink
 import com.ayatu.barquitos.net.NetMessage
 import com.ayatu.barquitos.sound.Sfx
-import com.ayatu.barquitos.sound.SoundEngine
 import com.ayatu.barquitos.ui.common.BoardRender
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -102,7 +101,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     private val settingsStore = SettingsStore(application)
     private val statsStore = StatsStore(application)
     private val matchStore = MatchStore(application)
-    val sound = SoundEngine(application)
+    val sound = app.sound
 
     private val _ui = MutableStateFlow(MatchUiState())
     val ui: StateFlow<MatchUiState> = _ui.asStateFlow()
@@ -117,15 +116,13 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     private var recorded = false
 
     init {
+        // Los ajustes se siguen, no se leen una vez: si se cambian a mitad de partida valen ya.
+        // (El sonido y la vibración los lleva la propia Application, que es donde vive el motor.)
         viewModelScope.launch {
-            val s = settingsStore.settings.first()
-            sound.soundEnabled = s.sound
-            sound.hapticsEnabled = s.haptics
-            markWater = s.markWater
-            confirmShot = s.confirmShot
-            // Genera los WAV de los efectos la primera vez: es trabajo de disco, fuera del hilo
-            // principal.
-            kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { sound.prepare() }
+            settingsStore.settings.collect { s ->
+                markWater = s.markWater
+                confirmShot = s.confirmShot
+            }
         }
     }
 
@@ -196,7 +193,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         _ui.update {
             it.copy(selectedShipId = def.id, selectedPlacedId = null, preview = emptyList())
         }
-        sound.play(Sfx.TOQUE, 0.4f)
+        sound.play(Sfx.TOQUE)
     }
 
     /** El dedo, trayendo un barco de la bandeja, pasa por esa casilla (null = fuera del tablero). */
@@ -218,7 +215,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         val puesto = state.placed.firstOrNull { it.id == state.selectedPlacedId }
         if (puesto == null) {
             _ui.update { it.copy(orientation = it.orientation.next(), preview = emptyList()) }
-            sound.play(Sfx.TOQUE, 0.4f)
+            sound.play(Sfx.TOQUE)
             return
         }
         val nueva = puesto.orientation.next()
@@ -245,7 +242,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         }
         if (sitio == null) {
             // No cabe girado: se avisa y se deja como estaba.
-            sound.play(Sfx.AGUA, 0.3f)
+            sound.play(Sfx.AGUA, 0.7f)
             return
         }
         _ui.update {
@@ -255,7 +252,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                 preview = emptyList(),
             )
         }
-        sound.play(Sfx.TOQUE, 0.5f)
+        sound.play(Sfx.TOQUE)
     }
 
     // --- gestos sobre el propio tablero
@@ -295,7 +292,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                     preview = emptyList(),
                 )
             }
-            sound.play(Sfx.TOQUE, 0.4f)
+            sound.play(Sfx.TOQUE)
             return
         }
         if (anchor == null) clearPreview() else placeAt(anchor)
@@ -314,7 +311,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                 orientation = puesto.orientation,
             )
         }
-        sound.play(Sfx.TOQUE, 0.5f)
+        sound.play(Sfx.TOQUE)
     }
 
     private fun clearPreview() {
@@ -347,7 +344,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         val shape = def.shape.rotated(state.orientation)
         val offset = Coord(anchor.x - (shape.width - 1) / 2, anchor.y - (shape.height - 1) / 2)
         if (!Placement.canPlace(def, offset, state.orientation, state.placed)) {
-            sound.play(Sfx.AGUA, 0.3f)
+            sound.play(Sfx.AGUA, 0.7f)
             clearPreview()
             return
         }
@@ -362,7 +359,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                 preview = emptyList(),
             )
         }
-        sound.play(Sfx.TOQUE, 0.6f)
+        sound.play(Sfx.TOQUE)
     }
 
     fun randomPlacement() {
@@ -376,7 +373,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
                 preview = emptyList(),
             )
         }
-        sound.play(Sfx.TOQUE, 0.7f)
+        sound.play(Sfx.TOQUE)
     }
 
     fun clearPlacement() {
@@ -471,6 +468,8 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         byMe: Boolean,
     ) {
         val g = game ?: return
+        // El cañonazo suena siempre, y encima de él el resultado del disparo.
+        sound.play(Sfx.DISPARO, 0.9f)
         when {
             sunkKind != null -> {
                 sound.play(Sfx.HUNDIDO)
@@ -487,7 +486,7 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         }
         val flash = when {
             sunkKind != null -> Flash(if (byMe) FlashKind.HUNDIDO else FlashKind.HUNDIDO_PROPIO, sunkKind, now())
-            hit && byMe && g.config.shotRule == ShotRule.RACHA && !g.finished -> Flash(FlashKind.OTRA_VEZ, stamp = now())
+            hit && byMe && g.config.shotRule == ShotRule.CONTINUO && !g.finished -> Flash(FlashKind.OTRA_VEZ, stamp = now())
             hit -> Flash(FlashKind.TOCADO, stamp = now())
             else -> Flash(FlashKind.AGUA, stamp = now())
         }
@@ -614,7 +613,6 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
     override fun onCleared() {
         super.onCleared()
         link?.close()
-        sound.release()
     }
 
     // ------------------------------------------------------------------ red

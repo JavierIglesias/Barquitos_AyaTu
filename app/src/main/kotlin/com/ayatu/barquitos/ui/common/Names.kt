@@ -26,14 +26,14 @@ val ShipKind.labelRes: Int
 @get:StringRes
 val ShotRule.labelRes: Int
     get() = when (this) {
-        ShotRule.RACHA -> R.string.rule_streak
+        ShotRule.CONTINUO -> R.string.rule_continuous
         ShotRule.UN_DISPARO -> R.string.rule_one_shot
     }
 
 @get:StringRes
 val ShotRule.descriptionRes: Int
     get() = when (this) {
-        ShotRule.RACHA -> R.string.rule_streak_desc
+        ShotRule.CONTINUO -> R.string.rule_continuous_desc
         ShotRule.UN_DISPARO -> R.string.rule_one_shot_desc
     }
 

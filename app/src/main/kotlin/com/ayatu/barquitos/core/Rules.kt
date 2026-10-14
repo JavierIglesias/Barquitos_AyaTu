@@ -5,13 +5,15 @@ import kotlin.random.Random
 /**
  * Cómo se reparten los disparos.
  *
- * - **RACHA**: sigues disparando mientras aciertes; el primer fallo acaba tu turno. Es como se
- *   juega normalmente a lápiz y papel, y es la regla por defecto.
- * - **UN_DISPARO**: un disparo por turno, turnos estrictamente alternos, aciertes o no.
+ * - **UN_DISPARO**: un disparo por turno, turnos estrictamente alternos, aciertes o no. Es la regla
+ *   clásica y la que viene puesta por defecto.
+ * - **CONTINUO**: sigues disparando mientras aciertes; el primer fallo acaba tu turno.
+ *
+ * El orden de las constantes es el orden en que se ofrecen al elegir las reglas.
  */
 enum class ShotRule(val resKey: String) {
-    RACHA("rule_streak"),
     UN_DISPARO("rule_one_shot"),
+    CONTINUO("rule_continuous"),
 }
 
 /** Nivel de la IA. */
@@ -41,7 +43,7 @@ fun GameConfig.resolvedForHosting(rng: Random = Random): GameConfig =
 /** Configuración completa de una partida. La flota no se elige: es siempre la misma. */
 data class GameConfig(
     val mode: GameMode = GameMode.UN_JUGADOR,
-    val shotRule: ShotRule = ShotRule.RACHA,
+    val shotRule: ShotRule = ShotRule.UN_DISPARO,
     val difficulty: Difficulty = Difficulty.NORMAL,
     /** 0 = empieza el jugador 1, 1 = empieza el rival, null = se sortea. */
     val startingPlayer: Int? = null,

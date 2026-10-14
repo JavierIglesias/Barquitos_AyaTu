@@ -93,7 +93,6 @@ fun SetupScreen(
                 icon = Icons.Default.GpsFixed,
                 title = stringResource(R.string.setup_rule),
                 summary = stringResource(rule.labelRes),
-                initiallyExpanded = true,
             ) {
                 ShotRule.entries.forEach { option ->
                     OptionCard(

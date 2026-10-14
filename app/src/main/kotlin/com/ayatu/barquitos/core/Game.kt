@@ -35,7 +35,7 @@ data class ShotRecord(
  * Motor de la partida. Mantiene los dos tableros, de quién es el turno y quién ha ganado.
  *
  * El jugador de turno llama a [fire] una vez por disparo y el motor decide cuándo pasa el turno:
- * con [ShotRule.UN_DISPARO] siempre después de disparar, con [ShotRule.RACHA] solo al fallar.
+ * con [ShotRule.UN_DISPARO] siempre después de disparar, con [ShotRule.CONTINUO] solo al fallar.
  */
 class Game(
     val config: GameConfig,
@@ -104,7 +104,7 @@ class Game(
             winner = shooter
             return outcome
         }
-        // En RACHA no se pierde el turno al acertar: se sigue disparando hasta fallar.
+        // En CONTINUO no se pierde el turno al acertar: se sigue disparando hasta fallar.
         if (config.shotRule == ShotRule.UN_DISPARO || !outcome.hit) endTurn()
         return outcome
     }

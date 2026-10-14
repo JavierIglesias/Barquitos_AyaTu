@@ -1,5 +1,75 @@
 # Historial de Cambios
 
+## 14-10-2026 22:30 [1.0.0]
+
+### Corregido
+
+- **No se oía ningún sonido.** No era que no sonara: sonaba, pero a nada. Medidos los WAV que la app
+  genera en la caché del móvil (`SoundEngine.prepare()` → `cache/sfx/*.wav`), los efectos salían
+  entre **-31 y -18 dBFS** de valor eficaz y, peor aún, con casi toda su energía **por debajo de
+  300 Hz**, que es donde el altavoz de un móvil no reproduce nada: el cuerpo del cañonazo estaba en
+  90-45 Hz, el del impacto en 70 Hz y el del hundimiento en 55 Hz. Encima, los dos efectos que más
+  suenan se reproducían atenuados: el agua (cada disparo fallado) al 30 % y el toque de interfaz al
+  40 %. En conjunto, el agua llegaba al altavoz a unos **-42 dBFS**, alrededor del 1 % de la escala:
+  inaudible.
+  - Resintetizados los siete efectos para el altavoz de un móvil. El cuerpo de los golpes se sube a
+    la zona de 170-520 Hz, el ruido se tiñe con un filtro de banda (variable de estado de
+    Chamberlin) en vez de repartirse por todo el espectro, y **cada efecto se normaliza a un pico
+    fijo**, que es lo que evita que uno acabe veinte decibelios por debajo de otro según cómo se
+    mezclen sus componentes. Medido sobre los ficheros generados en el propio móvil, ahora van de
+    **-24 a -13 dBFS** y entre el **80 y el 100 %** de su energía cae en la banda que el altavoz
+    reproduce (antes, el cañonazo tenía ahí el 18 % y el impacto el 33 %).
+  - Subido el volumen en los puntos de llamada: el agua y el toque pasan de 0,3 y 0,4 a 1,0.
+  - `GENERATION` pasa a 2 para regenerar la caché, y `prepare()` borra los WAV de generaciones
+    anteriores en vez de dejarlos ocupando sitio.
+- **El cañonazo (`Sfx.DISPARO`) estaba sintetizado y no sonaba nunca.** No había ni una llamada a
+  `play(Sfx.DISPARO)` en todo el proyecto. Ahora suena en cada disparo, con el resultado encima.
+- **Los ajustes de sonido y vibración no se aplicaban hasta reiniciar la app.** Causa:
+  `MatchViewModel` leía los ajustes **una sola vez** con `settingsStore.settings.first()` en su
+  `init`. Ahora el motor de sonido vive en `BarquitosApplication` y sigue el flujo de ajustes con
+  `collect`, así que el interruptor vale en cuanto se toca. Lo mismo para «Marcar agua al hundir» y
+  «Confirmar disparo» dentro de `MatchViewModel`.
+- **Publicación insegura del mapa de efectos entre hilos.** `SoundEngine.ids` era un `HashMap`
+  mutable escrito desde el hilo de disco y leído desde el hilo principal, sin barrera de memoria.
+  Ahora es un mapa inmutable detrás de una referencia `@Volatile`.
+
+### Añadido
+
+- **`sound/SfxSynth.kt`**: la síntesis se separa de Android para poder **medirla en las pruebas**.
+  `SoundEngine` se queda solo con el `SoundPool`, el vibrador y la caché.
+- **`SoundTest`** (6 pruebas): mide con una FFT propia el pico, el valor eficaz y qué fracción de la
+  energía cae entre 300 Hz y 8 kHz, y falla si un efecto baja de -26 dBFS útiles o deja menos del
+  40 % de su energía en esa banda. Es la prueba que habría cazado este fallo.
+- **Botón «Probar el sonido»** en Ajustes → Sonido y vibración: suena un impacto sin tener que
+  empezar una partida, con un aviso de que si no se oye es el volumen multimedia del móvil.
+- **Política de privacidad** publicable: `privacidad.html` y `privacy.html` en la raíz del
+  repositorio, para servirlas con GitHub Pages.
+- **Gráficos de Google Play** en `store/graficos/`: icono de 512×512, gráfico destacado de 1024×500
+  (generados por programa con la paleta de la app) y seis capturas de 1280×2856 tomadas del emulador
+  con la barra de estado en modo demostración.
+
+### Cambiado
+
+- **La regla «Racha» pasa a llamarse «Continuo»**, y las dos reglas cambian de orden y de valor por
+  defecto: ahora se ofrece primero **«Un disparo»**, que además es la que viene puesta
+  (`GameConfig.shotRule`), y el panel «Regla de disparo» de Nueva partida arranca **contraído**. El
+  orden de las constantes de `ShotRule` es el orden en que se ofrecen, así que basta con ponerlas en
+  ese orden: `UN_DISPARO` y luego `CONTINUO`. Renombradas también la constante del enum
+  (`RACHA` → `CONTINUO`) y las cadenas (`rule_streak` → `rule_continuous`), para que el código no
+  siga llamando a las cosas por un nombre que ya no se ve en pantalla. Como el nombre del enum es lo
+  que se guarda en los ajustes y en las estadísticas, un `last_rule` o un récord de la versión
+  anterior con el valor `RACHA` se ignora y se vuelve al valor por defecto; en una app sin publicar
+  (`versionCode 1`) no afecta a nadie.
+- **«WiFi local» pasa a llamarse «Dos Jugadores (con mismo WIFI)»** en la pantalla de inicio, a dos
+  líneas, con «Uno crea la partida y el otro se une» debajo. El título de la pantalla queda en «Dos
+  jugadores», que es lo que cabe en la barra superior. Cadenas `home_wifi`, `home_wifi_desc`,
+  `mode_wifi` y `wifi_title`, en español y en inglés.
+
+### Pendiente de comprobar
+
+- El arreglo del WiFi del 10-10-2026 sigue sin poder probarse aquí de punta a punta (dos emuladores
+  no se ven por NSD). Necesita dos móviles reales.
+
 ## 10-10-2026 22:15 [1.0.0]
 
 ### Corregido

@@ -17,7 +17,10 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Sailing
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
@@ -108,6 +111,20 @@ fun SettingsScreen(appViewModel: AppViewModel, onBack: () -> Unit) {
                     description = stringResource(R.string.settings_haptics_desc),
                     checked = settings.haptics,
                     onChange = appViewModel::setHaptics,
+                )
+                OutlinedButton(
+                    onClick = appViewModel::testSound,
+                    enabled = settings.sound,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Icon(Icons.Default.PlayArrow, contentDescription = null)
+                    Spacer(Modifier.padding(2.dp))
+                    Text(stringResource(R.string.settings_sound_test))
+                }
+                Text(
+                    stringResource(R.string.settings_sound_test_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
 

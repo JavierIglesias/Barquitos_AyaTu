@@ -10,7 +10,8 @@ móvil por WiFi. Sin anuncios, sin cuentas y sin internet.
 La pantalla principal es el puerto. Desde ahí sales a jugar:
 
 - **Un jugador** — contra la máquina. No hace falta conexión de ningún tipo.
-- **WiFi local** — dos móviles en la misma red WiFi.
+- **Dos Jugadores (con mismo WIFI)** — dos móviles en la misma red WiFi: uno crea la partida y
+  el otro se une.
 - **Seguir la partida** — aparece solo si dejaste una batalla a medias. La recupera tal y como
   estaba, aunque hayas cerrado la app o se haya apagado el móvil.
 
@@ -49,8 +50,8 @@ Se eligen al crear la partida, en **Reglas de disparo**. Las dos partes juegan c
 
 | Regla | Qué pasa |
 |---|---|
-| **Racha** | Sigues disparando mientras aciertes. El primer fallo acaba tu turno. Es como se juega normalmente, y es la que viene puesta. |
-| **Un disparo** | Un disparo por turno y se pasa, aciertes o no. Turnos estrictamente alternos. |
+| **Un disparo** | Un disparo por turno y se pasa, aciertes o no. Turnos estrictamente alternos. Es la regla clásica y la que viene puesta. |
+| **Continuo** | Sigues disparando mientras aciertes. El primer fallo acaba tu turno. Es como se juega normalmente a lápiz y papel. |
 
 ---
 
@@ -87,7 +88,7 @@ cuadradito por casilla: gris si está entera, naranja si está tocada, rojo y ta
 - **Agua**: un círculo claro con su onda.
 - **Tocado**: una explosión naranja.
 - **Hundido**: se revela el barco entero, se tacha en rojo y se marca el agua de alrededor.
-- Con la regla **Racha**, al acertar sale «¡Otra vez!» y sigues tú.
+- Con la regla **Continuo**, al acertar sale «¡Otra vez!» y sigues tú.
 
 Debajo del todo está el **Parte de batalla**: las últimas jugadas, con la casilla, quién disparó y
 qué pasó.
@@ -95,11 +96,11 @@ qué pasó.
 Arriba a la derecha, la **bandera blanca** es rendirse (cuenta como derrota). La **flecha de volver**
 deja la partida guardada para seguirla luego.
 
-### WiFi local
+### Dos Jugadores (con mismo WIFI)
 
-1. En un móvil: **WiFi local → Crear partida**. Elige las reglas (las que pongas aquí son las que
+1. En un móvil: **Dos Jugadores → Crear partida**. Elige las reglas (las que pongas aquí son las que
    jugaréis los dos) y pulsa **Empezar**. El móvil se queda esperando.
-2. En el otro: **WiFi local → Unirse a una partida**. Aparecerá la partida en la lista; tócala.
+2. En el otro: **Dos Jugadores → Unirse a una partida**. Aparecerá la partida en la lista; tócala.
 3. Cada uno coloca su flota y empieza la batalla.
 
 Los dos móviles tienen que estar en la **misma red WiFi**. No hace falta cuenta, ni registro, ni
@@ -114,7 +115,7 @@ Partidas, victorias, porcentaje de acierto, barcos hundidos, mejor victoria (la 
 menos disparos), racha actual y mejor racha; el desglose por regla y por nivel de la máquina; y las
 **medallas**.
 
-Cuentan las partidas contra la máquina y las de WiFi local.
+Cuentan las partidas contra la máquina y las de dos jugadores.
 
 El icono de la papelera, arriba a la derecha, borra las estadísticas. No se puede deshacer, y las
 medallas se pierden con ellas.
@@ -134,6 +135,9 @@ lo que hay elegido sin necesidad de abrirlo.
   - *Animaciones* — explosiones y chapoteos.
 - **Sonido y vibración**
   - *Sonido* — cañonazos, impactos y hundimientos.
+  - *Probar el sonido* — suena un impacto al momento, para comprobar que se oye sin tener que
+    empezar una partida. Si aquí no oyes nada, sube el **volumen multimedia** del móvil (el de
+    los vídeos y la música, no el del timbre): los efectos del juego salen por ese volumen.
   - *Vibración* — un toque corto al acertar, uno largo al hundir.
 - **Aspecto** — como el sistema, claro u oscuro.
 - **Tu nombre** — el que sale en la partida.
@@ -172,10 +176,11 @@ Con esta flota ni la mejor IA hace milagros: cuatro submarinos de una casilla su
 no dejan pistas, y hay que buscarlos uno a uno.
 
 **¿Se pierde la partida si cierro la app?**
-No, salvo las de WiFi local. Al volver, el puerto te ofrece **Seguir la partida**.
+No, salvo las de dos jugadores. Al volver, el puerto te ofrece **Seguir la partida**.
 
 **¿Necesito internet?**
-No. Un jugador funciona sin conexión ninguna. WiFi local necesita que los dos móviles estén en la
+No. Un jugador funciona sin conexión ninguna. El modo de dos jugadores necesita que los dos
+móviles estén en la
 misma red, pero no sale a internet.
 
 **¿Qué datos se envían?**

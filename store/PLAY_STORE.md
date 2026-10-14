@@ -56,7 +56,7 @@ Barquitos AyaTu
 ### Descripción breve (máx. 80)
 
 ```
-Hunde la flota de siempre: contra la máquina o contra otro móvil por WiFi local.
+Hunde la flota de siempre: contra la máquina o contra otro móvil por el mismo WiFi.
 ```
 
 ### Descripción completa (máx. 4000)
@@ -76,17 +76,17 @@ disparos ahí.
 
 DOS REGLAS DE DISPARO
 
-• Racha — Sigues disparando mientras aciertes. El primer fallo acaba tu turno. Es como se juega
-  normalmente.
-• Un disparo — Un disparo por turno y se pasa, aciertes o no.
+• Un disparo — Un disparo por turno y se pasa, aciertes o no. Es la regla clásica y la que viene
+  puesta.
+• Continuo — Sigues disparando mientras aciertes. El primer fallo acaba tu turno.
 
 CONTRA QUIÉN
 
 • Contra la máquina, sin conexión de ningún tipo, en tres niveles. En Difícil calcula en cada
   tirada de cuántas maneras podría estar cada barco que te queda en cada casilla y dispara a la más
   probable. No hace trampas: solo ve lo mismo que verías tú.
-• Por WiFi local: dos móviles en la misma red se encuentran solos y juegan directamente, sin
-  servidor, sin cuenta y sin salir a internet.
+• Dos jugadores con el mismo WiFi: los dos móviles se encuentran solos en la red de casa y
+  juegan directamente, sin servidor, sin cuenta y sin salir a internet.
 
 COLOCAR LA FLOTA ES ARRASTRAR
 
@@ -110,7 +110,7 @@ Y ADEMÁS
 ```
 Primera versión. El barquitos de toda la vida: diez barcos (uno de 4, dos de 3, tres de 2 y cuatro
 de 1) que no pueden tocarse, dos reglas de disparo, partidas contra la máquina en tres niveles y
-por WiFi local entre dos móviles. Estadísticas y medallas. Sin anuncios, sin compras y sin
+para dos jugadores con el mismo WiFi. Estadísticas y medallas. Sin anuncios, sin compras y sin
 conexión.
 ```
 
@@ -125,7 +125,7 @@ conexión.
 
 | Permiso | Para qué | Si se quita |
 |---|---|---|
-| `android.permission.INTERNET` | Abrir el socket TCP entre los dos móviles en el modo **WiFi local**. No se usa para salir a internet: no hay servidor, ni analítica, ni anuncios. | El modo WiFi local deja de funcionar. |
+| `android.permission.INTERNET` | Abrir el socket TCP entre los dos móviles en el modo **Dos Jugadores (con mismo WIFI)**. No se usa para salir a internet: no hay servidor, ni analítica, ni anuncios. | El modo de dos jugadores deja de funcionar. |
 | `android.permission.ACCESS_NETWORK_STATE` | Saber si hay red local al publicar o buscar partidas por NSD. | Igual que el anterior. |
 | `android.permission.VIBRATE` | Toque corto al acertar y largo al hundir un barco. Se puede desactivar en Ajustes. | Solo se pierde la vibración. |
 
@@ -154,7 +154,7 @@ Qué guarda la app, todo **solo en el móvil** y sin salir de él:
 | Partida a medias | `filesDir/partida.sav` | Poder seguir la partida |
 | Registro de eventos | `filesDir/logs/*.log` | Depuración; el usuario decide si lo comparte |
 
-En el modo WiFi local, lo único que viaja entre los dos móviles es: el nombre que hayas puesto, las
+En el modo de dos jugadores, lo único que viaja entre los dos móviles es: el nombre que hayas puesto, las
 reglas de la partida, la colocación de tu flota y tus disparos. Va directamente de un móvil a otro
 por la red local.
 
@@ -165,7 +165,7 @@ por la red local.
 - **Violencia**: ninguna representación realista. Son fichas sobre una cuadrícula; hay explosiones
   esquemáticas dibujadas con figuras geométricas y no hay personas, ni sangre, ni armas realistas.
 - **Lenguaje soez, sexo, drogas, juego de azar/apuestas, compras**: no.
-- **Interacción con otros usuarios**: **sí, limitada** — en el modo WiFi local dos jugadores de la
+- **Interacción con otros usuarios**: **sí, limitada** — en el modo de dos jugadores, dos jugadores de la
   misma red intercambian jugadas. **No hay chat, ni texto libre, ni perfiles, ni contenido
   compartido**; lo único que el rival puede ver es el nombre que el jugador se haya puesto.
 - **Comparte ubicación**: no.
@@ -184,17 +184,37 @@ por la red local.
 
 ## 7. Gráficos que hay que subir
 
-| Recurso | Tamaño | Estado |
+Todos están hechos y en **`store/graficos/`**. El icono y el gráfico destacado se generan por
+programa con la paleta de la app (`Docs/` no lleva imágenes: el script está en el historial del
+repositorio); las capturas salen del emulador Pixel 9 Pro con la barra de estado en modo
+demostración, en español.
+
+| Recurso | Tamaño | Fichero |
 |---|---|---|
-| Icono de la app | 512 × 512 PNG, 32 bits | **Pendiente**: exportar desde `app/src/main/res/drawable/ic_launcher_foreground.xml` sobre el fondo `#071A2B` |
-| Gráfico destacado | 1024 × 500 PNG | **Pendiente** |
-| Capturas de teléfono | mín. 2, máx. 8; 16:9 o 9:16, lado corto ≥ 320 px | **Pendiente**: puerto, nueva partida, colocación de la flota, batalla con impactos, resultado |
-| Capturas de tablet de 7" y 10" | opcionales | Pendiente |
+| Icono de la app | 512 × 512 PNG, sin transparencia | `store/graficos/icono_512.png` |
+| Gráfico destacado | 1024 × 500 PNG, sin transparencia | `store/graficos/destacado_1024x500.png` |
+| Captura 1 — pantalla de inicio | 1280 × 2856 | `store/graficos/capturas/01_inicio.png` |
+| Captura 2 — nueva partida | 1280 × 2856 | `store/graficos/capturas/02_nueva_partida.png` |
+| Captura 3 — colocar la flota | 1280 × 2856 | `store/graficos/capturas/03_colocar_flota.png` |
+| Captura 4 — batalla con impactos y hundidos | 1280 × 2856 | `store/graficos/capturas/04_batalla.png` |
+| Captura 5 — dos jugadores | 1280 × 2856 | `store/graficos/capturas/05_dos_jugadores.png` |
+| Captura 6 — ajustes | 1280 × 2856 | `store/graficos/capturas/06_ajustes.png` |
+| Capturas de tablet de 7" y 10" | opcionales | No hechas |
 | Vídeo promocional | opcional (YouTube) | No previsto |
 
-Para las capturas, el emulador Pixel 9 Pro (1280 × 2856) da la proporción correcta:
+Google Play pide **de 2 a 8 capturas de teléfono**, con el lado corto de 320 px como mínimo y el
+largo de 3840 px como máximo, y una proporción entre 1:2,4 y 2,4:1. Las seis cumplen (1280 × 2856 es
+1:2,23).
+
+Para rehacer las capturas, con el emulador Pixel 9 Pro arrancado:
 
 ```
+adb shell settings put global sysui_demo_allowed 1
+adb shell am broadcast -a com.android.systemui.demo -e command enter
+adb shell am broadcast -a com.android.systemui.demo -e command clock -e hhmm 1000
+adb shell am broadcast -a com.android.systemui.demo -e command battery -e level 100 -e plugged false
+adb shell am broadcast -a com.android.systemui.demo -e command notifications -e visible false
+adb shell cmd locale set-app-locales com.ayatu.barquitos --locales es-ES
 adb exec-out screencap -p > captura.png
 ```
 
@@ -202,19 +222,40 @@ adb exec-out screencap -p > captura.png
 
 ## 8. Política de privacidad
 
-Google Play exige una URL de política de privacidad aunque la app no recoja datos. Texto mínimo que
-sirve (hay que publicarlo en una página accesible, p. ej. en GitHub Pages del repositorio):
+Google Play exige una URL de política de privacidad aunque la app no recoja ningún dato. La política
+está escrita y lista para publicar, en los dos idiomas de la ficha:
+
+| Fichero | Idioma |
+|---|---|
+| `privacidad.html` (raíz del repositorio) | Español — es la que hay que poner en la consola |
+| `privacy.html` (raíz del repositorio) | Inglés, enlazada desde la anterior |
+
+Dice, en resumen: la app no recoge, no envía y no comparte ningún dato personal; lo que guarda
+(ajustes, estadísticas, partida a medias, nombre del jugador y registro de la app) se queda en el
+almacenamiento privado del móvil; no hay servidores, analítica, publicidad ni bibliotecas de
+terceros; en el modo de dos jugadores viajan **directamente de un móvil al otro** el nombre, las
+reglas, la colocación de la flota y los disparos; se detallan los tres permisos y para qué sirven; y
+se advierte de que la copia de seguridad de Android puede llevar los ajustes al Drive del propio
+usuario.
+
+### Cómo publicar la URL (hay que hacerlo en GitHub, una sola vez)
+
+Los dos ficheros están en la **raíz** del repositorio a propósito: GitHub Pages solo puede servir
+desde la raíz o desde una carpeta llamada exactamente `docs`, y este proyecto ya tiene una carpeta
+`Docs` (con mayúscula), que en Windows sería la misma.
+
+1. En `https://github.com/JavierIglesias/Barquitos_AyaTu` → **Settings** → **Pages**.
+2. En *Build and deployment*, **Source: Deploy from a branch**; *Branch:* **`main`**, carpeta
+   **`/ (root)`**. **Save**.
+3. Al cabo de un par de minutos la política queda publicada en:
 
 ```
-Barquitos AyaTu no recopila, almacena ni comparte ningún dato personal. No usa cuentas, publicidad,
-analítica ni servicios de terceros. Los ajustes, las estadísticas, la partida en curso y el registro
-de la aplicación se guardan únicamente en el dispositivo y se eliminan al desinstalarla. En el modo
-«WiFi local», el nombre elegido por el jugador, las reglas de la partida y las jugadas se envían
-directamente al otro dispositivo de la misma red local, sin pasar por ningún servidor.
-Contacto: javier.iglesias10@gmail.com
+https://javieriglesias.github.io/Barquitos_AyaTu/privacidad.html
 ```
 
-- **URL de la política**: **pendiente de publicar**.
+- **URL de la política para la consola**:
+  `https://javieriglesias.github.io/Barquitos_AyaTu/privacidad.html`
+  (pendiente del paso 2: hasta que no se active Pages, la dirección da 404).
 
 ---
 
@@ -225,11 +266,13 @@ Contacto: javier.iglesias10@gmail.com
 - [ ] `Docs/historial.md`, `Docs/novedades.md` y `Docs/manual_usuario.md` al día (entran en el APK
       como assets; la app los enseña).
 - [ ] Las notas de la versión de esta ficha coinciden con `Docs/novedades.md`.
-- [ ] Probado en un móvil real además del emulador, incluido el modo WiFi local con dos aparatos.
+- [ ] Probado en un móvil real además del emulador, incluido el modo de dos jugadores con dos
+      aparatos.
 - [ ] Permisos del manifiesto = los de la tabla del apartado 3.
 - [ ] Formulario de seguridad de los datos revisado si ha cambiado algo de lo que guarda la app.
 - [ ] Capturas rehechas si ha cambiado la interfaz.
-- [ ] URL de política de privacidad accesible.
+- [ ] URL de política de privacidad accesible (GitHub Pages activado; ver apartado 8).
+- [ ] Sonido comprobado en un móvil real con «Probar el sonido», en Ajustes.
 
 ---
 

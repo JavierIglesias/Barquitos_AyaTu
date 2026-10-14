@@ -1,5 +1,45 @@
 # Novedades
 
+## 14 de octubre de 2026 — versión 1.0.0 (sonido)
+
+### Ahora se oyen los disparos
+
+Los sonidos sonaban, pero tan flojos que no había forma de oírlos. Dos motivos: salían a un volumen
+muy por debajo de lo normal, y casi todo su sonido estaba en graves tan profundos que el altavoz de
+un móvil sencillamente no los reproduce.
+
+Están hechos de nuevo pensando en el altavoz de un móvil: más fuertes y con el cuerpo del sonido
+donde sí se oye. El chapoteo del agua y el toque de los botones, que son los que más suenan, han
+subido muchísimo.
+
+Y el cañonazo, que estaba hecho pero no llegaba a sonar nunca, ahora suena en cada disparo.
+
+### Un botón para probar el sonido
+
+En **Ajustes → Sonido y vibración** hay un botón «Probar el sonido»: suena un impacto al momento,
+sin tener que empezar una partida. Si ahí no se oye nada, es el volumen multimedia del móvil.
+
+### Los interruptores de sonido valen al momento
+
+Antes, apagar o encender el sonido o la vibración no hacía efecto hasta cerrar y abrir la app. Ahora
+vale en cuanto lo tocas.
+
+### «Un disparo» por defecto, y «Racha» ahora se llama «Continuo»
+
+Al crear una partida, la regla que viene puesta es **Un disparo** (un disparo por turno y se pasa),
+que es la clásica, y sale la primera de las dos. La otra, la de seguir disparando mientras aciertes,
+se llamaba «Racha» y ahora se llama **Continuo**.
+
+Además, el apartado «Regla de disparo» aparece cerrado: si no quieres tocar nada, solo tienes que
+darle a Empezar.
+
+### «Dos Jugadores (con mismo WIFI)»
+
+El modo que se llamaba «WiFi local» ahora se llama por lo que es: **Dos Jugadores (con mismo
+WIFI)**, con «Uno crea la partida y el otro se une» debajo.
+
+---
+
 ## 10 de octubre de 2026 — versión 1.0.0 (arreglos)
 
 ### Por WiFi ya se puede disparar

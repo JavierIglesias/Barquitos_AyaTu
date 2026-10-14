@@ -5,8 +5,8 @@
     <!-- Main screen -->
     <string name="home_single">One player</string>
     <string name="home_single_desc">Against the computer, offline</string>
-    <string name="home_wifi">Local Wi-Fi</string>
-    <string name="home_wifi_desc">Two phones on the same network</string>
+    <string name="home_wifi">Two Players\n(on the same Wi-Fi)</string>
+    <string name="home_wifi_desc">One creates the game, the other joins</string>
     <string name="home_resume">Resume game</string>
     <string name="home_resume_desc">You have a battle in progress</string>
     <string name="home_stats">Statistics</string>
@@ -28,9 +28,9 @@
     <string name="setup_player_names">Names</string>
 
     <string name="rule_one_shot">One shot</string>
-    <string name="rule_streak">Streak</string>
+    <string name="rule_continuous">Continuous</string>
     <string name="rule_one_shot_desc">One shot per turn, strictly alternating. The classic rule.</string>
-    <string name="rule_streak_desc">You keep firing as long as you hit. The first miss ends your turn.</string>
+    <string name="rule_continuous_desc">You keep firing as long as you hit. The first miss ends your turn.</string>
 
     <string name="difficulty_easy">Easy</string>
     <string name="difficulty_normal">Normal</string>
@@ -40,7 +40,7 @@
     <string name="difficulty_hard_desc">Works out on every turn where your remaining ships most likely are. It does not cheat, but it does not forgive either.</string>
 
     <string name="mode_single">One player</string>
-    <string name="mode_wifi">Local Wi-Fi</string>
+    <string name="mode_wifi">Two players (on the same Wi-Fi)</string>
 
     <!-- Ships -->
     <string name="ship_carrier">Carrier</string>
@@ -119,6 +119,8 @@
     <string name="settings_sound">Sound</string>
     <string name="settings_sound_desc">Gunfire, hits and sinkings.</string>
     <string name="settings_haptics">Vibration</string>
+    <string name="settings_sound_test">Test the sound</string>
+    <string name="settings_sound_test_desc">Plays a hit. If you hear nothing, turn up the phone media volume.</string>
     <string name="settings_haptics_desc">A short buzz on a hit and a long one on a sinking.</string>
     <string name="settings_animations">Animations</string>
     <string name="settings_animations_desc">Waves, explosions and screen transitions.</string>
@@ -136,7 +138,7 @@
     <string name="settings_version">Version %1$s</string>
 
     <!-- Local Wi-Fi -->
-    <string name="wifi_title">Local Wi-Fi</string>
+    <string name="wifi_title">Two players</string>
     <string name="wifi_host">Create game</string>
     <string name="wifi_join">Join a game</string>
     <string name="wifi_hint">Both phones must be on the same Wi-Fi network.</string>

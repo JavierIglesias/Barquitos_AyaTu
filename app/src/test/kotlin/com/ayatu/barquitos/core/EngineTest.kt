@@ -173,8 +173,18 @@ class GameTest {
     }
 
     @Test
-    fun `con racha se sigue disparando mientras se acierte`() {
-        val g = partida(ShotRule.RACHA)
+    fun `la regla por defecto es un disparo por turno y se ofrece la primera`() {
+        assertEquals(ShotRule.UN_DISPARO, GameConfig().shotRule)
+        assertEquals(
+            "«Un disparo» tiene que salir la primera al elegir las reglas",
+            ShotRule.UN_DISPARO,
+            ShotRule.entries.first(),
+        )
+    }
+
+    @Test
+    fun `en continuo se sigue disparando mientras se acierte`() {
+        val g = partida(ShotRule.CONTINUO)
         g.fire(Coord(5, 5)) // acierta
         assertEquals("Al acertar se repite", 0, g.current)
         g.fire(Coord(9, 9)) // falla
@@ -183,7 +193,7 @@ class GameTest {
 
     @Test
     fun `disparar dos veces a la misma casilla no cuenta`() {
-        val g = partida(ShotRule.RACHA)
+        val g = partida(ShotRule.CONTINUO)
         assertNotNull(g.fire(Coord(9, 9)))
         g.fire(Coord(0, 9)) // turno del rival, falla
         assertEquals(0, g.current)
@@ -192,7 +202,7 @@ class GameTest {
 
     @Test
     fun `hundir la flota entera gana la partida`() {
-        val g = partida(ShotRule.RACHA)
+        val g = partida(ShotRule.CONTINUO)
         g.fire(Coord(5, 5))
         val last = g.fire(Coord(6, 5))
         assertTrue(last!!.fleetDestroyed)
@@ -222,7 +232,7 @@ class GameTest {
 
     @Test
     fun `al hundir un barco deja de contar como a flote`() {
-        val g = partida(ShotRule.RACHA)
+        val g = partida(ShotRule.CONTINUO)
         g.fire(Coord(5, 5))
         g.fire(Coord(6, 5))
         assertTrue(g.viewFor(0).remaining.isEmpty())
@@ -251,7 +261,7 @@ class SaveTest {
             PlayerBoard(Fleet.BOARD_SIZE, Placement.randomLayout(Random(1))),
             PlayerBoard(Fleet.BOARD_SIZE, Placement.randomLayout(Random(2))),
         )
-        return Game(GameConfig(shotRule = ShotRule.RACHA), boards, startingPlayer = 1)
+        return Game(GameConfig(shotRule = ShotRule.CONTINUO), boards, startingPlayer = 1)
     }
 
     @Test

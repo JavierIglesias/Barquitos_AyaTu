@@ -50,7 +50,7 @@ class SettingsStore(private val context: Context) {
             playerName = p[K.PLAYER_NAME] ?: "",
             lastConfig = GameConfig(
                 mode = p[K.LAST_MODE]?.let { enumOrNull<GameMode>(it) } ?: GameMode.UN_JUGADOR,
-                shotRule = p[K.LAST_RULE]?.let { enumOrNull<ShotRule>(it) } ?: ShotRule.RACHA,
+                shotRule = p[K.LAST_RULE]?.let { enumOrNull<ShotRule>(it) } ?: ShotRule.UN_DISPARO,
                 difficulty = p[K.LAST_DIFFICULTY]?.let { enumOrNull<Difficulty>(it) } ?: Difficulty.NORMAL,
                 startingPlayer = (p[K.LAST_START] ?: -1).takeIf { it >= 0 },
             ),

@@ -2,12 +2,14 @@ package com.ayatu.barquitos.ui
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import com.ayatu.barquitos.BarquitosApplication
 import androidx.lifecycle.viewModelScope
 import com.ayatu.barquitos.data.MatchStore
 import com.ayatu.barquitos.data.Settings
 import com.ayatu.barquitos.data.SettingsStore
 import com.ayatu.barquitos.data.Stats
 import com.ayatu.barquitos.data.StatsStore
+import com.ayatu.barquitos.sound.Sfx
 import com.ayatu.barquitos.ui.theme.ThemeChoice
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -53,6 +55,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun setTheme(value: ThemeChoice) = edit { settingsStore.setTheme(value) }
     fun setPlayerName(value: String) = edit { settingsStore.setPlayerName(value) }
     fun resetStats() = edit { statsStore.reset() }
+
+    /**
+     * Suena un impacto de prueba, para comprobar desde Ajustes que el sonido llega al altavoz sin
+     * tener que empezar una partida. Si no se oye nada aquí, es el volumen del móvil.
+     */
+    fun testSound() {
+        (getApplication<Application>() as BarquitosApplication).sound.play(Sfx.IMPACTO)
+    }
 
     private fun edit(block: suspend () -> Unit) {
         viewModelScope.launch { block() }
