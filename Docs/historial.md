@@ -11,6 +11,13 @@
   política)—, más la configuración de la ficha para la categoría y las traducciones. Recogidos
   también el «Guardar» + «Enviar para revisión», que la ficha es por idioma, y el formato
   `<es-ES>...</es-ES>` de las notas de la versión.
+- **Compilada y verificada la versión firmada 1.0.0 (`versionCode` 1) para subir a Play.** El
+  `.aab` y el `.apk` se dejan con nombre de versión en `store/publicar/`, carpeta añadida a
+  `.gitignore` porque son binarios que se regeneran con `./gradlew bundleRelease`. Comprobado:
+  47 pruebas sin fallos, `jarsigner -verify` da «jar verified» sobre el bundle, el APK verifica con
+  el esquema v2 y la huella SHA-256 del certificado coincide con la documentada en el apartado 1 de
+  `store/PLAY_STORE.md` (`9A:A3:AB:...:AC:21`), y el manifiesto declara `versionName` 1.0.0,
+  `minSdk` 24 y `targetSdk` 36.
 
 ## 14-10-2026 22:30 [1.0.0]
 

@@ -16,3 +16,6 @@ app/src/main/assets/novedades.md
 app/src/main/assets/manual_usuario.md
 /*.jks
 /*.keystore
+
+# Artefactos firmados listos para subir a Play (se regeneran con bundleRelease)
+store/publicar/
