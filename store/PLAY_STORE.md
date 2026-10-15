@@ -47,6 +47,34 @@ clave de subida en la consola.
 
 ## 2. Ficha de la tienda
 
+### Dónde va cada texto en la consola
+
+Los nombres del menú cambian de vez en cuando; lo que no cambia es que **todo lo de este apartado
+vive en dos pantallas distintas**: los textos que describen la app, en la ficha; las notas de la
+versión, dentro de la propia versión que se sube.
+
+| Texto de aquí | Pantalla de Play Console | Campo |
+|---|---|---|
+| Nombre de la app | Crecer → Presencia en Play → **Ficha de Play principal** | Nombre de la app |
+| Descripción breve | Crecer → Presencia en Play → **Ficha de Play principal** | Descripción breve |
+| Descripción completa | Crecer → Presencia en Play → **Ficha de Play principal** | Descripción completa |
+| Gráficos del apartado 7 | Crecer → Presencia en Play → **Ficha de Play principal** | Recursos gráficos (abajo, en la misma página) |
+| Notas de la versión | Versiones → **Producción** (o Pruebas) → Crear nueva versión | Notas de esta versión |
+| Categoría y etiquetas | Crecer → Presencia en Play → **Configuración de la ficha** | Categoría de la app / Etiquetas |
+| URL de la política (apartado 8) | **Política** → Contenido de la app → Política de privacidad | URL de la política de privacidad |
+
+Detalles que ahorran un viaje:
+
+- **Hay que darle a «Guardar» y luego a «Enviar para revisión»**: lo guardado no sale publicado solo.
+  Mientras no se revisa, la ficha anterior sigue en la tienda.
+- La ficha es **por idioma**. Arriba de la página hay un selector; estos textos son los de
+  **español (España)**, que es el idioma por defecto de la app. Para añadir el inglés:
+  Configuración de la ficha → Traducciones → Añadir traducciones → `en-US`.
+- Las notas de la versión se escriben entre etiquetas de idioma, así:
+  `<es-ES>` texto `</es-ES>`. La consola las pone sola si solo hay un idioma.
+- Los límites (30 / 80 / 4000 / 500 caracteres) los cuenta la propia consola; los textos de aquí
+  caben.
+
 ### Nombre de la app (máx. 30)
 
 ```

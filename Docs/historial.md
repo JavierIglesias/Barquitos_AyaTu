@@ -1,5 +1,17 @@
 # Historial de Cambios
 
+## 15-10-2026 [1.0.0]
+
+### Documentación
+
+- **`store/PLAY_STORE.md`: añadido al apartado 2 un mapa de en qué pantalla de Play Console va cada
+  texto.** Causa: el documento tenía los textos listos pero no dónde pegarlos, y están repartidos
+  entre tres sitios que no se parecen —la ficha de Play principal (nombre, descripciones,
+  gráficos), la versión que se sube (notas de la versión) y Contenido de la app (URL de la
+  política)—, más la configuración de la ficha para la categoría y las traducciones. Recogidos
+  también el «Guardar» + «Enviar para revisión», que la ficha es por idioma, y el formato
+  `<es-ES>...</es-ES>` de las notas de la versión.
+
 ## 14-10-2026 22:30 [1.0.0]
 
 ### Corregido
