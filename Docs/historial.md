@@ -1,5 +1,68 @@
 # Historial de Cambios
 
+## 17-10-2026 23:30 [1.0.1]
+
+### Corregido
+
+- **Una partida creada en un móvil no la veía el otro, y al revés sí.** Javier lo probó con dos
+  móviles de verdad: publicaba la partida, el contrincante no la veía nunca, y en cambio sí podía
+  unirse a la que creaba el contrincante. Dos causas, una encima de la otra:
+  - **Todo el descubrimiento dependia de NSD, y NSD falla distinto en cada móvil y cada router.**
+    Es mDNS por multicast: basta con que un móvil no reciba el multicast (ahorro de energía del
+    WiFi, banda distinta, aislamiento de clientes del router) para que no vea nada, aunque el otro
+    lado esté publicando bien. Ahora hay **un segundo camino en paralelo**, `net/LanBeacon.kt`:
+    el anfitrión manda un paquete UDP de **difusión** (no multicast) cada segundo a todas las
+    redes del móvil, con el identificador de la partida y el puerto; el que busca escucha en el
+    puerto 48101 y se queda con la dirección del remitente, así que **no hay que resolver nada**
+    (se salta también `resolveService`, que era otro punto de fallo). Con que funcione uno de los
+    dos caminos, la partida aparece. No hace falta ningún permiso nuevo: la difusión UDP va con el
+    `INTERNET` que ya estaba.
+  - **La app no se enteraba de nada de lo que le decía NSD.** Las seis respuestas de
+    `NsdManager.RegistrationListener` y `DiscoveryListener` en `net/LanDiscovery.kt` estaban
+    escritas como `= Unit`: si `registerService` fallaba, `onRegistrationFailed` se tragaba el
+    código de error y la pantalla seguía diciendo «Esperando a que alguien se una…» para siempre,
+    sin un aviso ni una línea en el registro. Ahora **todas** escriben en el registro, con el
+    código de error traducido. Comprobado en el emulador: al publicar, NSD **no llama nunca** a
+    `onServiceRegistered` —la publicación no llega a completarse y nadie se enteraba— mientras que
+    la baliza sale puntualmente cada segundo.
+  - Además, cada partida lleva ahora un **identificador corto propio** (`BarquitosAyaTu#a3f1 ...`),
+    que sirve para no repetir nombre entre dos móviles, para agrupar la misma partida vista por los
+    dos caminos y para seguirla en el registro.
+- **Volverse atrás mientras se esperaba un rival escribía un ERROR en el registro** («fallo al
+  publicar la partida: Socket closed»). Causa: cancelar cierra el `ServerSocket` y eso hace que
+  `accept()` lance, y el fallo se trataba igual que uno de verdad. `LanHost` expone ahora
+  `cancelled` y `WifiViewModel` distingue las dos cosas.
+
+### Añadido
+
+- **Aviso en pantalla si al cabo de 20 segundos no aparece nadie** (`wifi_waiting_slow`), tanto
+  esperando como buscando: que los dos móviles tienen que estar en la misma red WiFi —no uno con
+  datos móviles ni en la red de invitados— y que en Ajustes → Registro queda apuntado lo que ha
+  pasado.
+- 5 pruebas nuevas de la baliza (`BeaconTest` en `NetTest.kt`): ida y vuelta del anuncio, nombres
+  con la barra separadora, y que **cualquier basura que llegue al puerto se descarta sin reventar**,
+  que es obligado en un puerto UDP abierto a toda la red. Total: **52 pruebas**.
+
+### Comprobado
+
+- La difusión UDP llega de verdad: mandada desde el PC (192.168.1.135) a 192.168.1.255 y a
+  255.255.255.255, y recibida íntegra en el Pixel 9 Pro XL (192.168.1.23) escuchando con
+  `toybox nc -u -l -p 48101`.
+- En el emulador, con la app: al buscar aparece «escuchando balizas en el puerto 48101» y una
+  partida inyectada a mano sale en la lista en dos segundos; al crear, la app manda
+  `BQ1|<id>|<nombre>|<puerto>` cada segundo a dos destinos de difusión.
+
+### Cambiado
+
+- **`versionCode` 1 → 2 y `versionName` 1.0.0 → 1.0.1.** Causa: el bundle con el `versionCode` 1
+  ya estaba en manos de Javier para subirlo a Play, y un `versionCode` que se ha subido a una
+  pista no se puede reutilizar. Actualizado también el apartado 1 de `store/PLAY_STORE.md`.
+
+### Pendiente de comprobar
+
+- Falta la prueba de punta a punta **entre los dos móviles de Javier**, que es la que fallaba. Aquí
+  solo se puede probar cada mitad por separado: el emulador no comparte red con el móvil.
+
 ## 15-10-2026 [1.0.0]
 
 ### Documentación

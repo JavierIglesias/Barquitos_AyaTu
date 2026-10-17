@@ -10,7 +10,7 @@ datos que se tratan, versión). Al final está la lista de comprobaciones antes 
 | Campo | Valor |
 |---|---|
 | `applicationId` | `com.ayatu.barquitos` |
-| `versionName` / `versionCode` | `1.0.0` / `1` |
+| `versionName` / `versionCode` | `1.0.1` / `2` |
 | `minSdk` | 24 (Android 7.0) |
 | `targetSdk` / `compileSdk` | 36 |
 | Formato de subida | Android App Bundle (`.aab`) |
@@ -153,7 +153,7 @@ conexión.
 
 | Permiso | Para qué | Si se quita |
 |---|---|---|
-| `android.permission.INTERNET` | Abrir el socket TCP entre los dos móviles en el modo **Dos Jugadores (con mismo WIFI)**. No se usa para salir a internet: no hay servidor, ni analítica, ni anuncios. | El modo de dos jugadores deja de funcionar. |
+| `android.permission.INTERNET` | Abrir el socket TCP entre los dos móviles en el modo **Dos Jugadores (con mismo WIFI)**, y mandar la baliza UDP con la que se encuentran dentro de la red de casa. No se usa para salir a internet: no hay servidor, ni analítica, ni anuncios. | El modo de dos jugadores deja de funcionar. |
 | `android.permission.ACCESS_NETWORK_STATE` | Saber si hay red local al publicar o buscar partidas por NSD. | Igual que el anterior. |
 | `android.permission.VIBRATE` | Toque corto al acertar y largo al hundir un barco. Se puede desactivar en Ajustes. | Solo se pierde la vibración. |
 

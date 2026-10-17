@@ -107,6 +107,18 @@ Los dos móviles tienen que estar en la **misma red WiFi**. No hace falta cuenta
 internet: los móviles hablan directamente entre ellos. Si te sales de la partida se corta la
 conexión, así que las de WiFi no se guardan para seguirlas luego.
 
+**Si la partida no aparece en el otro móvil:**
+
+| Mira esto | Por qué |
+|---|---|
+| Que los dos estén en el **mismo WiFi** | Si uno tira de datos móviles, no se ven |
+| Que ninguno esté en la **red de invitados** del router | Esas redes aíslan los aparatos entre sí |
+| El **ahorro de energía** del móvil que busca | Puede cortar los anuncios que llegan por WiFi |
+| **Ajustes → Registro** | Ahí queda apuntado todo: si se publicó la partida, si se encontró y por dónde |
+
+La partida se anuncia por dos vías distintas a la vez, así que con que funcione una de las dos el
+otro móvil la verá.
+
 ---
 
 ## Estadísticas

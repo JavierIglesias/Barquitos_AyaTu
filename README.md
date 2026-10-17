@@ -35,7 +35,7 @@ app/src/main/kotlin/com/ayatu/barquitos/
 │   └── ai/ShipAi.kt   La IA (fácil / normal / difícil por mapa de probabilidad)
 ├── data/              Ajustes, estadísticas, partida guardada y medallas
 ├── log/               Registro de eventos en fichero, con rotación
-├── net/               Dos jugadores con el mismo WiFi: descubrimiento NSD y conexión TCP
+├── net/               Dos jugadores con el mismo WiFi: descubrimiento (NSD + baliza UDP) y TCP
 ├── sound/             Efectos sintetizados (no hay ficheros de audio)
 └── ui/                Pantallas en Jetpack Compose
 ```
@@ -56,7 +56,7 @@ Dos detalles de los que depende todo lo visual:
 Hace falta JDK 17 y el SDK de Android (`local.properties` → `sdk.dir`).
 
 ```bash
-./gradlew testDebugUnitTest   # 46 pruebas del motor, la IA, el protocolo de red y el sonido
+./gradlew testDebugUnitTest   # 52 pruebas del motor, la IA, el protocolo de red y el sonido
 ./gradlew assembleDebug       # APK de depuración
 ./gradlew bundleRelease       # .aab firmado para Google Play (necesita keystore.properties)
 ```

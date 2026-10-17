@@ -144,6 +144,7 @@
     <string name="wifi_hint">Both phones must be on the same Wi-Fi network.</string>
     <string name="wifi_waiting">Waiting for someone to join…</string>
     <string name="wifi_searching">Looking for games…</string>
+    <string name="wifi_waiting_slow">If nothing shows up: both phones must be on the same Wi-Fi network —not one on mobile data, nor one on a guest network— with Wi-Fi power saving off. Settings → Log records what happened.</string>
     <string name="wifi_none">No game in sight. Let the other phone create one.</string>
     <string name="wifi_connected">Connected to %1$s</string>
     <string name="wifi_connecting">Connecting…</string>

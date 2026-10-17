@@ -47,6 +47,7 @@ import com.ayatu.barquitos.ui.common.BarquitosScreen
 import com.ayatu.barquitos.ui.common.MenuButton
 import com.ayatu.barquitos.ui.common.OptionCard
 import com.ayatu.barquitos.ui.setup.SetupScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -72,13 +73,19 @@ object LanSession {
     }
 }
 
+/**
+ * Cuánto se espera antes de explicar por qué puede no aparecer nadie. Lo normal es que el otro
+ * móvil vea la partida en uno o dos segundos, así que a los veinte ya ha pasado algo.
+ */
+private const val WAIT_HINT_MS = 20_000L
+
 /** En qué paso del WiFi local estamos. */
 private enum class WifiStep { ELEGIR, REGLAS, ESPERANDO, BUSCANDO, CONECTANDO }
 
 class WifiViewModel(application: Application) : AndroidViewModel(application) {
 
     private val logger = (application as BarquitosApplication).logger
-    private val browser = LanBrowser(application)
+    private val browser = LanBrowser(application, logger)
     private var host: LanHost? = null
 
     val found: StateFlow<List<LanGameFound>> = browser.found
@@ -95,7 +102,7 @@ class WifiViewModel(application: Application) : AndroidViewModel(application) {
         // saludo. Si viajara como «al azar», cada móvil echaría su propio dado y la mitad de las
         // veces acabarían los dos creyendo que le toca al otro: los dos tableros muertos.
         val acordado = config.resolvedForHosting()
-        val newHost = LanHost(getApplication(), playerName, acordado)
+        val newHost = LanHost(getApplication(), playerName, acordado, logger)
         host = newHost
         logger.logInfo(
             "WiFi local: publicando partida (${acordado.summary()}); " +
@@ -110,8 +117,13 @@ class WifiViewModel(application: Application) : AndroidViewModel(application) {
                     _connected.value = true
                 }
                 .onFailure {
-                    logger.logError("WiFi local: fallo al publicar la partida: ${it.message}")
-                    _error.value = it.message
+                    // Volverse atrás cierra el socket y eso aparece como un fallo: no lo es.
+                    if (newHost.cancelled) {
+                        logger.logInfo("WiFi: se ha dejado de publicar la partida")
+                    } else {
+                        logger.logError("WiFi local: fallo al publicar la partida: ${it.message}")
+                        _error.value = it.message
+                    }
                 }
         }
     }
@@ -216,7 +228,10 @@ fun WifiScreen(
                     )
                 }
 
-                WifiStep.ESPERANDO -> Waiting(stringResource(R.string.wifi_waiting))
+                WifiStep.ESPERANDO -> {
+                    Waiting(stringResource(R.string.wifi_waiting))
+                    SlowHint()
+                }
 
                 WifiStep.BUSCANDO -> {
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -237,6 +252,7 @@ fun WifiScreen(
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
                         )
+                        SlowHint()
                     }
                     found.forEach { game ->
                         OptionCard(
@@ -268,6 +284,28 @@ fun WifiScreen(
                 }) { Text(stringResource(R.string.common_close)) }
             }
         }
+    }
+}
+
+/**
+ * El aviso que sale si al cabo de [WAIT_HINT_MS] no ha aparecido nadie: lo que falla casi siempre es
+ * que los dos móviles no están en la misma red, y el registro de la app dice el resto.
+ */
+@Composable
+private fun SlowHint() {
+    var slow by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        delay(WAIT_HINT_MS)
+        slow = true
+    }
+    if (slow) {
+        Text(
+            stringResource(R.string.wifi_waiting_slow),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+        )
     }
 }
 

@@ -145,6 +145,7 @@
     <string name="wifi_hint">Los dos móviles tienen que estar en la misma red WiFi.</string>
     <string name="wifi_waiting">Esperando a que alguien se una…</string>
     <string name="wifi_searching">Buscando partidas…</string>
+    <string name="wifi_waiting_slow">Si no aparece: los dos móviles tienen que estar en la misma red WiFi —no uno con datos móviles, ni uno en la red de invitados— y con el WiFi sin ahorro de energía. En Ajustes → Registro queda apuntado lo que ha pasado.</string>
     <string name="wifi_none">No se ve ninguna partida. Que el otro móvil cree una.</string>
     <string name="wifi_connected">Conectado con %1$s</string>
     <string name="wifi_connecting">Conectando…</string>

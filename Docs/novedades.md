@@ -1,5 +1,20 @@
 # Novedades
 
+## 17 de octubre de 2026
+
+### Ahora el otro móvil sí ve tu partida
+
+Si creabas tú la partida, podía pasar que el otro móvil no la viera nunca, aunque al revés sí
+funcionara. La app usaba un solo sistema para encontrarse (el mismo que usan las impresoras de red),
+y ese sistema falla en unos móviles sí y en otros no.
+
+Ahora la partida se anuncia **por dos caminos a la vez**. Con que funcione uno, el otro móvil la ve.
+No hay que hacer nada distinto: se crea y se busca igual que antes.
+
+Y si aun así no aparece nadie, a los veinte segundos la app te dice qué mirar —lo más habitual es
+que un móvil esté con datos en vez de con el WiFi, o en la red de invitados—. Todo lo que pasa al
+crear o buscar una partida queda anotado en **Ajustes → Registro**.
+
 ## 14 de octubre de 2026 — versión 1.0.0 (sonido)
 
 ### Ahora se oyen los disparos
