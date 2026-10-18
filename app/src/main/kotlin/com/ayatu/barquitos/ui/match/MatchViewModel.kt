@@ -564,7 +564,16 @@ class MatchViewModel(application: Application) : AndroidViewModel(application) {
         val local = _ui.value.localPlayer
         val winner = forcedWinner ?: g.winner
         val result = if (winner == local) MatchResult.GANADA else MatchResult.PERDIDA
-        sound.play(if (result == MatchResult.GANADA) Sfx.VICTORIA else Sfx.DERROTA)
+        if (result == MatchResult.GANADA) {
+            sound.play(Sfx.VICTORIA)
+            // Los aplausos entran con el arpegio ya empezado, como en una entrega de premios.
+            viewModelScope.launch {
+                delay(450)
+                sound.play(Sfx.APLAUSOS)
+            }
+        } else {
+            sound.play(Sfx.DERROTA)
+        }
         val enemy = g.enemyOf(local)
         val summary = MatchSummary(
             config = g.config,

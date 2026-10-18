@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ayatu.barquitos.core.GameMode
 import com.ayatu.barquitos.ui.AppViewModel
+import com.ayatu.barquitos.ui.about.AboutScreen
 import com.ayatu.barquitos.ui.docs.DocKind
 import com.ayatu.barquitos.ui.docs.DocsScreen
 import com.ayatu.barquitos.ui.docs.LogScreen
@@ -47,6 +48,7 @@ private object Routes {
     const val SETTINGS = "settings"
     const val WIFI = "wifi"
     const val LOG = "log"
+    const val ABOUT = "about"
     const val DOCS = "docs/{kind}"
 
     fun setup(mode: GameMode) = "setup/${mode.name}"
@@ -79,6 +81,7 @@ private fun BarquitosApp() {
                     onManual = { navController.navigate(Routes.docs(DocKind.MANUAL)) },
                     onNews = { navController.navigate(Routes.docs(DocKind.NOVEDADES)) },
                     onLog = { navController.navigate(Routes.LOG) },
+                    onAbout = { navController.navigate(Routes.ABOUT) },
                 )
             }
 
@@ -140,6 +143,10 @@ private fun BarquitosApp() {
 
             composable(Routes.LOG) {
                 LogScreen(onBack = { navController.popBackStack() })
+            }
+
+            composable(Routes.ABOUT) {
+                AboutScreen(onBack = { navController.popBackStack() })
             }
 
             composable(

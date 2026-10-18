@@ -24,6 +24,8 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Anchor
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.NewReleases
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Wifi
@@ -68,6 +70,7 @@ fun HomeScreen(
     onManual: () -> Unit,
     onNews: () -> Unit,
     onLog: () -> Unit,
+    onAbout: () -> Unit,
 ) {
     val settings by appViewModel.settings.collectAsStateWithLifecycle()
     val stats by appViewModel.stats.collectAsStateWithLifecycle()
@@ -199,12 +202,22 @@ fun HomeScreen(
                     Spacer(Modifier.width(4.dp))
                     Text(stringResource(R.string.home_manual))
                 }
-                TextButton(onClick = onNews) { Text(stringResource(R.string.home_news)) }
+                TextButton(onClick = onNews) {
+                    Icon(Icons.Default.NewReleases, contentDescription = null)
+                    Spacer(Modifier.width(4.dp))
+                    Text(stringResource(R.string.home_news))
+                }
                 TextButton(onClick = onLog) {
                     Icon(Icons.Default.Description, contentDescription = null)
                     Spacer(Modifier.width(4.dp))
                     Text(stringResource(R.string.home_log))
                 }
+            }
+
+            TextButton(onClick = onAbout) {
+                Icon(Icons.Default.Info, contentDescription = null)
+                Spacer(Modifier.width(4.dp))
+                Text(stringResource(R.string.home_about))
             }
         }
     }

@@ -1,5 +1,42 @@
 # Historial de Cambios
 
+## 18-10-2026 [1.1.0]
+
+### Añadido
+
+- **Aplausos al ganar** (`Sfx.APLAUSOS` en `sound/SfxSynth.kt`), sintetizados como el resto: no hay
+  ficheros de audio. Son **190 palmadas sueltas** sorteadas a lo largo de 2,6 s, cada una un
+  chasquido corto de ruido de banda centrado en 2 kHz (que es donde suena una palmada de verdad)
+  con una caída de 50 ms, más una capa de murmullo de sala por debajo. Los instantes se sortean
+  **una sola vez** y se recorren ordenados: con ruido continuo no sonaría a aplauso sino a lluvia,
+  porque lo que lo hace reconocible son los transitorios. Entran a los 450 ms del arpegio de
+  victoria (`MatchViewModel.finish()`), como en una entrega de premios. Medido sobre el WAV
+  generado en el propio Android: pico −0,4 dBFS, rms −20,2 dBFS, **76 %** de la energía entre
+  300 Hz y 8 kHz y **101 transitorios** distinguibles.
+- **Pantalla «Acerca de»** (`ui/about/AboutScreen.kt`), debajo de Manual / Novedades / Registro en
+  la pantalla de inicio: nombre, versión y `versionCode`, marca y modelo del móvil, versión de
+  Android con su API, y la invitación a un café con el mismo enlace de Stripe que Rutas AyaTu y
+  Sudoku AyaTu. La taza va **centrada** sobre el texto (en Rutas está a la izquierda), que es como
+  lo pidió Javier. Ruta `about` en `MainActivity`. El enlace se abre con un `Intent` de navegador
+  y, si el móvil no tuviera ninguno, no revienta: se traga la `ActivityNotFoundException`.
+- **Novedades estrena icono** en el pie de la pantalla de inicio (`Icons.Default.NewReleases`), que
+  era el único de los tres que iba sin él.
+
+### Cambiado
+
+- **«Al puerto» pasa a «Al puerto (reiniciar)»** (`result_home`, es e in), para que se vea que ese
+  botón de la pantalla de resultado deja la partida y vuelve al principio.
+- **`versionCode` 2 → 3 y `versionName` 1.0.1 → 1.1.0**, por ser funciones nuevas y no solo
+  correcciones. El `.aab` 1.0.1 (`versionCode` 2) **no llegó a subirse a Play** —la 1.0.0 seguía en
+  revisión—, así que queda descartado y se sube este.
+
+### Comprobado
+
+- 52 pruebas sin fallos. `SoundTest` recorre `Sfx.entries`, así que los aplausos pasan por los
+  mismos tres límites que el resto (pico, rms útil y fracción en banda) sin tocar nada.
+- En el emulador: la pantalla «Acerca de» con la taza centrada, y el pie de inicio con los cuatro
+  accesos.
+
 ## 17-10-2026 23:30 [1.0.1]
 
 ### Corregido

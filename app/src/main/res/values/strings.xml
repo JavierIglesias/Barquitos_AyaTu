@@ -15,6 +15,7 @@
     <string name="home_manual">Manual</string>
     <string name="home_news">Novedades</string>
     <string name="home_log">Registro</string>
+    <string name="home_about">Acerca de</string>
     <string name="home_rules">Reglas</string>
 
     <!-- Configuración de la partida -->
@@ -87,7 +88,7 @@
     <string name="result_accuracy">Acierto</string>
     <string name="result_rounds">Rondas</string>
     <string name="result_again">Otra vez</string>
-    <string name="result_home">Al puerto</string>
+    <string name="result_home">Al puerto (reiniciar)</string>
     <string name="result_show_boards">Ver los tableros</string>
 
     <!-- Estadísticas -->
@@ -155,6 +156,13 @@
     <string name="wifi_rival_placing">El rival está colocando su flota…</string>
 
     <!-- Documentos y registro -->
+    <string name="about_title">Acerca de</string>
+    <string name="about_version">Versión</string>
+    <string name="about_device">Móvil</string>
+    <string name="about_android">Android</string>
+    <string name="about_coffee_title">¿Te gusta la app?</string>
+    <string name="about_coffee_desc">Invita a un café al desarrollador</string>
+    <string name="about_no_ads">Sin anuncios, sin compras y sin cuentas.</string>
     <string name="docs_manual">Manual de usuario</string>
     <string name="docs_news">Novedades</string>
     <string name="log_title">Registro</string>

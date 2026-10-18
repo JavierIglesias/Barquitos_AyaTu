@@ -10,7 +10,7 @@ datos que se tratan, versión). Al final está la lista de comprobaciones antes 
 | Campo | Valor |
 |---|---|
 | `applicationId` | `com.ayatu.barquitos` |
-| `versionName` / `versionCode` | `1.0.1` / `2` |
+| `versionName` / `versionCode` | `1.1.0` / `3` |
 | `minSdk` | 24 (Android 7.0) |
 | `targetSdk` / `compileSdk` | 36 |
 | Formato de subida | Android App Bundle (`.aab`) |

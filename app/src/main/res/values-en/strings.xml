@@ -14,6 +14,7 @@
     <string name="home_manual">Manual</string>
     <string name="home_news">What\'s new</string>
     <string name="home_log">Log</string>
+    <string name="home_about">About</string>
     <string name="home_rules">Rules</string>
 
     <!-- Game setup -->
@@ -86,7 +87,7 @@
     <string name="result_accuracy">Accuracy</string>
     <string name="result_rounds">Rounds</string>
     <string name="result_again">Again</string>
-    <string name="result_home">Back to port</string>
+    <string name="result_home">Back to port (restart)</string>
     <string name="result_show_boards">Show the boards</string>
 
     <!-- Statistics -->
@@ -154,6 +155,13 @@
     <string name="wifi_rival_placing">The opponent is placing their fleet…</string>
 
     <!-- Documents and log -->
+    <string name="about_title">About</string>
+    <string name="about_version">Version</string>
+    <string name="about_device">Phone</string>
+    <string name="about_android">Android</string>
+    <string name="about_coffee_title">Do you like the app?</string>
+    <string name="about_coffee_desc">Buy the developer a coffee</string>
+    <string name="about_no_ads">No ads, no purchases, no accounts.</string>
     <string name="docs_manual">User manual</string>
     <string name="docs_news">What\'s new</string>
     <string name="log_title">Log</string>

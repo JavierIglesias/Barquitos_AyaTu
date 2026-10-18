@@ -1,5 +1,24 @@
 # Novedades
 
+## 18 de octubre de 2026
+
+### Aplausos al ganar
+
+Cuando hundes la última pieza de la flota enemiga, además de la musiquilla de victoria ahora se oye
+**al público aplaudiendo**. Si no lo oyes, sube el volumen multimedia del móvil.
+
+### Nueva pantalla «Acerca de»
+
+En la pantalla de inicio, debajo de Manual, Novedades y Registro, tienes **Acerca de**: la versión
+de la app, qué móvil es el tuyo y qué Android lleva —lo que hace falta si alguna vez hay que
+preguntar por un fallo— y, si te apetece, **invitar a un café al desarrollador**.
+
+### Detalles
+
+- El botón del final de la partida ahora dice **«Al puerto (reiniciar)»**, para que quede claro que
+  vuelve al principio.
+- **Novedades** ya tiene su icono, como Manual y Registro.
+
 ## 17 de octubre de 2026
 
 ### Ahora el otro móvil sí ve tu partida

@@ -96,6 +96,9 @@ qué pasó.
 Arriba a la derecha, la **bandera blanca** es rendirse (cuenta como derrota). La **flecha de volver**
 deja la partida guardada para seguirla luego.
 
+Al acabar, el botón **«Al puerto (reiniciar)»** cierra la partida y te devuelve a la pantalla de
+inicio. Si has ganado, oirás la musiquilla de victoria y los **aplausos**.
+
 ### Dos Jugadores (con mismo WIFI)
 
 1. En un móvil: **Dos Jugadores → Crear partida**. Elige las reglas (las que pongas aquí son las que
@@ -161,6 +164,9 @@ lo que hay elegido sin necesidad de abrirlo.
 
 - **Novedades** — lo que ha cambiado en cada versión, en lenguaje normal.
 - **Manual** — esto que estás leyendo.
+- **Acerca de** — la versión de la app, qué móvil es el tuyo y qué Android lleva (lo que hace falta
+  si hay que preguntar por un fallo), y la invitación a un café al desarrollador. Es voluntario:
+  no desbloquea nada.
 - **Registro** — todo lo que va haciendo la app, con fecha y hora: arranques, partidas, flotas
   colocadas, barcos hundidos, finales de partida, avisos y errores. Se guarda en ficheros de texto
   que van rotando cuando se llenan (las flechas `‹` y `›` pasan de uno a otro).

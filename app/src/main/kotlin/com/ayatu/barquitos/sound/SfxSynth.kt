@@ -9,7 +9,7 @@ import kotlin.math.sin
 import kotlin.random.Random
 
 /** Los efectos del juego. */
-enum class Sfx { DISPARO, IMPACTO, AGUA, HUNDIDO, VICTORIA, DERROTA, TOQUE }
+enum class Sfx { DISPARO, IMPACTO, AGUA, HUNDIDO, VICTORIA, APLAUSOS, DERROTA, TOQUE }
 
 /**
  * La síntesis de los efectos. No lleva nada de Android a propósito, para poder **medirla en las
@@ -83,6 +83,30 @@ object SfxSynth {
                 val local = t - paso * (d / 3)
                 val env = exp(-3.0 * local / (d / 3))
                 env * (sin(2 * PI * freq * t) + 0.35 * sin(4 * PI * freq * t))
+            }
+            // Aplausos: un puñado de palmadas sueltas, cada una un chasquido corto de ruido en
+            // la zona de los 2 kHz, que es donde suena una palmada de verdad. Los instantes se
+            // sortean una sola vez y se recorren ordenados: con un ruido continuo no sonaría a
+            // aplauso sino a lluvia, porque lo que lo hace reconocible son los transitorios.
+            Sfx.APLAUSOS -> {
+                val palmada = BandPass(2000.0, 0.55)
+                val sala = BandPass(1300.0, 0.35)
+                val rngPalmas = Random(20261018)
+                val duracion = 2.6
+                val inicios = DoubleArray(190) { rngPalmas.nextDouble(0.0, duracion) }
+                inicios.sort()
+                build(duracion, peak = 0.95) { t, d ->
+                    var golpes = 0.0
+                    for (inicio in inicios) {
+                        if (inicio > t) break
+                        val dt = t - inicio
+                        if (dt < 0.05) golpes += exp(-95.0 * dt)
+                    }
+                    // Entra enseguida y se va apagando, como cuando el público se cansa.
+                    val global = (1 - exp(-14.0 * t)) * exp(-1.2 * t / d)
+                    global * (palmada.process(noise()) * golpes * 1.1 +
+                        0.3 * sala.process(noise()))
+                }
             }
             // Derrota: dos notas descendentes. La grave no baja de 230 Hz, o no se oiría.
             Sfx.DERROTA -> build(0.90, peak = 0.88) { t, d ->
