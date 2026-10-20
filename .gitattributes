@@ -1,0 +1,3 @@
+# El WAV de los aplausos es binario: ni finales de linea ni diffs de texto.
+*.wav binary
+*.jks binary

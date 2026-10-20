@@ -80,7 +80,6 @@ private fun BarquitosApp() {
                     onSettings = { navController.navigate(Routes.SETTINGS) },
                     onManual = { navController.navigate(Routes.docs(DocKind.MANUAL)) },
                     onNews = { navController.navigate(Routes.docs(DocKind.NOVEDADES)) },
-                    onLog = { navController.navigate(Routes.LOG) },
                     onAbout = { navController.navigate(Routes.ABOUT) },
                 )
             }
@@ -146,7 +145,10 @@ private fun BarquitosApp() {
             }
 
             composable(Routes.ABOUT) {
-                AboutScreen(onBack = { navController.popBackStack() })
+                AboutScreen(
+                    onBack = { navController.popBackStack() },
+                    onLog = { navController.navigate(Routes.LOG) },
+                )
             }
 
             composable(

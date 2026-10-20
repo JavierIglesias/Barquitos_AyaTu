@@ -31,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ayatu.barquitos.BuildConfig
 import com.ayatu.barquitos.R
+import com.ayatu.barquitos.log.BarquitosLogger
 import com.ayatu.barquitos.ui.common.BarquitosScreen
+import com.ayatu.barquitos.ui.common.onMultiFingerTap
 
 /**
  * El enlace de pago de Stripe que Javier ya usa para el café en Rutas AyaTu y Sudoku AyaTu. Es una
@@ -43,14 +45,23 @@ private const val DONATION_URL = "https://buy.stripe.com/fZu3cvemddIJ6jN9Yl3cc00
  * «Acerca de»: la versión, el móvil en el que va y el café para el desarrollador, igual que en las
  * demás apps de AyaTu. Los datos del móvil están aquí porque son lo primero que hace falta cuando
  * algo falla y hay que preguntar en qué aparato.
+ *
+ * Un toque con **tres dedos** en cualquier parte del contenido abre el **registro técnico**
+ * ([onLog]), que ya no ocupa sitio en el puerto. Es el mismo gesto, y en el mismo sitio, que en
+ * Rutas AyaTu y Audio AyaTu: no hay que explicárselo a quien solo quiere jugar, y quien lo
+ * necesita lo tiene siempre a mano.
  */
 @Composable
-fun AboutScreen(onBack: () -> Unit) {
+fun AboutScreen(onBack: () -> Unit, onLog: () -> Unit) {
     val context = LocalContext.current
     BarquitosScreen(title = stringResource(R.string.about_title), onBack = onBack) { modifier ->
         Column(
             modifier
                 .fillMaxSize()
+                .onMultiFingerTap(3) {
+                    BarquitosLogger.get(context).logInfo("Registro abierto con 3 dedos")
+                    onLog()
+                }
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),

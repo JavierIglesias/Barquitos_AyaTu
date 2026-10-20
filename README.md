@@ -36,7 +36,7 @@ app/src/main/kotlin/com/ayatu/barquitos/
 ├── data/              Ajustes, estadísticas, partida guardada y medallas
 ├── log/               Registro de eventos en fichero, con rotación
 ├── net/               Dos jugadores con el mismo WiFi: descubrimiento (NSD + baliza UDP) y TCP
-├── sound/             Efectos sintetizados (no hay ficheros de audio)
+├── sound/             Efectos sintetizados (y el aplauso grabado, en res/raw)
 └── ui/                Pantallas en Jetpack Compose
 ```
 
@@ -45,18 +45,23 @@ Dos detalles de los que depende todo lo visual:
 - **No hay imágenes de barcos**. `ui/common/ShipPainter.kt` los dibuja con Canvas a partir de su
   forma, y `ui/common/BoardView.kt` pinta el tablero entero igual: agua, retícula, impactos y
   animaciones.
-- **No hay ficheros de audio**. `sound/SfxSynth.kt` sintetiza los efectos —sin nada de Android, para
-  poder medirlos en las pruebas— y `sound/SoundEngine.kt` los escribe como WAV en la caché la
-  primera vez que arranca la app y los reproduce con un `SoundPool`. Están pensados para el
-  altavoz de un móvil, que no da graves: `SoundTest` mide con una FFT que cada efecto llega con
+- **Casi no hay ficheros de audio**. `sound/SfxSynth.kt` sintetiza los efectos —sin nada de
+  Android, para poder medirlos en las pruebas— y `sound/SoundEngine.kt` los escribe como WAV en la
+  caché la primera vez que arranca la app y los reproduce con un `SoundPool`. Están pensados para
+  el altavoz de un móvil, que no da graves: `SoundTest` mide con una FFT que cada efecto llega con
   nivel suficiente y que su energía cae donde ese altavoz sí reproduce.
+  - La excepción son los **aplausos** del final (`res/raw/aplausos.wav`, 132 KB): un público
+    sintetizado sonaba a lluvia por muchas palmadas que se le pusieran, porque todas salían del
+    mismo filtro y del mismo ruido. Es una grabación con licencia **CC0** de Wikimedia Commons
+    (`277021_sandermotions_applause-2.wav`, de Sandermotions), pasada a mono y a 22 050 Hz.
+    `AplausosTest` mide el fichero del repositorio para que nadie lo cambie por algo mudo.
 
 ## Compilar
 
 Hace falta JDK 17 y el SDK de Android (`local.properties` → `sdk.dir`).
 
 ```bash
-./gradlew testDebugUnitTest   # 52 pruebas del motor, la IA, el protocolo de red y el sonido
+./gradlew testDebugUnitTest   # 62 pruebas del motor, la IA, el protocolo de red, el sonido y los gestos
 ./gradlew assembleDebug       # APK de depuración
 ./gradlew bundleRelease       # .aab firmado para Google Play (necesita keystore.properties)
 ```

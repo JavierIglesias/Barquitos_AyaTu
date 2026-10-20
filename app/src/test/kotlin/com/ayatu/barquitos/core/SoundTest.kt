@@ -22,13 +22,16 @@ import kotlin.math.sqrt
  */
 class SoundTest {
 
+    /** Los que se sintetizan: los aplausos son un fichero y se miden en [AplausosTest]. */
+    private val sinteticos = Sfx.entries.filter { it.sintetizado }
+
     /** Lo que un altavoz de móvil sí reproduce. Por debajo de esto, un móvil no da nada. */
     private val bandaBaja = 300.0
     private val bandaAlta = 8000.0
 
     @Test
     fun `todos los efectos llegan casi al tope sin pasarse`() {
-        for (sfx in Sfx.entries) {
+        for (sfx in sinteticos) {
             val p = pico(SfxSynth.render(sfx))
             assertTrue("$sfx se sale de escala (pico $p)", p <= 1.0)
             assertTrue("$sfx sale flojo: pico ${dbTexto(p)}", db(p) > -8.0)
@@ -40,7 +43,7 @@ class SoundTest {
         // Referencia: un efecto de juego decente anda por -20 dBFS de RMS útil. Por debajo de -26
         // ya no se oye con ruido alrededor, y ahí es donde estaban los efectos antiguos: el agua
         // salía a -31 dBFS y encima se reproducía al 30 % de volumen.
-        for (sfx in Sfx.entries) {
+        for (sfx in sinteticos) {
             val util = rmsUtil(SfxSynth.render(sfx))
             assertTrue(
                 "$sfx no se oiría en un móvil: ${dbTexto(util)} entre 300 Hz y 8 kHz",
@@ -51,7 +54,7 @@ class SoundTest {
 
     @Test
     fun `el grueso de la energia no se va a los graves que un movil no da`() {
-        for (sfx in Sfx.entries) {
+        for (sfx in sinteticos) {
             val muestras = SfxSynth.render(sfx)
             val fraccion = fraccionUtil(muestras)
             assertTrue(
@@ -65,7 +68,7 @@ class SoundTest {
 
     @Test
     fun `cada efecto dura lo suyo y no se corta de golpe`() {
-        for (sfx in Sfx.entries) {
+        for (sfx in sinteticos) {
             val m = SfxSynth.render(sfx)
             assertTrue("$sfx está vacío", m.size > SfxSynth.SAMPLE_RATE / 50)
             assertEquals("$sfx no termina en silencio", 0, m.last().toInt())

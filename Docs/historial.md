@@ -1,5 +1,51 @@
 # Historial de Cambios
 
+## 20-10-2026 [1.1.1]
+
+### Cambiado
+
+- **Los aplausos pasan a ser una grabación de verdad** (`app/src/main/res/raw/aplausos.wav`), en
+  lugar de sintetizarse. **Causa**: los de 1.1.0 no sonaban creíbles —«no parecen reales», dijo
+  Javier—. Y es un límite de la síntesis, no un fallo de los números: medían bien (76 % de la
+  energía en banda, 101 transitorios), pero todas las palmadas salían del mismo filtro y del mismo
+  ruido, así que al oído era **lluvia**, no público. Lo que delata a un aplauso real no es cuántos
+  golpes hay sino que cada palmada suene distinta de la anterior, y eso no se arregla subiendo el
+  número de palmadas.
+  - Origen: `277021_sandermotions_applause-2.wav` de Wikimedia Commons, de Sandermotions, con
+    licencia **CC0** (dominio público: no exige atribución ni ata la ficha de Play a nadie).
+  - Preparación del fichero: mezcla a mono, **paso-bajo de ventana a 9,5 kHz** antes de bajar de
+    48 000 a 22 050 Hz (sin filtrar, el siseo de las palmadas se plegaría sobre la banda audible),
+    recorte de 3,0 s desde el segundo 0,9 —el principio de la grabación está casi vacío—,
+    desvanecido de entrada de 30 ms y de salida cuadrático de 600 ms, y normalización al pico.
+  - Medido sobre el fichero que va en la app: **3,00 s, pico −0,3 dBFS, rms −19,1 dBFS, 99 % de la
+    energía entre 300 Hz y 8 kHz y 162 palmadas distinguibles** (el sintetizado: 76 % y 101).
+  - `Sfx` gana `sintetizado` y `SfxSynth.render()` rechaza `APLAUSOS`; `SoundEngine` lo carga con
+    `pool.load(context, R.raw.aplausos, 1)`. El `aplausos_v2.wav` de la caché lo borra el propio
+    `prepare()`, que ya limpiaba lo que no está en la lista de efectos sintetizados.
+  - La app deja de ser «sin un solo fichero de audio»: son 132 KB sobre 1,5 MB. El resto de
+    efectos siguen sintetizados.
+- **El Registro sale del puerto y se abre con tres dedos desde «Acerca de»**
+  (`ui/common/MultiFingerTap.kt`, nuevo; `ui/about/AboutScreen.kt`, `ui/home/HomeScreen.kt`,
+  `MainActivity.kt`). Es el mismo gesto y el mismo sitio que en Rutas AyaTu y Audio AyaTu, a
+  petición de Javier: el pie del puerto se queda en Manual, Novedades y Acerca de, y quien necesita
+  el registro no tiene que acordarse de un gesto distinto en cada app. Al abrirse deja apuntado
+  «Registro abierto con 3 dedos», para saber luego por qué se abrió.
+  - La regla es **exactamente tres dedos a la vez**, no «al menos tres»: con «al menos» un roce con
+    la palma al sujetar el móvil abriría el registro. Y se cuenta el máximo **durante** el gesto,
+    no al levantar, porque al soltar nunca se van los tres dedos a la vez.
+- **`versionCode` 3 → 4 y `versionName` 1.1.0 → 1.1.1.** La 1.1.0 no llegó a subirse a Play (la
+  1.0.0 seguía en revisión), así que queda descartada junto con la 1.0.1.
+
+### Comprobado
+
+- 62 pruebas sin fallos. Dos clases nuevas:
+  - `AplausosTest` mide **el fichero del repositorio**: que sea PCM de 16 bits, mono y a 22 050 Hz
+    (la misma frecuencia que los sintetizados, para que el `SoundPool` no tenga que remuestrear),
+    que dure entre 2 y 4 s, el pico y el rms, que se distingan más de 60 palmadas —si alguien lo
+    sustituye por un siseo, salta— y que no empiece ni acabe de golpe.
+  - `GestosTest` prueba el contador de dedos: tres dedos abren, uno o dos no, y cuatro tampoco.
+- `SoundTest` ya solo recorre los efectos con `Sfx.sintetizado`.
+
 ## 18-10-2026 [1.1.0]
 
 ### Añadido

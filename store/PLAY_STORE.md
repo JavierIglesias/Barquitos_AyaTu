@@ -10,13 +10,13 @@ datos que se tratan, versión). Al final está la lista de comprobaciones antes 
 | Campo | Valor |
 |---|---|
 | `applicationId` | `com.ayatu.barquitos` |
-| `versionName` / `versionCode` | `1.1.0` / `3` |
+| `versionName` / `versionCode` | `1.1.1` / `4` |
 | `minSdk` | 24 (Android 7.0) |
 | `targetSdk` / `compileSdk` | 36 |
 | Formato de subida | Android App Bundle (`.aab`) |
 | Firma | Almacén `barquitos-release.jks`, alias `barquitos` (ver «Clave de firma») |
 | Idiomas | Español (por defecto) e inglés |
-| Tamaño real del APK de publicación | **1,47 MB** (no lleva imágenes ni audio: todo se dibuja y se sintetiza) |
+| Tamaño real del APK de publicación | **1,54 MB** (sin imágenes; el único fichero de audio son los aplausos, 132 KB) |
 
 Compilar la versión de publicación:
 
@@ -129,8 +129,8 @@ Y ADEMÁS
 • Estadísticas y 14 medallas.
 • Manual de usuario, novedades y registro de la app, dentro de la propia app.
 • Aspecto claro u oscuro, con letras y números en el tablero si los quieres.
-• Pesa menos de 2 MB: no lleva ni una imagen ni un fichero de sonido, todo lo dibuja y lo sintetiza
-  el propio programa.
+• Pesa menos de 2 MB: no lleva ni una imagen, y todo el dibujo y casi todo el sonido los hace el
+  propio programa.
 ```
 
 ### Textos de la versión (notas de la versión 1.0.0)
@@ -140,6 +140,28 @@ Primera versión. El barquitos de toda la vida: diez barcos (uno de 4, dos de 3,
 de 1) que no pueden tocarse, dos reglas de disparo, partidas contra la máquina en tres niveles y
 para dos jugadores con el mismo WiFi. Estadísticas y medallas. Sin anuncios, sin compras y sin
 conexión.
+```
+
+### Textos de la versión (notas de la versión 1.1.1)
+
+Para cuando acabe la revisión de la 1.0.0 (la 1.0.1 y la 1.1.0 quedaron descartadas sin subirse).
+
+```
+<es-ES>
+- Aplausos de verdad al ganar la partida.
+- El botón del final dice ahora «Al puerto (reiniciar)», para que quede claro que vuelve al
+  principio.
+- Nueva pantalla «Acerca de»: versión, datos del móvil y la invitación a un café.
+- Dos jugadores por WiFi: la partida se anuncia por dos caminos a la vez, así que el otro móvil la
+  encuentra aunque el router se trague el primero.
+</es-ES>
+<en-US>
+- Real applause when you win.
+- The end-of-game button now reads "Back to port (restart)".
+- New "About" screen: version, device details and the coffee link.
+- Two players over WiFi: the game is announced two ways at once, so the other phone finds it even
+  if the router drops the first one.
+</en-US>
 ```
 
 ### Categoría y etiquetas
@@ -310,5 +332,8 @@ El juego reproduce **las reglas** del clásico de hundir la flota y el conjunto 
 que popularizó *Fleet Battle* (Smuttlewerk Interactive). Las reglas de un juego no son objeto de
 derechos de autor, pero **el nombre, la marca, los gráficos, los textos y el código de esa app sí lo
 son**, y aquí no se ha utilizado nada de eso: todo el código, el dibujo (hecho por programa, sin
-imágenes), los sonidos (sintetizados) y los textos son propios. No se debe usar en la ficha el
+imágenes) y los textos son propios, y los sonidos están sintetizados por el propio programa
+salvo los aplausos del final, que son una grabación de **dominio público (CC0)**:
+`277021_sandermotions_applause-2.wav`, de Sandermotions, de Wikimedia Commons. CC0 no exige
+atribución ni impone condiciones a la app. No se debe usar en la ficha el
 nombre «Fleet Battle» ni sugerir relación alguna con ese producto o su editor.

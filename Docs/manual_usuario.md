@@ -15,8 +15,7 @@ La pantalla principal es el puerto. Desde ahí sales a jugar:
 - **Seguir la partida** — aparece solo si dejaste una batalla a medias. La recupera tal y como
   estaba, aunque hayas cerrado la app o se haya apagado el móvil.
 
-Abajo tienes **Estadísticas**, **Ajustes** y los tres documentos: **Manual**, **Novedades** y
-**Registro**.
+Abajo tienes **Estadísticas**, **Ajustes** y, al pie, **Manual**, **Novedades** y **Acerca de**.
 
 ---
 
@@ -117,7 +116,7 @@ conexión, así que las de WiFi no se guardan para seguirlas luego.
 | Que los dos estén en el **mismo WiFi** | Si uno tira de datos móviles, no se ven |
 | Que ninguno esté en la **red de invitados** del router | Esas redes aíslan los aparatos entre sí |
 | El **ahorro de energía** del móvil que busca | Puede cortar los anuncios que llegan por WiFi |
-| **Ajustes → Registro** | Ahí queda apuntado todo: si se publicó la partida, si se encontró y por dónde |
+| **El registro** (ver más abajo) | Ahí queda apuntado todo: si se publicó la partida, si se encontró y por dónde |
 
 La partida se anuncia por dos vías distintas a la vez, así que con que funcione una de las dos el
 otro móvil la verá.
@@ -170,6 +169,9 @@ lo que hay elegido sin necesidad de abrirlo.
 - **Registro** — todo lo que va haciendo la app, con fecha y hora: arranques, partidas, flotas
   colocadas, barcos hundidos, finales de partida, avisos y errores. Se guarda en ficheros de texto
   que van rotando cuando se llenan (las flechas `‹` y `›` pasan de uno a otro).
+  - No tiene botón propio, para no llenar el puerto de cosas que casi nunca hacen falta: se abre
+    desde **Acerca de**, tocando la pantalla **con tres dedos a la vez**. Es el mismo gesto que en
+    Rutas AyaTu y Audio AyaTu.
   - El icono de **copiar** mete todo el fichero en el portapapeles, para pegarlo en un chat.
   - El de **compartir** manda el fichero entero.
   - También puedes mantener pulsado el texto para seleccionar solo un trozo.

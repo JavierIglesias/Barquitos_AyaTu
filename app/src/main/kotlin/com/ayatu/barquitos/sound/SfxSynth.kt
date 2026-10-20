@@ -8,8 +8,15 @@ import kotlin.math.exp
 import kotlin.math.sin
 import kotlin.random.Random
 
-/** Los efectos del juego. */
-enum class Sfx { DISPARO, IMPACTO, AGUA, HUNDIDO, VICTORIA, APLAUSOS, DERROTA, TOQUE }
+/**
+ * Los efectos del juego. Todos se sintetizan menos los **aplausos**, que son una grabación de
+ * verdad (`res/raw/aplausos.wav`): un público sintetizado sonaba a lluvia por muchas palmadas que
+ * se le pusieran, porque lo que delata a un aplauso real no es el número de golpes sino que cada
+ * palmada suene distinta de la anterior.
+ */
+enum class Sfx(val sintetizado: Boolean = true) {
+    DISPARO, IMPACTO, AGUA, HUNDIDO, VICTORIA, APLAUSOS(sintetizado = false), DERROTA, TOQUE,
+}
 
 /**
  * La síntesis de los efectos. No lleva nada de Android a propósito, para poder **medirla en las
@@ -31,7 +38,10 @@ object SfxSynth {
     /** Nombre del fichero en la caché. Lleva la generación para no reusar los de antes. */
     fun fileName(sfx: Sfx): String = "${sfx.name.lowercase()}_v$GENERATION.wav"
 
-    /** Las muestras del efecto, en 16 bits mono a [SAMPLE_RATE] Hz, normalizadas a su pico. */
+    /**
+     * Las muestras del efecto, en 16 bits mono a [SAMPLE_RATE] Hz, normalizadas a su pico. Solo
+     * vale para los efectos con [Sfx.sintetizado]; los demás salen de un fichero.
+     */
     fun render(sfx: Sfx): ShortArray {
         val rng = Random(20261014)
         fun noise() = rng.nextDouble(-1.0, 1.0)
@@ -84,30 +94,8 @@ object SfxSynth {
                 val env = exp(-3.0 * local / (d / 3))
                 env * (sin(2 * PI * freq * t) + 0.35 * sin(4 * PI * freq * t))
             }
-            // Aplausos: un puñado de palmadas sueltas, cada una un chasquido corto de ruido en
-            // la zona de los 2 kHz, que es donde suena una palmada de verdad. Los instantes se
-            // sortean una sola vez y se recorren ordenados: con un ruido continuo no sonaría a
-            // aplauso sino a lluvia, porque lo que lo hace reconocible son los transitorios.
-            Sfx.APLAUSOS -> {
-                val palmada = BandPass(2000.0, 0.55)
-                val sala = BandPass(1300.0, 0.35)
-                val rngPalmas = Random(20261018)
-                val duracion = 2.6
-                val inicios = DoubleArray(190) { rngPalmas.nextDouble(0.0, duracion) }
-                inicios.sort()
-                build(duracion, peak = 0.95) { t, d ->
-                    var golpes = 0.0
-                    for (inicio in inicios) {
-                        if (inicio > t) break
-                        val dt = t - inicio
-                        if (dt < 0.05) golpes += exp(-95.0 * dt)
-                    }
-                    // Entra enseguida y se va apagando, como cuando el público se cansa.
-                    val global = (1 - exp(-14.0 * t)) * exp(-1.2 * t / d)
-                    global * (palmada.process(noise()) * golpes * 1.1 +
-                        0.3 * sala.process(noise()))
-                }
-            }
+            // Los aplausos no se sintetizan: son una grabación (ver [Sfx]).
+            Sfx.APLAUSOS -> error("Los aplausos salen de res/raw/aplausos.wav, no se sintetizan")
             // Derrota: dos notas descendentes. La grave no baja de 230 Hz, o no se oiría.
             Sfx.DERROTA -> build(0.90, peak = 0.88) { t, d ->
                 val paso = (t / (d / 2)).toInt().coerceIn(0, 1)

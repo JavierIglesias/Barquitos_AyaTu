@@ -1,5 +1,18 @@
 # Novedades
 
+## 20 de octubre de 2026
+
+### Los aplausos ahora son de verdad
+
+Los de ayer estaban hechos por el propio programa y sonaban más a lluvia que a público. Este es
+**un aplauso grabado**, de un público real. Se oye al hundir el último barco enemigo.
+
+### El Registro ya no ocupa sitio en el puerto
+
+El pie de la pantalla de inicio se queda en **Manual**, **Novedades** y **Acerca de**. El registro
+sigue estando, y entero: se abre desde **Acerca de**, tocando la pantalla **con tres dedos a la
+vez** (el mismo gesto que en Rutas AyaTu y Audio AyaTu).
+
 ## 18 de octubre de 2026
 
 ### Aplausos al ganar

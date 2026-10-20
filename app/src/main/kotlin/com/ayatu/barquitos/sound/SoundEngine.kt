@@ -7,12 +7,14 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import com.ayatu.barquitos.R
 import com.ayatu.barquitos.log.BarquitosLogger
 import java.io.File
 
 /**
- * Sonido del juego **sintetizado**: la app no lleva ni un fichero de audio. La primera vez que se
- * arranca, [SfxSynth] genera unos WAV cortos en la caché y aquí se cargan en un [SoundPool].
+ * Sonido del juego casi todo **sintetizado**: la primera vez que se arranca, [SfxSynth] genera unos
+ * WAV cortos en la caché y aquí se cargan en un [SoundPool]. La única excepción son los aplausos,
+ * que son una grabación real incluida en la app (`res/raw/aplausos.wav`).
  *
  * Si algo falla al generar o al cargar, el juego sigue: simplemente se queda en silencio, y el
  * registro de la app lo cuenta.
@@ -39,6 +41,9 @@ class SoundEngine(context: Context, private val logger: BarquitosLogger? = null)
     @Volatile
     private var ids: Map<Sfx, Int> = emptyMap()
 
+    /** Los efectos que no se sintetizan, con el fichero de la app del que salen. */
+    private val recursos: Map<Sfx, Int> = mapOf(Sfx.APLAUSOS to R.raw.aplausos)
+
     @Volatile var soundEnabled: Boolean = true
     @Volatile var hapticsEnabled: Boolean = true
 
@@ -56,16 +61,23 @@ class SoundEngine(context: Context, private val logger: BarquitosLogger? = null)
     fun prepare() {
         val dir = File(appContext.cacheDir, "sfx").apply { mkdirs() }
         // Los efectos de versiones anteriores ya no valen y ocupan sitio: fuera.
-        val vigentes = Sfx.entries.map { SfxSynth.fileName(it) }.toSet()
+        val vigentes = Sfx.entries.filter { it.sintetizado }
+            .map { SfxSynth.fileName(it) }
+            .toSet()
         runCatching {
             dir.listFiles()?.forEach { if (it.name !in vigentes) it.delete() }
         }
         val cargados = HashMap<Sfx, Int>(Sfx.entries.size)
         for (sfx in Sfx.entries) {
             runCatching {
-                val file = File(dir, SfxSynth.fileName(sfx))
-                if (!file.exists()) SfxSynth.writeWav(file, SfxSynth.render(sfx))
-                val id = pool.load(file.absolutePath, 1)
+                val recurso = recursos[sfx]
+                val id = if (recurso != null) {
+                    pool.load(appContext, recurso, 1)
+                } else {
+                    val file = File(dir, SfxSynth.fileName(sfx))
+                    if (!file.exists()) SfxSynth.writeWav(file, SfxSynth.render(sfx))
+                    pool.load(file.absolutePath, 1)
+                }
                 if (id != 0) cargados[sfx] = id
             }.onFailure { logger?.logError("No se pudo preparar el sonido $sfx: ${it.message}") }
         }
