@@ -180,6 +180,27 @@ Si algo va mal, lo primero que ayuda es el registro.
 
 ---
 
+## En el monitor (modo escritorio)
+
+Si conectas el móvil a un monitor o a una tele por **USB-C o HDMI** y Android entra en **modo
+escritorio**, Barquitos AyaTu se abre en una ventana de ordenador, que puedes mover y estirar.
+
+- La **batalla** y la **colocación** se ponen a **dos columnas** en cuanto hay sitio: el tablero
+  donde disparas a la izquierda, y a la derecha tu flota, el estado de las dos y el parte de
+  batalla. Si estrechas la ventana, vuelven a una sola columna.
+- El resto de pantallas se queda **centrado**: en un monitor grande, un texto de borde a borde no
+  hay quien lo lea.
+- Con **teclado**, la tecla **Esc** vuelve atrás.
+- Con **ratón** no hay tres dedos: para abrir el registro, **mantén pulsada la línea de la versión**
+  en «Acerca de».
+- El modo escritorio lo pone Android, no la app: en los Pixel aparece al conectar la pantalla
+  (según el modelo y la versión hay que activarlo en **Ajustes → Sistema**, o en Opciones de
+  desarrollador → «modo escritorio»).
+
+Todo esto vale igual en una **tablet**, en un **Chromebook** y con el móvil **tumbado**.
+
+---
+
 ## Preguntas sueltas
 
 **¿Hace trampas la máquina?**

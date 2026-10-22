@@ -1,5 +1,21 @@
 # Novedades
 
+## 22 de octubre de 2026
+
+### 🖥️ Barquitos en el monitor
+
+Si conectas el móvil a un monitor o a una tele por **USB-C o HDMI** y Android entra en **modo
+escritorio**, la app se abre en una ventana que puedes mover y estirar, y se adapta:
+
+- La **batalla** y la **colocación de la flota** se reparten en **dos columnas**: el tablero donde
+  disparas a un lado, grande, y tu flota y el parte de batalla al otro.
+- Las pantallas de texto y los ajustes se quedan **centrados**, sin estirarse de borde a borde.
+- Con teclado, **Esc** vuelve atrás.
+- Con ratón no se pueden poner tres dedos, así que en **Acerca de** puedes **mantener pulsada la
+  línea de la versión** para abrir el registro.
+
+Lo mismo vale en una tablet, en un Chromebook y con el móvil tumbado.
+
 ## 20 de octubre de 2026
 
 ### Los aplausos ahora son de verdad

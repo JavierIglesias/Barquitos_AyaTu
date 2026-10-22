@@ -5,7 +5,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -50,7 +52,11 @@ private const val DONATION_URL = "https://buy.stripe.com/fZu3cvemddIJ6jN9Yl3cc00
  * ([onLog]), que ya no ocupa sitio en el puerto. Es el mismo gesto, y en el mismo sitio, que en
  * Rutas AyaTu y Audio AyaTu: no hay que explicárselo a quien solo quiere jugar, y quien lo
  * necesita lo tiene siempre a mano.
+ *
+ * Con **ratón** no hay tres dedos que valgan (en modo escritorio, en una tablet con teclado o en un
+ * Chromebook), así que la línea de la versión abre lo mismo si se **mantiene pulsada**.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun AboutScreen(onBack: () -> Unit, onLog: () -> Unit) {
     val context = LocalContext.current
@@ -82,6 +88,14 @@ fun AboutScreen(onBack: () -> Unit, onLog: () -> Unit) {
             InfoRow(
                 stringResource(R.string.about_version),
                 "${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})",
+                // Mantener pulsado (o el botón del ratón) hace lo mismo que los tres dedos.
+                modifier = Modifier.combinedClickable(
+                    onClick = {},
+                    onLongClick = {
+                        BarquitosLogger.get(context).logInfo("Registro abierto desde la versión")
+                        onLog()
+                    },
+                ),
             )
             InfoRow(
                 stringResource(R.string.about_device),
@@ -114,9 +128,9 @@ fun AboutScreen(onBack: () -> Unit, onLog: () -> Unit) {
 
 /** Una línea de «etiqueta … valor», con el valor pegado a la derecha. */
 @Composable
-private fun InfoRow(label: String, value: String) {
+private fun InfoRow(label: String, value: String, modifier: Modifier = Modifier) {
     Row(
-        Modifier.fillMaxWidth(),
+        modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

@@ -10,7 +10,7 @@ datos que se tratan, versión). Al final está la lista de comprobaciones antes 
 | Campo | Valor |
 |---|---|
 | `applicationId` | `com.ayatu.barquitos` |
-| `versionName` / `versionCode` | `1.1.1` / `4` |
+| `versionName` / `versionCode` | `1.2.0` / `5` |
 | `minSdk` | 24 (Android 7.0) |
 | `targetSdk` / `compileSdk` | 36 |
 | Formato de subida | Android App Bundle (`.aab`) |
@@ -125,6 +125,8 @@ reparte la flota entera.
 
 Y ADEMÁS
 
+• Se adapta a la pantalla: en el móvil, en una tablet y en el monitor (modo escritorio), donde la
+  batalla se reparte en dos columnas y se puede jugar con el ratón.
 • La partida se guarda sola: si cierras la app, al volver la sigues donde estaba.
 • Estadísticas y 14 medallas.
 • Manual de usuario, novedades y registro de la app, dentro de la propia app.
@@ -142,12 +144,15 @@ para dos jugadores con el mismo WiFi. Estadísticas y medallas. Sin anuncios, si
 conexión.
 ```
 
-### Textos de la versión (notas de la versión 1.1.1)
+### Textos de la versión (notas de la versión 1.2.0)
 
-Para cuando acabe la revisión de la 1.0.0 (la 1.0.1 y la 1.1.0 quedaron descartadas sin subirse).
+Para cuando acabe la revisión de la 1.0.0 (la 1.0.1, la 1.1.0 y la 1.1.1 quedaron descartadas sin
+subirse).
 
 ```
 <es-ES>
+- Barquitos en el monitor: en modo escritorio, en tablet o con el móvil tumbado, la batalla se
+  reparte en dos columnas y se juega con ratón y teclado.
 - Aplausos de verdad al ganar la partida.
 - El botón del final dice ahora «Al puerto (reiniciar)», para que quede claro que vuelve al
   principio.
@@ -161,6 +166,7 @@ Para cuando acabe la revisión de la 1.0.0 (la 1.0.1 y la 1.1.0 quedaron descart
 - New "About" screen: version, device details and the coffee link.
 - Two players over WiFi: the game is announced two ways at once, so the other phone finds it even
   if the router drops the first one.
+- Desktop mode, tablets and landscape: the battle splits into two columns and plays with a mouse.
 </en-US>
 ```
 
@@ -323,6 +329,8 @@ https://javieriglesias.github.io/Barquitos_AyaTu/privacidad.html
 - [ ] Capturas rehechas si ha cambiado la interfaz.
 - [ ] URL de política de privacidad accesible (GitHub Pages activado; ver apartado 8).
 - [ ] Sonido comprobado en un móvil real con «Probar el sonido», en Ajustes.
+- [ ] Si ha cambiado la interfaz, repasada también en una ventana ancha (modo escritorio o móvil
+      tumbado): dos columnas, nada cortado y el contenido centrado.
 
 ---
 

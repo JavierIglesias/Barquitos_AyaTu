@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ayatu.barquitos.core.GameMode
+import android.view.KeyEvent
 import com.ayatu.barquitos.ui.AppViewModel
 import com.ayatu.barquitos.ui.about.AboutScreen
 import com.ayatu.barquitos.ui.docs.DocKind
@@ -37,6 +38,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent { BarquitosApp() }
+    }
+
+    /**
+     * Con teclado (modo escritorio, tablet con funda o Chromebook), **Esc** vuelve atrás, que es lo
+     * que hace cualquier ventana de ordenador. En el móvil no cambia nada: ahí no hay tecla Esc.
+     */
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        if (keyCode == KeyEvent.KEYCODE_ESCAPE) {
+            onBackPressedDispatcher.onBackPressed()
+            return true
+        }
+        return super.onKeyUp(keyCode, event)
     }
 }
 

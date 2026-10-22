@@ -1,5 +1,64 @@
 # Historial de Cambios
 
+## 22-10-2026 [1.2.0] — Modo escritorio: la app en una ventana del monitor, con ratón y teclado
+
+Pedido por Javier: «optimízalo para que funcione también en modo escritorio». Es el **modo
+escritorio** de Android (Pixel con Android 15/16 en adelante): al conectar el móvil a un monitor por
+USB-C o HDMI, las apps se abren en **ventanas** que se mueven y se redimensionan, con ratón y
+teclado. Lo mismo vale para una tablet, para un Chromebook y para la pantalla partida. La app
+funcionaba, pero como un móvil estirado: todo en una columna estrecha en el centro, el tablero
+limitado por el alto aunque sobrara ancho, y el registro inalcanzable porque hacían falta tres
+dedos.
+
+### Añadido
+
+- **`ui/common/WindowSize.kt`** (nuevo): `WindowClass` con reglas **puras** —`esAncha` (≥ 840 dp de
+  ancho y ≥ 400 de alto: caben dos columnas), `esEscritorio` (ancho **y** alto, para distinguir un
+  monitor de un móvil tumbado) y `ladoTablero`, que decide el tamaño del tablero— más los ayudantes
+  de Compose que leen `LocalConfiguration`. Y `DosPaneles`, que coloca dos bloques en una columna o
+  lado a lado, cada uno con su propio desplazamiento, que es lo que se espera en una ventana de
+  ordenador.
+- **Teclado**: **Esc** vuelve atrás (`MainActivity.onKeyUp`), como cualquier ventana de ordenador.
+  En el móvil no cambia nada, porque allí no hay tecla Esc.
+- **Ratón**: en «Acerca de», **mantener pulsada la línea de la versión** abre el registro técnico,
+  porque con ratón no hay tres dedos que valgan. Los tres dedos siguen funcionando en el móvil.
+  Queda apuntado en el registro de qué manera se abrió.
+
+### Cambiado
+
+- **`AndroidManifest.xml`**: `resizeableActivity="true"` explícito; `configChanges` añade
+  `screenLayout|smallestScreenSize|density|uiMode|keyboard|navigation|layoutDirection|fontScale`
+  (al mover la ventana a otra pantalla cambia la densidad: sin esto la pantalla se reiniciaba);
+  `<layout>` con el tamaño inicial de la ventana (1040 × 760 dp, mínimo 360 × 480) y
+  `uses-feature android.hardware.touchscreen required="false"` (en un monitor se juega con el ratón;
+  también hace que la app valga para Chromebooks).
+- **`ui/common/Widgets.kt`** (`BarquitosScreen`): el contenido va **centrado y con ancho máximo**
+  (900 dp las pantallas de texto y ajustes, 1500 las de juego, parámetro `anchoMaximo`). En un
+  monitor de 2.000 px, unos ajustes de borde a borde no hay quien los lea.
+- **`ui/home/HomeScreen.kt`**: el puerto, centrado con el mismo ancho máximo; si no, los dos botones
+  grandes quedaban a tres palmos uno del otro.
+- **`ui/match/GameScreen.kt`**: la batalla se parte en dos columnas cuando hay sitio —aguas enemigas
+  a la izquierda, flota propia, estado de las flotas y parte de batalla a la derecha—. El cuerpo de
+  la pantalla se ha repartido en cuatro funciones (`Cabecera`, `AguasEnemigas`, `MiFlota`,
+  `ParteDeBatalla`) para no escribir dos veces lo mismo en cada reparto.
+- **`ui/match/PlacementScreen.kt`**: igual, el tablero a la izquierda y la bandeja con los botones a
+  la derecha. El arrastre de la bandeja al tablero sigue funcionando porque el cálculo de la casilla
+  usa coordenadas **de la raíz**, no del componente.
+- El tamaño del tablero lo decide ahora `WindowClass.ladoTablero`, que en una columna lo limita por
+  el alto (como antes) y en dos columnas por el ancho de la columna, con un tope de 620 dp: más
+  grande no se gana nada y obliga a mover la cabeza.
+
+### Comprobado
+
+- 69 pruebas sin fallos, con `VentanaTest` (móvil de pie, móvil tumbado, monitor, monitor grande,
+  ventana encogida a mano, pantalla partida muy baja y la fracción de alto al colocar la flota).
+- En el emulador, con la pantalla puesta a **1800 × 1150 dp** (`wm size` + `wm density 160`), que es
+  lo que se ve en un monitor: el puerto centrado, la colocación y la batalla a dos columnas con el
+  tablero a 580 dp, el manual legible, **Esc** sacando el aviso de «dejar la partida» y la pulsación
+  larga en la versión abriendo el registro («Registro abierto desde la versión» queda anotado).
+- **Pendiente de comprobar con un monitor de verdad**: que Android abra la ventana al tamaño del
+  `<layout>` y que al redimensionarla el cambio de columna se note al vuelo.
+
 ## 20-10-2026 [1.1.1]
 
 ### Cambiado

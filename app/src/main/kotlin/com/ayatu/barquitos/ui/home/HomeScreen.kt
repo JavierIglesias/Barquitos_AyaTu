@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -53,6 +54,7 @@ import com.ayatu.barquitos.core.PlacedShip
 import com.ayatu.barquitos.ui.AppViewModel
 import com.ayatu.barquitos.ui.common.MenuButton
 import com.ayatu.barquitos.ui.common.SeaBackdrop
+import com.ayatu.barquitos.ui.common.WindowClass
 import com.ayatu.barquitos.ui.common.ShipPainter.drawShipPreview
 import com.ayatu.barquitos.ui.theme.Flota
 import com.ayatu.barquitos.ui.theme.Mar
@@ -75,8 +77,12 @@ fun HomeScreen(
     val hasSaved by appViewModel.hasSavedMatch.collectAsStateWithLifecycle()
 
     SeaBackdrop {
+        // Centrado y con ancho máximo: en una ventana de escritorio el puerto no se estira de
+        // borde a borde, que dejaría los dos botones grandes a tres palmos uno del otro.
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         Column(
             Modifier
+                .widthIn(max = WindowClass.CONTENIDO_MAX)
                 .fillMaxSize()
                 // La app va a pantalla completa, así que hay que dejar sitio a la barra de estado
                 // y a la de navegación a mano.
@@ -213,6 +219,7 @@ fun HomeScreen(
                 Spacer(Modifier.width(4.dp))
                 Text(stringResource(R.string.home_about))
             }
+        }
         }
     }
 }

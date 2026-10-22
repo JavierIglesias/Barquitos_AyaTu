@@ -37,7 +37,7 @@ app/src/main/kotlin/com/ayatu/barquitos/
 ├── log/               Registro de eventos en fichero, con rotación
 ├── net/               Dos jugadores con el mismo WiFi: descubrimiento (NSD + baliza UDP) y TCP
 ├── sound/             Efectos sintetizados (y el aplauso grabado, en res/raw)
-└── ui/                Pantallas en Jetpack Compose
+└── ui/                Pantallas en Jetpack Compose (ui/common/WindowSize.kt: móvil o ventana de escritorio)
 ```
 
 Dos detalles de los que depende todo lo visual:
@@ -61,7 +61,7 @@ Dos detalles de los que depende todo lo visual:
 Hace falta JDK 17 y el SDK de Android (`local.properties` → `sdk.dir`).
 
 ```bash
-./gradlew testDebugUnitTest   # 62 pruebas del motor, la IA, el protocolo de red, el sonido y los gestos
+./gradlew testDebugUnitTest   # 69 pruebas: motor, IA, red, sonido, gestos y tamaño de ventana
 ./gradlew assembleDebug       # APK de depuración
 ./gradlew bundleRelease       # .aab firmado para Google Play (necesita keystore.properties)
 ```

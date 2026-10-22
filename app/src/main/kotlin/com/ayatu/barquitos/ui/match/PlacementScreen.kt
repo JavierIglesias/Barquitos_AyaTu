@@ -34,7 +34,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,7 +49,11 @@ import com.ayatu.barquitos.ui.common.BarquitosScreen
 import com.ayatu.barquitos.ui.common.BoardHitTest
 import com.ayatu.barquitos.ui.common.BoardRender
 import com.ayatu.barquitos.ui.common.BoardView
+import com.ayatu.barquitos.ui.common.DosPaneles
 import com.ayatu.barquitos.ui.common.ShipChip
+import com.ayatu.barquitos.ui.common.WindowClass
+import com.ayatu.barquitos.ui.common.esVentanaAncha
+import com.ayatu.barquitos.ui.common.ladoTablero
 import com.ayatu.barquitos.ui.common.ShipPainter.drawShipPreview
 import com.ayatu.barquitos.ui.common.labelRes
 
@@ -91,130 +94,136 @@ fun PlacementScreen(
 
     val pendientes = state.pendingShips.groupingBy { it.kind }.eachCount()
     // El tablero no puede comerse la pantalla: en un plegable abierto, que es casi cuadrado, un
-    // tablero tan ancho como la pantalla dejaría la bandeja y los botones fuera de la vista.
-    val pantalla = LocalConfiguration.current
-    val tableroMax = minOf(
-        pantalla.screenWidthDp,
-        (pantalla.screenHeightDp * 0.48f).toInt(),
-    ).dp
+    // tablero tan ancho como la pantalla dejaría la bandeja y los botones fuera de la vista. Con
+    // dos columnas manda el ancho de la columna (ver WindowClass.ladoTablero).
+    val ancha = esVentanaAncha()
+    val tableroMax = ladoTablero(fraccionAlto = 0.48f)
 
-    BarquitosScreen(title = stringResource(R.string.placement_title), onBack = onBack) { modifier ->
+    BarquitosScreen(
+        title = stringResource(R.string.placement_title),
+        onBack = onBack,
+        anchoMaximo = WindowClass.JUEGO_MAX,
+    ) { modifier ->
         Box(
             modifier
                 .fillMaxSize()
                 .onGloballyPositioned { overlayOrigin = it.positionInRoot() },
         ) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Text(
-                    stringResource(R.string.placement_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(
-                    stringResource(R.string.placement_separation),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.primary,
-                )
-
-                BoardView(
-                    render = BoardRender(
-                        size = state.boardSize,
-                        ships = state.placed,
-                        preview = state.preview,
-                        previewValid = state.previewValid,
-                        selectedShipId = state.selectedPlacedId,
-                        showCoords = settings.showCoords,
-                        enabled = true,
-                    ),
-                    maxSize = tableroMax,
-                    onPress = onBoardPress,
-                    onMove = onBoardMove,
-                    onRelease = onBoardRelease,
-                    onGeometry = { hitTest = it },
-                )
-
-                // Bandeja: un botón por clase de barco, con cuántos quedan por colocar.
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    TIPOS.forEach { kind ->
-                        val def = Fleet.ships.first { it.kind == kind }
-                        val quedan = pendientes[kind] ?: 0
-                        ShipChip(
-                            def = def,
-                            label = stringResource(kind.labelRes),
-                            remaining = quedan,
-                            selected = state.pendingShips
-                                .firstOrNull { it.id == state.selectedShipId }?.kind == kind,
-                            modifier = Modifier.weight(1f),
-                            onDragStart = {
-                                onTakeFromTray(kind)
-                                carried = def
-                            },
-                            onDrag = { pos ->
-                                carriedAt = pos
-                                onDragOverBoard(hitTest?.coordAtRoot(pos))
-                            },
-                            onDragEnd = {
-                                onDropFromTray(carriedAt?.let { p -> hitTest?.coordAtRoot(p) })
-                                carried = null
-                                carriedAt = null
-                            },
-                        )
-                    }
-                }
-
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    OutlinedButton(
-                        onClick = onRotate,
-                        enabled = state.selectedPlacedId != null || state.selectedShipId != null,
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Icon(Icons.Default.Rotate90DegreesCw, contentDescription = null)
-                        Spacer(Modifier.padding(2.dp))
-                        Text(stringResource(R.string.placement_rotate))
-                    }
-                    OutlinedButton(onClick = onRandom, modifier = Modifier.weight(1f)) {
-                        Icon(Icons.Default.Casino, contentDescription = null)
-                        Spacer(Modifier.padding(2.dp))
-                        Text(stringResource(R.string.placement_random))
-                    }
-                    OutlinedButton(onClick = onClear) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = stringResource(R.string.placement_clear),
-                        )
-                    }
-                }
-
-                val pending = state.pendingShips.size
-                Button(
-                    onClick = onReady,
-                    enabled = pending == 0,
-                    modifier = Modifier.fillMaxWidth().height(52.dp),
-                ) {
+            // En el móvil de pie, el tablero arriba y la bandeja debajo. En una ventana ancha
+            // (móvil tumbado, tablet o monitor en modo escritorio), el tablero a la izquierda y la
+            // bandeja con los botones a la derecha: así se ve entero sin tener que desplazar.
+            DosPaneles(
+                ancha = ancha,
+                modifier = Modifier.padding(horizontal = 12.dp),
+                separacion = 8.dp,
+                principal = {
                     Text(
-                        if (pending == 0) {
-                            stringResource(R.string.placement_ready)
-                        } else {
-                            stringResource(R.string.placement_pending, pending)
-                        },
-                        style = MaterialTheme.typography.titleMedium,
+                        stringResource(R.string.placement_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                }
-                Spacer(Modifier.height(16.dp))
-            }
+                    Text(
+                        stringResource(R.string.placement_separation),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+
+                    BoardView(
+                        render = BoardRender(
+                            size = state.boardSize,
+                            ships = state.placed,
+                            preview = state.preview,
+                            previewValid = state.previewValid,
+                            selectedShipId = state.selectedPlacedId,
+                            showCoords = settings.showCoords,
+                            enabled = true,
+                        ),
+                        maxSize = tableroMax,
+                        onPress = onBoardPress,
+                        onMove = onBoardMove,
+                        onRelease = onBoardRelease,
+                        onGeometry = { hitTest = it },
+                    )
+
+                },
+                secundario = {
+                    // Bandeja: un botón por clase de barco, con cuántos quedan por colocar.
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        TIPOS.forEach { kind ->
+                            val def = Fleet.ships.first { it.kind == kind }
+                            val quedan = pendientes[kind] ?: 0
+                            ShipChip(
+                                def = def,
+                                label = stringResource(kind.labelRes),
+                                remaining = quedan,
+                                selected = state.pendingShips
+                                    .firstOrNull { it.id == state.selectedShipId }?.kind == kind,
+                                modifier = Modifier.weight(1f),
+                                onDragStart = {
+                                    onTakeFromTray(kind)
+                                    carried = def
+                                },
+                                onDrag = { pos ->
+                                    carriedAt = pos
+                                    onDragOverBoard(hitTest?.coordAtRoot(pos))
+                                },
+                                onDragEnd = {
+                                    onDropFromTray(carriedAt?.let { p -> hitTest?.coordAtRoot(p) })
+                                    carried = null
+                                    carriedAt = null
+                                },
+                            )
+                        }
+                    }
+
+                    Row(
+                        Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        OutlinedButton(
+                            onClick = onRotate,
+                            enabled = state.selectedPlacedId != null || state.selectedShipId != null,
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            Icon(Icons.Default.Rotate90DegreesCw, contentDescription = null)
+                            Spacer(Modifier.padding(2.dp))
+                            Text(stringResource(R.string.placement_rotate))
+                        }
+                        OutlinedButton(onClick = onRandom, modifier = Modifier.weight(1f)) {
+                            Icon(Icons.Default.Casino, contentDescription = null)
+                            Spacer(Modifier.padding(2.dp))
+                            Text(stringResource(R.string.placement_random))
+                        }
+                        OutlinedButton(onClick = onClear) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = stringResource(R.string.placement_clear),
+                            )
+                        }
+                    }
+
+                    val pending = state.pendingShips.size
+                    Button(
+                        onClick = onReady,
+                        enabled = pending == 0,
+                        modifier = Modifier.fillMaxWidth().height(52.dp),
+                    ) {
+                        Text(
+                            if (pending == 0) {
+                                stringResource(R.string.placement_ready)
+                            } else {
+                                stringResource(R.string.placement_pending, pending)
+                            },
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+                    Spacer(Modifier.height(16.dp))
+                },
+            )
 
             // El barco que se lleva en el dedo, por encima de todo lo demás.
             val llevado = carried

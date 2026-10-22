@@ -10,20 +10,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.filled.LocalFireDepartment
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -41,26 +38,33 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.ayatu.barquitos.R
 import com.ayatu.barquitos.core.Coord
-import com.ayatu.barquitos.core.ShotRule
 import com.ayatu.barquitos.data.Settings
 import com.ayatu.barquitos.ui.common.BarquitosScreen
 import com.ayatu.barquitos.ui.common.BoardView
+import com.ayatu.barquitos.ui.common.DosPaneles
 import com.ayatu.barquitos.ui.common.FleetStatus
+import com.ayatu.barquitos.ui.common.WindowClass
+import com.ayatu.barquitos.ui.common.esVentanaAncha
 import com.ayatu.barquitos.ui.common.labelRes
+import com.ayatu.barquitos.ui.common.ladoTablero
 import com.ayatu.barquitos.ui.theme.Flota
 
 /**
- * La batalla. Arriba el tablero del rival (donde se dispara) y abajo el propio, más pequeño, con
- * el estado de las dos flotas y el parte de batalla.
+ * La batalla. En el móvil de pie, arriba el tablero del rival (donde se dispara) y abajo el propio,
+ * más pequeño, con el estado de las dos flotas y el parte de batalla.
+ *
+ * En una **ventana ancha** —móvil tumbado, tablet o el móvil conectado a un monitor en modo
+ * escritorio— eso mismo se reparte en dos columnas: las aguas enemigas a la izquierda, y a la
+ * derecha la flota propia y el parte. Así el tablero donde se dispara es tan grande como permita la
+ * ventana en vez de quedarse en una tira en el centro de la pantalla.
  */
 @Composable
 fun GameScreen(
@@ -74,12 +78,10 @@ fun GameScreen(
     var askSurrender by remember { mutableStateOf(false) }
 
     // Igual que al colocar: en una pantalla casi cuadrada el tablero enemigo no puede ocuparla
-    // entera, o el propio y el parte de batalla se quedan fuera de la vista.
-    val pantalla = LocalConfiguration.current
-    val tableroMax = minOf(
-        pantalla.screenWidthDp,
-        (pantalla.screenHeightDp * 0.5f).toInt(),
-    ).dp
+    // entera, o el propio y el parte de batalla se quedan fuera de la vista. Con dos columnas el
+    // límite pasa a ser el ancho de la columna (ver WindowClass.ladoTablero).
+    val ancha = esVentanaAncha()
+    val tableroMax = ladoTablero(fraccionAlto = 0.5f)
 
     // Animación del último disparo: explosión si tocó, chapoteo si cayó al agua.
     var shotProgress by remember { mutableFloatStateOf(1f) }
@@ -111,6 +113,7 @@ fun GameScreen(
     BarquitosScreen(
         title = turnText,
         onBack = onBack,
+        anchoMaximo = WindowClass.JUEGO_MAX,
         actions = {
             IconButton(onClick = { askSurrender = true }) {
                 Icon(Icons.Default.Flag, contentDescription = stringResource(R.string.game_surrender))
@@ -118,118 +121,22 @@ fun GameScreen(
         },
     ) { modifier ->
         Box(modifier.fillMaxSize()) {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp),
-            ) {
-                // Cabecera: ronda y disparos que quedan.
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        stringResource(R.string.game_round, state.round),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                    Text(
-                        stringResource(state.config.shotRule.labelRes),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-
-                Text(
-                    stringResource(R.string.game_enemy_waters),
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                state.enemyRender?.let { render ->
-                    BoardView(
-                        // `enabled` se saca aquí del estado recién llegado y no de lo que venía en
-                        // el render, para que no pueda quedarse desfasado tras un turno de la IA.
-                        render = render.copy(
-                            shotProgress = shotProgress,
-                            showCoords = settings.showCoords,
-                            enabled = state.isMyTurn && !state.busy && !state.finished,
-                        ),
-                        maxSize = tableroMax,
-                        onTap = onTapEnemy,
-                    )
-                }
-
-                if (state.busy) {
-                    LinearProgressIndicator(Modifier.fillMaxWidth())
-                }
-
-                Spacer(Modifier.height(2.dp))
-
-                // Tablero propio y estado de las flotas, lado a lado.
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            stringResource(R.string.game_my_fleet),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        state.myRender?.let { render ->
-                            BoardView(
-                                render = render.copy(
-                                    shotProgress = shotProgress,
-                                    showCoords = false,
-                                ),
-                                    )
-                        }
-                    }
-                    Column(
-                        Modifier.weight(1f),
-                        verticalArrangement = Arrangement.spacedBy(6.dp),
-                    ) {
-                        FleetStatus(stringResource(R.string.game_fleet_status), state.enemyFleet)
-                        FleetStatus(stringResource(R.string.game_my_fleet_status), state.myFleet)
-                    }
-                }
-
-                // Parte de batalla.
-                if (state.history.isNotEmpty()) {
-                    Text(
-                        stringResource(R.string.game_report),
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 6.dp),
-                    )
-                    Column(
-                        Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.6f))
-                            .padding(8.dp),
-                    ) {
-                        state.history.take(8).forEach { record ->
-                            val who = playerName(state, settings, record.player)
-                            val sunk = record.sunkKind?.let { " · ${stringResource(it.labelRes)}" } ?: ""
-                            Text(
-                                "${record.coord.label()}  $who  " +
-                                    (if (record.hit) stringResource(R.string.game_hit) else stringResource(R.string.game_miss)) +
-                                    sunk,
-                                style = MaterialTheme.typography.bodySmall,
-                                fontFamily = FontFamily.Monospace,
-                                color = when {
-                                    record.sunkKind != null -> Flota.Hundido
-                                    record.hit -> Flota.Fuego
-                                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                            )
-                        }
-                    }
-                }
-                Spacer(Modifier.height(20.dp))
-            }
+            DosPaneles(
+                ancha = ancha,
+                modifier = Modifier.padding(horizontal = 12.dp),
+                separacion = 6.dp,
+                principal = {
+                    Cabecera(state)
+                    AguasEnemigas(state, settings, shotProgress, tableroMax, onTapEnemy)
+                    if (state.busy) LinearProgressIndicator(Modifier.fillMaxWidth())
+                },
+                secundario = {
+                    if (!ancha) Spacer(Modifier.height(2.dp))
+                    MiFlota(state, shotProgress)
+                    ParteDeBatalla(state, settings)
+                    Spacer(Modifier.height(20.dp))
+                },
+            )
 
             // Aviso grande encima del tablero.
             AnimatedVisibility(
@@ -276,6 +183,122 @@ fun GameScreen(
                 }
             },
         )
+    }
+}
+
+/** Ronda y regla de disparo. */
+@Composable
+private fun Cabecera(state: MatchUiState) {
+    Row(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            stringResource(R.string.game_round, state.round),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            stringResource(state.config.shotRule.labelRes),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold,
+        )
+    }
+}
+
+/** El tablero del rival: donde se dispara. */
+@Composable
+private fun ColumnScope.AguasEnemigas(
+    state: MatchUiState,
+    settings: Settings,
+    shotProgress: Float,
+    tableroMax: Dp,
+    onTapEnemy: (Coord) -> Unit,
+) {
+    Text(
+        stringResource(R.string.game_enemy_waters),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    state.enemyRender?.let { render ->
+        BoardView(
+            // `enabled` se saca aquí del estado recién llegado y no de lo que venía en el render,
+            // para que no pueda quedarse desfasado tras un turno de la IA.
+            render = render.copy(
+                shotProgress = shotProgress,
+                showCoords = settings.showCoords,
+                enabled = state.isMyTurn && !state.busy && !state.finished,
+            ),
+            maxSize = tableroMax,
+            onTap = onTapEnemy,
+        )
+    }
+}
+
+/** Tablero propio y estado de las dos flotas, lado a lado. */
+@Composable
+private fun MiFlota(state: MatchUiState, shotProgress: Float) {
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                stringResource(R.string.game_my_fleet),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            state.myRender?.let { render ->
+                BoardView(
+                    render = render.copy(
+                        shotProgress = shotProgress,
+                        showCoords = false,
+                    ),
+                )
+            }
+        }
+        Column(
+            Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            FleetStatus(stringResource(R.string.game_fleet_status), state.enemyFleet)
+            FleetStatus(stringResource(R.string.game_my_fleet_status), state.myFleet)
+        }
+    }
+}
+
+/** Los últimos disparos, los de los dos. */
+@Composable
+private fun ParteDeBatalla(state: MatchUiState, settings: Settings) {
+    if (state.history.isEmpty()) return
+    Text(
+        stringResource(R.string.game_report),
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 6.dp),
+    )
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.6f))
+            .padding(8.dp),
+    ) {
+        state.history.take(8).forEach { record ->
+            val who = playerName(state, settings, record.player)
+            val sunk = record.sunkKind?.let { " · ${stringResource(it.labelRes)}" } ?: ""
+            Text(
+                "${record.coord.label()}  $who  " +
+                    (if (record.hit) stringResource(R.string.game_hit) else stringResource(R.string.game_miss)) +
+                    sunk,
+                style = MaterialTheme.typography.bodySmall,
+                fontFamily = FontFamily.Monospace,
+                color = when {
+                    record.sunkKind != null -> Flota.Hundido
+                    record.hit -> Flota.Fuego
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                },
+            )
+        }
     }
 }
 

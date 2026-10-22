@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -59,6 +60,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.ayatu.barquitos.R
@@ -92,12 +94,19 @@ fun SeaBackdrop(modifier: Modifier = Modifier, content: @Composable () -> Unit) 
     ) { content() }
 }
 
-/** Andamio común: barra con título, botón de volver y el fondo de mar. */
+/**
+ * Andamio común: barra con título, botón de volver y el fondo de mar.
+ *
+ * El contenido va **centrado y con un ancho máximo** ([anchoMaximo]): en una ventana de escritorio
+ * de 2.000 px, un texto o unos ajustes de borde a borde no hay quien los lea. Las pantallas de
+ * juego piden un máximo mayor, porque ahí el sitio de más sí se aprovecha.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BarquitosScreen(
     title: String,
     onBack: (() -> Unit)? = null,
+    anchoMaximo: Dp = WindowClass.CONTENIDO_MAX,
     actions: @Composable () -> Unit = {},
     content: @Composable (Modifier) -> Unit,
 ) {
@@ -124,7 +133,14 @@ fun BarquitosScreen(
             )
         },
     ) { padding ->
-        SeaBackdrop { content(Modifier.padding(padding)) }
+        SeaBackdrop {
+            Box(
+                Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                content(Modifier.widthIn(max = anchoMaximo).fillMaxWidth())
+            }
+        }
     }
 }
 
