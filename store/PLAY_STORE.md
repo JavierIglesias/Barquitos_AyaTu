@@ -65,8 +65,20 @@ versión, dentro de la propia versión que se sube.
 
 Detalles que ahorran un viaje:
 
-- **Hay que darle a «Guardar» y luego a «Enviar para revisión»**: lo guardado no sale publicado solo.
-  Mientras no se revisa, la ficha anterior sigue en la tienda.
+- **Guardar no es enviar.** Cada página de la consola tiene su «Guardar», pero lo guardado se queda
+  en un montón de cambios **pendientes** y arriba sale el aviso «*los cambios no se han enviado a
+  revisión*». Para que Google los mire hay que ir a **Publicar información general** (menú de la
+  izquierda, arriba del todo; en inglés *Publishing overview*), repasar la lista «Cambios listos
+  para enviar a revisión» y pulsar **Enviar cambios a revisión**. Mientras no se revisan, en la
+  tienda sigue lo de antes. Es un aviso, no un error: no se pierde nada por tenerlo ahí un rato.
+- **Si el botón de enviar aparece apagado** es que falta algo obligatorio, y esa misma página dice
+  qué. Casi siempre es un apartado de **Política → Contenido de la app** (clasificación de
+  contenido, seguridad de los datos, público objetivo, anuncios, acceso a la app, política de
+  privacidad) o un gráfico que falta en la ficha. Se rellena, se guarda y se vuelve a enviar.
+- **Publicación gestionada** (en esa misma página): si está activada, los cambios **ya aprobados**
+  tampoco salen a la tienda hasta que se pulsa «Publicar». Si no la quieres, desactívala ahí.
+- Que la primera versión (1.0.0) esté en revisión **no impide** enviar los cambios de ficha: se
+  acumulan y se revisan junto con la app.
 - La ficha es **por idioma**. Arriba de la página hay un selector; estos textos son los de
   **español (España)**, que es el idioma por defecto de la app. Para añadir el inglés:
   Configuración de la ficha → Traducciones → Añadir traducciones → `en-US`.
@@ -328,6 +340,8 @@ https://javieriglesias.github.io/Barquitos_AyaTu/privacidad.html
 - [ ] Formulario de seguridad de los datos revisado si ha cambiado algo de lo que guarda la app.
 - [ ] Capturas rehechas si ha cambiado la interfaz.
 - [ ] URL de política de privacidad accesible (GitHub Pages activado; ver apartado 8).
+- [ ] Después de guardar: **Publicar información general → Enviar cambios a revisión**, hasta que
+      no quede el aviso de «cambios sin enviar a revisión».
 - [ ] Sonido comprobado en un móvil real con «Probar el sonido», en Ajustes.
 - [ ] Si ha cambiado la interfaz, repasada también en una ventana ancha (modo escritorio o móvil
       tumbado): dos columnas, nada cortado y el contenido centrado.

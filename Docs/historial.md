@@ -1,5 +1,19 @@
 # Historial de Cambios
 
+## 23-10-2026 — Documentación: cómo se envían los cambios a revisión en Play Console
+
+Sin cambios en la app (sigue la 1.2.0, `versionCode` 5). Javier avisó de que la consola de Google le
+decía que **los cambios no se habían enviado a revisión**: en Play Console, «Guardar» solo deja los
+cambios pendientes; hay que enviarlos aparte desde **Publicar información general → Enviar cambios a
+revisión**. Faltaba explicado en `store/PLAY_STORE.md`, que solo lo mencionaba de pasada en una
+línea.
+
+- **`store/PLAY_STORE.md`**: en «Detalles que ahorran un viaje», el aviso y la ruta exacta; qué
+  mirar si el botón de enviar sale apagado (apartados sin rellenar de Política → Contenido de la
+  app, o un gráfico que falta); qué hace la **publicación gestionada**; y que la revisión de la
+  1.0.0 en curso no impide enviar los cambios de ficha. Nuevo punto en la lista de comprobaciones
+  antes de enviar.
+
 ## 22-10-2026 [1.2.0] — Modo escritorio: la app en una ventana del monitor, con ratón y teclado
 
 Pedido por Javier: «optimízalo para que funcione también en modo escritorio». Es el **modo
