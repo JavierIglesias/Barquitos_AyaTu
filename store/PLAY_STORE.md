@@ -291,7 +291,7 @@ adb exec-out screencap -p > captura.png
 ## 8. Política de privacidad
 
 Google Play exige una URL de política de privacidad aunque la app no recoja ningún dato. La política
-está escrita y lista para publicar, en los dos idiomas de la ficha:
+ya está **publicada**, en los dos idiomas de la ficha:
 
 | Fichero | Idioma |
 |---|---|
@@ -306,7 +306,11 @@ reglas, la colocación de la flota y los disparos; se detallan los tres permisos
 se advierte de que la copia de seguridad de Android puede llevar los ajustes al Drive del propio
 usuario.
 
-### Cómo publicar la URL (hay que hacerlo en GitHub, una sola vez)
+### La URL (ya publicada)
+
+**Activado el 23-10-2026** y comprobado: la página responde 200 y lo servido es **byte a byte** el
+`privacidad.html` del repositorio; `privacy.html` también responde. Esto quedó así (no hay que
+repetirlo; se deja escrito por si algún día hay que rehacerlo):
 
 Los dos ficheros están en la **raíz** del repositorio a propósito: GitHub Pages solo puede servir
 desde la raíz o desde una carpeta llamada exactamente `docs`, y este proyecto ya tiene una carpeta
@@ -323,7 +327,12 @@ https://javieriglesias.github.io/Barquitos_AyaTu/privacidad.html
 
 - **URL de la política para la consola**:
   `https://javieriglesias.github.io/Barquitos_AyaTu/privacidad.html`
-  (pendiente del paso 2: hasta que no se active Pages, la dirección da 404).
+- La dirección distingue **mayúsculas**: `Barquitos_AyaTu` exactamente así.
+- La raíz (`.../Barquitos_AyaTu/`) da 404 porque no hay `index.html`, y da igual: Play solo visita
+  la dirección exacta de la política.
+- Si algún día volviera a dar 404, lo primero que hay que mirar es si Pages sigue activado
+  (Settings → Pages) y si el último despliegue *pages-build-deployment* salió bien, en la pestaña
+  **Actions** del repositorio. Cada `push` a `main` vuelve a desplegar la página.
 
 ---
 

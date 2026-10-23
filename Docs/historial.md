@@ -1,5 +1,23 @@
 # Historial de Cambios
 
+## 23-10-2026 — Política de privacidad publicada de verdad (GitHub Pages)
+
+Sin cambios en la app (sigue la 1.2.0, `versionCode` 5). La consola de Google decía que la política
+de privacidad devolvía «página no encontrada». La dirección puesta en la consola era la correcta y
+los ficheros `privacidad.html` y `privacy.html` estaban en el repositorio desde el commit `d771a4c`,
+pero **GitHub Pages no estaba activado**: la cuenta no servía ninguna página, así que la dirección
+daba 404 (también la raíz de `javieriglesias.github.io`, que fue la pista). Javier lo activó
+(Settings → Pages → `main`, `/ (root)`).
+
+- Comprobado: `https://javieriglesias.github.io/Barquitos_AyaTu/privacidad.html` responde **200
+  text/html** y lo servido es **byte a byte** (6.218 B, mismo SHA-256) el fichero del repositorio;
+  `privacy.html` también responde (5.803 B) y el enlace entre las dos versiones es relativo, así
+  que funciona.
+- **`store/PLAY_STORE.md`**, apartado 8: los pasos pasan de «hay que hacerlo» a quedar como
+  referencia, con la fecha de activación; fuera el aviso de que la URL daba 404; apuntado que la
+  dirección distingue mayúsculas, que la raíz da 404 a propósito (no hay `index.html`) y dónde
+  mirar si algún día falla (Actions → *pages-build-deployment*).
+
 ## 23-10-2026 — Documentación: cómo se envían los cambios a revisión en Play Console
 
 Sin cambios en la app (sigue la 1.2.0, `versionCode` 5). Javier avisó de que la consola de Google le
